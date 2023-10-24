@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from '../ui/Button.jsx';
 import {BAR_HEIGHT, BAR_SAFETY, FOOTER_SAFETY, NEW_HEIGHT} from '../SETTINGS.js';
 import connectGoogle from '../state/actions/connectGoogle.js';
 
@@ -27,15 +26,7 @@ class History extends React.PureComponent {
     render() {
         return (
             <div css={SX.root}>
-                <Button
-                    label={
-                        <>
-                            Connect your
-                            <br /> Google Calendar
-                        </>
-                    }
-                    onClick={this.onButtonClick}
-                />
+
             </div>
         );
     }

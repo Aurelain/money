@@ -6,6 +6,8 @@ import validateJson from '../../utils/validateJson.js';
 import requestJson from '../../utils/requestJson.js';
 import OauthCodeSchema from '../../schemas/OauthCodeSchema.js';
 import OauthTokenSchema from '../../schemas/OauthTokenSchema.js';
+import requestHistory from './requestHistory.js';
+import discoverVault from './discoverVault.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -75,7 +77,8 @@ const onCodeReceived = async (codeClientResponse) => {
         state.volatile.isAuthenticated = true;
     });
 
-    // TODO
+    await discoverVault();
+    await requestHistory();
 
     currentResolve();
 };

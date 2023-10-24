@@ -19,10 +19,16 @@ export default {
             },
             required: ['accessToken', 'refreshToken', 'expirationTimestamp'],
         },
+        spreadsheetIds: {
+            type: 'array',
+            items: {
+                type: 'string',
+            },
+        },
         volatile: {
             type: 'object',
             additionalProperties: false,
         },
     },
-    required: ['tokens', 'volatile'],
+    required: ['tokens', 'spreadsheetIds', 'volatile'],
 };

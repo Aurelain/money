@@ -8,6 +8,7 @@ import {selectIsAuthenticated} from '../state/selectors.js';
 import {addErrorListener} from '../utils/interceptErrors.js';
 import failAuthentication from '../state/actions/failAuthentication.js';
 import History from './History.jsx';
+import requestHistory from '../state/actions/requestHistory.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -32,7 +33,7 @@ class App extends React.PureComponent {
         );
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
         document.body.removeChild(document.getElementById('spinner'));
 
@@ -40,7 +41,8 @@ class App extends React.PureComponent {
 
         if (this.props.isAuthenticated) {
             // We were logged-in sometimes in the past. We should ensure we have the latest data:
-            this.syncWithCloud();
+            // await discoverVault();
+            await requestHistory();
         }
     }
 
@@ -58,13 +60,6 @@ class App extends React.PureComponent {
             window.scrollTo(0, 0);
             window.location.reload();
         }
-    };
-
-    /**
-     *
-     */
-    syncWithCloud = async () => {
-        // TODO
     };
 
     /**

@@ -17,7 +17,7 @@
     ],
     "start_url": "./",
     "display": "standalone",
-    "theme_color": "#5da71a",
+    "theme_color": "#f5c045",
     "background_color": "#ffffff",
     "description": "Money Tracker"
 }
