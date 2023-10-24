@@ -21,7 +21,10 @@ const discoverVault = async () => {
     const spreadsheetIds = await getSpreadsheetIds(vaultId);
 
     setState((state) => {
-        state.spreadsheetIds = spreadsheetIds;
+        state.spreadsheets = spreadsheetIds.map((id) => ({
+            id,
+            modified: '', // will force an update of each spreadsheet's data
+        }));
     });
 };
 
@@ -51,13 +54,14 @@ const getVaultId = async () => {
 const getSpreadsheetIds = async (vaultId) => {
     const result = await requestApi('https://www.googleapis.com/drive/v3/files', {
         searchParams: {
-            q: `parents in '${vaultId}'`,
+            q: `parents in '${vaultId}' and trashed = false`,
         },
         schema: FilesSchema,
     });
 
     const ids = [];
-    for (const {id, mimeType} of result.files) {
+    for (const file of result.files) {
+        const {id, mimeType} = file;
         switch (mimeType) {
             case 'application/vnd.google-apps.spreadsheet': {
                 ids.push(id);

@@ -13,6 +13,9 @@ import assume from '../utils/assume.js';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import Separator from '../ui/Separator.jsx';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
+import Database from '../ui/Icons/Database.jsx';
+import requestHistory from '../state/actions/requestHistory.js';
+import discoverVault from '../state/actions/discoverVault.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -52,6 +55,7 @@ const SX = {
     },
 };
 
+const MENU_REFRESH_VAULT = 'MENU_REFRESH_VAULT';
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
 const MENU_LOG_OUT = 'MENU_LOG_OUT';
 
@@ -82,7 +86,7 @@ class Bar extends React.PureComponent {
                     isOpen={isMenuOpen}
                     onClose={this.onMenuClose}
                     onClick={this.onMenuChoice}
-                    title={'Destiny'}
+                    title={'Money'}
                     list={this.memoMenuList()}
                     listItemCss={SX.listItem}
                 />
@@ -127,8 +131,9 @@ class Bar extends React.PureComponent {
      */
     onMenuChoice = async ({name}) => {
         switch (name) {
-            case MENU_SHOW_DONE:
-                toggleShowDone();
+            case MENU_REFRESH_VAULT:
+                await discoverVault();
+                await requestHistory();
                 break;
             case MENU_SHOW_CONSOLE:
                 localStorage.setItem('console', 'emulated');
@@ -139,13 +144,6 @@ class Bar extends React.PureComponent {
                 window.location.reload();
                 break;
             default: {
-                const {calendars} = this.props;
-                for (const {id} of calendars) {
-                    if (id === name) {
-                        toggleCalendar(id);
-                        return;
-                    }
-                }
                 assume(false, `Unexpected menu choice "${name}"!`);
             }
         }
@@ -175,6 +173,11 @@ class Bar extends React.PureComponent {
             ...[
                 Separator,
                 {
+                    name: MENU_REFRESH_VAULT,
+                    icon: Database,
+                    label: 'Refresh vault',
+                },
+                {
                     name: MENU_SHOW_CONSOLE,
                     icon: Console,
                     label: 'Show console',
@@ -197,7 +200,6 @@ Bar.propTypes = {
     // -------------------------------- redux:
 };
 
-const mapStateToProps = (state) => ({
-});
+const mapStateToProps = (state) => ({});
 
 export default connect(mapStateToProps)(Bar);

@@ -18,7 +18,7 @@ const MOCK = USE_MOCK && STATE_MOCK;
  *
  */
 const resurrectState = async () => {
-    const stored = USE_MOCK ? MOCK : await localforage.getItem(STORE_KEY) || {};
+    const stored = USE_MOCK ? MOCK : (await localforage.getItem(STORE_KEY)) || {};
 
     try {
         healJson(stored, STATE_SCHEMA);
@@ -33,7 +33,6 @@ const resurrectState = async () => {
         for (const key in stored) {
             state[key] = stored[key];
         }
-        console.log('aici');
         state.volatile.isAuthenticated = Boolean(selectAccessToken(state)); // ugly :(
     });
 };

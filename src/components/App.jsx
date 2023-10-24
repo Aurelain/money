@@ -41,7 +41,6 @@ class App extends React.PureComponent {
 
         if (this.props.isAuthenticated) {
             // We were logged-in sometimes in the past. We should ensure we have the latest data:
-            // await discoverVault();
             await requestHistory();
         }
     }
