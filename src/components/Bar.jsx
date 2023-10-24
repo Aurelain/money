@@ -13,9 +13,6 @@ import assume from '../utils/assume.js';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import Separator from '../ui/Separator.jsx';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
-import Database from '../ui/Icons/Database.jsx';
-import requestHistory from '../state/actions/requestHistory.js';
-import discoverVault from '../state/actions/discoverVault.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -55,7 +52,6 @@ const SX = {
     },
 };
 
-const MENU_REFRESH_VAULT = 'MENU_REFRESH_VAULT';
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
 const MENU_LOG_OUT = 'MENU_LOG_OUT';
 
@@ -131,10 +127,6 @@ class Bar extends React.PureComponent {
      */
     onMenuChoice = async ({name}) => {
         switch (name) {
-            case MENU_REFRESH_VAULT:
-                await discoverVault();
-                await requestHistory();
-                break;
             case MENU_SHOW_CONSOLE:
                 localStorage.setItem('console', 'emulated');
                 window.location.reload();
@@ -172,11 +164,6 @@ class Bar extends React.PureComponent {
         list.push(
             ...[
                 Separator,
-                {
-                    name: MENU_REFRESH_VAULT,
-                    icon: Database,
-                    label: 'Refresh vault',
-                },
                 {
                     name: MENU_SHOW_CONSOLE,
                     icon: Console,

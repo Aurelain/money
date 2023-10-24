@@ -19,6 +19,18 @@ export default {
             },
             required: ['accessToken', 'refreshToken', 'expirationTimestamp'],
         },
+        vaults: {
+            type: 'object',
+            additionalProperties: false,
+            patternProperties: {
+                // The property name is actually the spreadsheet's `id`
+                '.': {
+                    // The property value is actually the spreadsheet's `modifiedTime`
+                    type: 'string',
+                    minLength: 1,
+                },
+            },
+        },
         spreadsheets: {
             type: 'array',
             items: {
@@ -41,5 +53,5 @@ export default {
             additionalProperties: false,
         },
     },
-    required: ['tokens', 'spreadsheets', 'volatile'],
+    required: ['tokens', 'vaults', 'spreadsheets', 'volatile'],
 };

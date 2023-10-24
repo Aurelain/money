@@ -1,10 +1,12 @@
 import requestApi from '../../system/requestApi.js';
 import checkOffline from '../../system/checkOffline.js';
-import {selectSpreadsheets} from '../selectors.js';
+import {selectVaults} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import SpreadsheetSchema from '../../schemas/SpreadsheetSchema.js';
 import assume from '../../utils/assume.js';
-import FileModifiedTimeSchema from '../../schemas/FileModifiedTimeSchema.js';
+import {VAULT_DIR_NAME} from '../../SETTINGS.js';
+import condense from '../../utils/condense.js';
+import VaultsSchema from '../../schemas/VaultsSchema.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -18,15 +20,14 @@ const requestHistory = async () => {
     }
 
     const state = getState();
-    const spreadsheets = selectSpreadsheets(state);
-    const modifiedTimes = {};
+    const existingVaults = selectVaults(state);
+    const freshVaults = await discoverVaults();
 
     let hasChanged = false;
-    for (const spreadsheet of spreadsheets) {
-        const {id, modified} = spreadsheet;
-        const freshModified = await getFileModifiedTime(id);
-        modifiedTimes[id] = freshModified;
-        if (modified === freshModified) {
+    for (const id in freshVaults) {
+        const existingModifiedTime = existingVaults[id];
+        const freshModifiedTime = freshVaults[id];
+        if (existingModifiedTime === freshModifiedTime) {
             console.log(`Nothing changed in ${id}!`);
             continue;
         } else {
@@ -42,16 +43,38 @@ const requestHistory = async () => {
     }
 
     setState((state) => {
-        const spreadsheets = selectSpreadsheets(state);
-        for (const spreadsheet of spreadsheets) {
-            spreadsheet.modified = modifiedTimes[spreadsheet.id];
-        }
+        state.vaults = freshVaults;
     });
 };
 
 // =====================================================================================================================
 //  P R I V A T E
 // =====================================================================================================================
+/**
+ *
+ */
+const discoverVaults = async () => {
+    const result = await requestApi('https://www.googleapis.com/drive/v3/files', {
+        searchParams: {
+            q: condense(`
+                name contains '${VAULT_DIR_NAME}' and
+                mimeType = 'application/vnd.google-apps.spreadsheet' and
+                'root' in parents
+            `),
+            fields: 'files(id,name,modifiedTime)',
+        },
+        schema: VaultsSchema,
+    });
+
+    const vaults = {};
+    for (const {id, name, modifiedTime} of result.files) {
+        if (name.startsWith(VAULT_DIR_NAME)) {
+            vaults[id] = modifiedTime;
+        }
+    }
+    return vaults;
+};
+
 /**
  *
  */
@@ -105,18 +128,6 @@ const getSpreadsheetData = async (spreadsheetId) => {
     return result;
 };
 
-/**
- *
- */
-const getFileModifiedTime = async (fileId) => {
-    const result = await requestApi(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
-        searchParams: {
-            fields: 'modifiedTime',
-        },
-        schema: FileModifiedTimeSchema,
-    });
-    return result.modifiedTime;
-};
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
