@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang='en'>
+    <head>
+        <link rel='apple-touch-startup-image' href='meta/apple-splash-1080-2340.png' />
+        <meta charset='UTF-8' />
+        <title>Money</title>
+        <meta name='description' content='Money Tracker' />
+        <meta name='color-scheme' content='light' />
+        <meta
+            name='viewport'
+            content='viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no'
+        />
+        <meta name='format-detection' content='telephone=no' />
+        <meta name='msapplication-tap-highlight' content='no' />
+        <link rel='manifest' href='manifest.json' />
+        <link rel='shortcut icon' type='image/png' href='meta/money.png' />
+        <link rel='icon' type='image/svg+xml' href='meta/money.svg' />
+        <link rel='apple-touch-icon' type='image/png' sizes='1024x1024' href='meta/money-1024.png' />
+        <meta name='theme-color' media='(prefers-color-scheme: light)' content='#528c1e' />
+        <meta name='apple-mobile-web-app-title' content='Destiny' />
+        <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />
+        <meta name='apple-mobile-web-app-capable' content='yes' />
+        <style>
+            html {
+                --sat: env(safe-area-inset-top);
+                --sab: env(safe-area-inset-bottom);
+            }
+            #spinner {
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                margin: -12px 0 0 -12px;
+                width: 24px;
+                height: 24px;
+                animation: animationSpinner infinite linear .75s;
+                border-radius: 100%;
+                border: 2px solid #5da71a;
+                border-top-color: transparent;
+                box-sizing: border-box;
+            }
+            @keyframes animationSpinner {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id='spinner'></div>
+        <div id='root'></div>
+        <script src='js/main-GJzxspvw.js'></script>
+    </body>
+</html>

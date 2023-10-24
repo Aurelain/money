@@ -1,0 +1,40 @@
+{
+    "name": "money",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "start": "node scripts/build --dev",
+        "focus": "node scripts/build --dev --focus",
+        "build": "node scripts/build"
+    },
+    "dependencies": {
+        "@emotion/css": "^11.11.2",
+        "@emotion/react": "^11.11.1",
+        "@mdi/js": "^7.2.96",
+        "@reduxjs/toolkit": "^1.9.6",
+        "ajv": "^8.12.0",
+        "immer": "^10.0.3",
+        "localforage": "^1.10.0",
+        "memoize-one": "^6.0.0",
+        "prop-types": "^15.8.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-redux": "^8.1.2"
+    },
+    "devDependencies": {
+        "esbuild": "0.19.2",
+        "eslint": "^8.45.0",
+        "eslint-plugin-react": "^7.32.2",
+        "folder-hash": "^4.0.4",
+        "fs-extra": "^11.1.1",
+        "prettier": "^3.0.3",
+        "sendkeys-js": "^0.0.4"
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "singleQuote": true,
+        "printWidth": 120,
+        "bracketSpacing": false
+    }
+}
