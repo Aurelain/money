@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '../ui/Button.jsx';
-import {BAR_HEIGHT, BAR_SAFETY} from '../SETTINGS.js';
+import {HEADER_HEIGHT, HEADER_SAFETY} from '../SETTINGS.js';
 import connectGoogle from '../state/actions/connectGoogle.js';
 
 // =====================================================================================================================
@@ -11,7 +11,7 @@ const SX = {
         display: 'flex',
         flexGrow: 1,
         justifyContent: 'center',
-        paddingTop: BAR_HEIGHT + BAR_SAFETY + 32,
+        paddingTop: HEADER_HEIGHT + HEADER_SAFETY + 32,
     },
 };
 

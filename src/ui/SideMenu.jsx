@@ -1,4 +1,5 @@
 import React from 'react';
+import {createPortal} from 'react-dom';
 import PropTypes from 'prop-types';
 import List from './List.jsx';
 
@@ -9,6 +10,7 @@ const TRANSITION_DURATION = '300ms';
 const SX = {
     overlay: {
         position: 'fixed',
+        zIndex: 99999,
         inset: 0,
         visibility: 'hidden',
         backgroundColor: 'rgba(0,0,0,0)',
@@ -40,7 +42,7 @@ const SX = {
     },
     title: {
         padding: 24,
-        borderBottom: 'solid 1px silver',
+        borderBottom: 'solid 1px rgba(0,0,0,0.1)',
         fontSize: '2em',
     },
     subtitle: {
@@ -58,7 +60,7 @@ const SX = {
 class SideMenu extends React.PureComponent {
     render() {
         const {isOpen, title, subtitle, list, listItemCss, onClick} = this.props;
-        return (
+        return createPortal(
             <div css={[SX.overlay, isOpen && SX.overlayIsOpen]} onClick={this.onOverlayClick}>
                 <div css={[SX.menu, isOpen && SX.menuIsOpen]} onClick={this.onMenuClick}>
                     <div css={SX.title}>
@@ -67,7 +69,8 @@ class SideMenu extends React.PureComponent {
                     </div>
                     {list && <List styling={SX.list} items={list} itemCss={listItemCss} onClick={onClick} />}
                 </div>
-            </div>
+            </div>,
+            document.body,
         );
     }
 

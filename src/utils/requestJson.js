@@ -8,10 +8,56 @@ import validateJson from './validateJson.js';
  *
  */
 const requestJson = async (url, options = {}) => {
-    const fetchOptions = {...options};
-    delete fetchOptions.schema;
-    delete fetchOptions.mock;
+    let json;
+    if (options.mock && (window.USE_MOCK || options.forceMock)) {
+        if (typeof options.mock === 'function') {
+            json = options.mock(url, options);
+        } else {
+            json = options.mock;
+        }
+    }
 
+    if (!json) {
+        const fetchOptions = {...options};
+        delete fetchOptions.schema;
+        delete fetchOptions.mock;
+        delete fetchOptions.forceMock;
+        json = await getJson(url, fetchOptions);
+    }
+
+    if (json) {
+        const {error} = json;
+        if (error) {
+            let message;
+            if (typeof error === 'string') {
+                message = error;
+            } else if (error.message) {
+                message = error.message;
+            } else {
+                message = JSON.stringify(error);
+            }
+            throw new Error(prettifyUrl(url) + ': ' + message);
+        }
+    }
+
+    if (options.schema) {
+        try {
+            validateJson(json, options.schema);
+        } catch (e) {
+            throw new Error(`Unexpected reply from ${prettifyUrl(url)}: ${e.message}`);
+        }
+    }
+
+    return json;
+};
+
+// =====================================================================================================================
+//  P R I V A T E
+// =====================================================================================================================
+/**
+ *
+ */
+const getJson = async (url, fetchOptions) => {
     if (fetchOptions.searchParams) {
         url += '?' + new URLSearchParams(fetchOptions.searchParams).toString();
         delete fetchOptions.searchParams;
@@ -31,52 +77,25 @@ const requestJson = async (url, options = {}) => {
         }
         fetchOptions.headers = headers;
     }
-
-    let json = window.USE_MOCK && options.mock?.(url, options);
-    if (!json) {
-        let response;
-        try {
-            response = await fetchWithLoading(url, fetchOptions);
-        } catch (e) {
-            throw new Error(`Failed to fetch ${prettifyUrl(url)}!`);
-        }
-
-        const text = await response.text();
-        if (text) {
-            try {
-                json = JSON.parse(text);
-            } catch (e) {
-                throw new Error(`Cannot parse json from ${prettifyUrl(url)}! ${e.message}`);
-            }
-            const {error} = json;
-            if (error) {
-                let message;
-                if (typeof error === 'string') {
-                    message = error;
-                } else if (error.message) {
-                    message = error.message;
-                } else {
-                    message = JSON.stringify(error);
-                }
-                throw new Error(prettifyUrl(url) + ': ' + message);
-            }
-        }
+    let response;
+    try {
+        response = await fetchWithLoading(url, fetchOptions);
+    } catch (e) {
+        throw new Error(`Failed to fetch ${prettifyUrl(url)}!`);
     }
 
-    if (options.schema) {
+    const text = await response.text();
+    let json;
+    if (text) {
         try {
-            validateJson(json, options.schema);
+            json = JSON.parse(text);
         } catch (e) {
-            throw new Error(`Unexpected reply from ${prettifyUrl(url)}: ${e.message}`);
+            throw new Error(`Cannot parse json from ${prettifyUrl(url)}! ${e.message}`);
         }
     }
-
     return json;
 };
 
-// =====================================================================================================================
-//  P R I V A T E
-// =====================================================================================================================
 /**
  *
  */

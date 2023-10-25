@@ -36,7 +36,7 @@ class Select extends React.PureComponent {
     listRef = React.createRef();
 
     render() {
-        const {button, buttonProps, list, listProps, forcedOpen, onHold} = this.props;
+        const {button, list, listProps, forcedOpen, onHold, ...other} = this.props;
         const {isOpen} = this.state;
         const ButtonClass = typeof button === 'function' ? button : Button;
         const ListClass = typeof list === 'function' ? list : List;
@@ -44,7 +44,7 @@ class Select extends React.PureComponent {
         return (
             <>
                 {/*TODO use press for quick selection*/}
-                <ButtonClass {...buttonProps} onClick={this.onButtonClick} onHold={onHold} innerRef={this.buttonRef} />
+                <ButtonClass {...other} onClick={this.onButtonClick} onHold={onHold} innerRef={this.buttonRef} />
                 {(isOpen || forcedOpen) &&
                     createPortal(
                         <div css={SX.overlay} onClick={this.onOverlayClick}>
@@ -136,9 +136,9 @@ class Select extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Select.propTypes = {
-    button: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+    button: PropTypes.func,
     buttonProps: PropTypes.object,
-    list: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+    list: PropTypes.func,
     listProps: PropTypes.object,
     onOpen: PropTypes.func,
     onSelect: PropTypes.func,

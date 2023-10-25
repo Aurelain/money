@@ -1,5 +1,5 @@
 import React from 'react';
-import {BAR_HEIGHT, BAR_SAFETY, FOOTER_SAFETY, GRID_HEADER_HEIGHT, NEW_HEIGHT} from '../SETTINGS.js';
+import {HEADER_HEIGHT, HEADER_SAFETY, FOOTER_SAFETY, GRID_HEADER_HEIGHT, FOOTER_HEIGHT} from '../SETTINGS.js';
 import connectGoogle from '../state/actions/connectGoogle.js';
 
 // =====================================================================================================================
@@ -7,9 +7,9 @@ import connectGoogle from '../state/actions/connectGoogle.js';
 // =====================================================================================================================
 const SX = {
     root: {
-        paddingTop: BAR_HEIGHT + BAR_SAFETY + GRID_HEADER_HEIGHT,
+        paddingTop: HEADER_HEIGHT + HEADER_SAFETY + GRID_HEADER_HEIGHT,
         paddingRight: 8,
-        paddingBottom: NEW_HEIGHT + FOOTER_SAFETY,
+        paddingBottom: FOOTER_HEIGHT + FOOTER_SAFETY,
         paddingLeft: 8,
         '& > *:first-of-type': {
             marginTop: 8,

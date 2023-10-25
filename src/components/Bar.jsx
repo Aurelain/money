@@ -8,10 +8,9 @@ import Menu from '../ui/Icons/Menu.jsx';
 import SideMenu from '../ui/SideMenu.jsx';
 import Console from '../ui/Icons/Console.jsx';
 import LocationExit from '../ui/Icons/LocationExit.jsx';
-import {BAR_HEIGHT, BAR_SAFETY, PRIMARY_COLOR, STORE_KEY} from '../SETTINGS.js';
+import {HEADER_HEIGHT, HEADER_SAFETY, PRIMARY_COLOR, STORE_KEY} from '../SETTINGS.js';
 import assume from '../utils/assume.js';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
-import Separator from '../ui/Separator.jsx';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
 
 // =====================================================================================================================
@@ -23,22 +22,21 @@ const SX = {
         top: 0,
         left: 0,
         right: 0,
-        height: BAR_HEIGHT + BAR_SAFETY,
+        height: HEADER_HEIGHT + HEADER_SAFETY,
         zIndex: 100,
         display: 'flex',
         background: PRIMARY_COLOR,
         color: '#fff',
-        paddingTop: BAR_SAFETY,
+        paddingTop: HEADER_SAFETY,
         borderBottom: 'solid 1px rgba(0,0,0,0.1)',
-    },
-    grow: {
-        flexGrow: 1,
     },
     btn: {
         padding: 8,
     },
-    hamburger: {
-        paddingRight: 64,
+    btnGrow: {
+        padding: 8,
+        flexGrow: 1,
+        fontSize: 24,
     },
     listItem: {
         overflow: 'hidden',
@@ -64,13 +62,8 @@ class Bar extends React.PureComponent {
         const reloadIcon = isLoading ? DotsCircle : Reload;
         return (
             <div css={SX.root}>
-                <Button
-                    icon={Menu}
-                    cssNormal={[SX.btn, SX.hamburger]}
-                    onClick={this.onMenuClick}
-                    variant={'inverted'}
-                />
-                <div css={SX.grow} />
+                <Button icon={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} variant={'inverted'} />
+                <Button label={'2 500'} cssNormal={SX.btnGrow} onClick={this.onMenuClick} variant={'inverted'} />
                 <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
                 <SideMenu
                     isOpen={isMenuOpen}
@@ -157,7 +150,6 @@ class Bar extends React.PureComponent {
         const list = [];
         list.push(
             ...[
-                Separator,
                 {
                     name: MENU_SHOW_CONSOLE,
                     icon: Console,
