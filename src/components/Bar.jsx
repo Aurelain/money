@@ -29,6 +29,7 @@ const SX = {
         background: PRIMARY_COLOR,
         color: '#fff',
         paddingTop: BAR_SAFETY,
+        borderBottom: 'solid 1px rgba(0,0,0,0.1)',
     },
     grow: {
         flexGrow: 1,
@@ -43,12 +44,6 @@ const SX = {
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
-    },
-    sliver: {
-        position: 'absolute',
-        inset: 'auto 0 0 0',
-        height: 1,
-        background: 'rgba(0,0,0,0.1)',
     },
 };
 
@@ -77,7 +72,6 @@ class Bar extends React.PureComponent {
                 />
                 <div css={SX.grow} />
                 <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
-                <div css={SX.sliver} />
                 <SideMenu
                     isOpen={isMenuOpen}
                     onClose={this.onMenuClose}

@@ -1,45 +1,53 @@
 import React from 'react';
-import {BAR_HEIGHT, BAR_SAFETY, FOOTER_SAFETY, GRID_HEADER_HEIGHT, NEW_HEIGHT} from '../SETTINGS.js';
-import connectGoogle from '../state/actions/connectGoogle.js';
+import {BAR_HEIGHT, BAR_SAFETY, GRID_HEADER_HEIGHT} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const SX = {
     root: {
-        paddingTop: BAR_HEIGHT + BAR_SAFETY + GRID_HEADER_HEIGHT,
-        paddingRight: 8,
-        paddingBottom: NEW_HEIGHT + FOOTER_SAFETY,
-        paddingLeft: 8,
-        '& > *:first-of-type': {
-            marginTop: 8,
-        },
+        position: 'fixed',
+        top: BAR_HEIGHT + BAR_SAFETY,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+    },
+    content: {
+        position: 'relative',
+        background: '#FFF59D',
+        alignItems: 'center',
+        display: 'flex',
         margin: 'auto',
+        width: '100%',
         maxWidth: 640,
+        height: GRID_HEADER_HEIGHT,
+        borderBottom: 'solid 1px rgba(0,0,0,0.1)',
+    },
+    column: {
+        width: '25%',
+        padding: 4,
     },
 };
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
-class History extends React.PureComponent {
+class Grid extends React.PureComponent {
     render() {
-        return <div css={SX.root}></div>;
+        return (
+            <div css={SX.root}>
+                <div css={SX.content}>
+                    <div css={SX.column}>De la</div>
+                    <div css={SX.column}>Valoare</div>
+                    <div css={SX.column}>Către</div>
+                    <div css={SX.column}>Articol</div>
+                </div>
+            </div>
+        );
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // P R I V A T E
-    // -----------------------------------------------------------------------------------------------------------------
-    /**
-     *
-     */
-    onButtonClick = async () => {
-        await connectGoogle();
-    };
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-History.propTypes = {};
-export default History;
+export default Grid;

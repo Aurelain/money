@@ -151,7 +151,7 @@ const updateIndex = (clientBundle) => {
 const refreshBrowser = async () => {
     await sendkeys.activate('Google Chrome');
     sendkeys.send('^r');
-    await sendkeys.activate('destiny –'); // reactivate WebStorm
+    await sendkeys.activate('money –'); // reactivate WebStorm
 };
 
 /**

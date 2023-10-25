@@ -10,6 +10,7 @@ export const BOX_SHADOW = `
 
 export const BAR_HEIGHT = 60;
 export const BAR_SAFETY = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
+export const GRID_HEADER_HEIGHT = 32;
 export const NEW_HEIGHT = 48;
 export const FOOTER_SAFETY = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')) || 0;
 

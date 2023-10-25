@@ -19,6 +19,7 @@ const SX = {
         background: PRIMARY_COLOR,
         display: 'flex',
         flexDirection: 'row',
+        borderTop: 'solid 1px rgba(0,0,0,0.1)',
     },
     selectCalendar: {
         padding: '0 8px',
@@ -36,12 +37,6 @@ const SX = {
     plus: {
         height: '100%',
         padding: 8,
-    },
-    sliver: {
-        position: 'absolute',
-        inset: '0 0 auto 0',
-        height: 1,
-        background: 'rgba(0,0,0,0.1)',
     },
 };
 
@@ -76,7 +71,6 @@ class Footer extends React.PureComponent {
                     onHold={this.onPlusHold}
                     disabled={!value}
                 />
-                <div css={SX.sliver} />
             </div>
         );
     }

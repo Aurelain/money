@@ -9,6 +9,7 @@ import {addErrorListener} from '../utils/interceptErrors.js';
 import failAuthentication from '../state/actions/failAuthentication.js';
 import History from './History.jsx';
 import requestHistory from '../state/actions/requestHistory.js';
+import Grid from './Grid.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -26,9 +27,15 @@ class App extends React.PureComponent {
         return (
             <>
                 <Bar />
-                {!isAuthenticated && <Connect />}
-                {isAuthenticated && <History />}
-                {isAuthenticated && <Footer />}
+                {isAuthenticated ? (
+                    <>
+                        <Grid />
+                        <History />
+                        <Footer />
+                    </>
+                ) : (
+                    <Connect />
+                )}
             </>
         );
     }
