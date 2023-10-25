@@ -7,6 +7,7 @@ const STATE_MOCK = {
         refreshToken: 'foo',
         expirationTimestamp: 0,
     },
+    vaults: {},
     volatile: {},
 };
 

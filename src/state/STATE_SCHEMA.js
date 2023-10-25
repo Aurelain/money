@@ -31,27 +31,10 @@ export default {
                 },
             },
         },
-        spreadsheets: {
-            type: 'array',
-            items: {
-                type: 'object',
-                additionalProperties: false,
-                properties: {
-                    id: {
-                        type: 'string',
-                        minLength: 1,
-                    },
-                    modified: {
-                        type: 'string',
-                    },
-                },
-                required: ['id', 'modified'],
-            },
-        },
         volatile: {
             type: 'object',
             additionalProperties: false,
         },
     },
-    required: ['tokens', 'vaults', 'spreadsheets', 'volatile'],
+    required: ['tokens', 'vaults', 'volatile'],
 };

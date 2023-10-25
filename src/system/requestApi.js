@@ -13,9 +13,6 @@ import OauthRefreshSchema from '../schemas/OauthRefreshSchema.js';
 const requestApi = async (url, options = {}) => {
     const accessToken = await getAccessToken();
 
-    // Ensure url safety (e.g. `en.romanian#holiday@group.v.calendar.google.com`)
-    url = url.replaceAll('#', '%23');
-
     const result = await requestJson(url, {
         ...options,
         headers: {
@@ -59,6 +56,7 @@ const refreshTokens = async (refreshToken) => {
             grant_type: 'refresh_token',
         },
         schema: OauthRefreshSchema,
+        mock: mockTokens,
     });
 
     setState((state) => {
@@ -67,6 +65,16 @@ const refreshTokens = async (refreshToken) => {
     });
 
     return freshTokens.access_token;
+};
+
+/**
+ *
+ */
+const mockTokens = () => {
+    return {
+        access_token: 'foo',
+        expires_in: 3599,
+    };
 };
 
 // =====================================================================================================================

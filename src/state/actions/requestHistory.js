@@ -64,6 +64,7 @@ const discoverVaults = async () => {
             fields: 'files(id,name,modifiedTime)',
         },
         schema: VaultsSchema,
+        mock: mockVaults,
     });
 
     const vaults = {};
@@ -78,12 +79,28 @@ const discoverVaults = async () => {
 /**
  *
  */
+const mockVaults = () => {
+    return {
+        files: [
+            {
+                id: '1zZE_PDRtZJoVNCjNQ6yu_J-lji3c1SoO0AszUmlASPE',
+                name: 'Money_Foo',
+                modifiedTime: '2023-10-24T15:08:57.627Z',
+            },
+        ],
+    };
+};
+
+/**
+ *
+ */
 const getSpreadsheetData = async (spreadsheetId) => {
     const result = await requestApi(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}`, {
         searchParams: {
             includeGridData: true,
         },
         schema: SpreadsheetSchema,
+        mock: mockSpreadsheetData,
     });
     const {sheets, properties} = result;
     const {title: spreadsheetTitle} = properties;
@@ -128,6 +145,61 @@ const getSpreadsheetData = async (spreadsheetId) => {
     return result;
 };
 
+/**
+ *
+ */
+const mockSpreadsheetData = () => {
+    return {
+        properties: {
+            title: 'FooSpreadsheet',
+        },
+        sheets: [
+            {
+                properties: {
+                    title: 'FooSheet',
+                },
+                data: [
+                    {
+                        rowData: [
+                            {
+                                values: [
+                                    {
+                                        formattedValue: 'Value',
+                                    },
+                                    {
+                                        formattedValue: 'To',
+                                    },
+                                    {
+                                        formattedValue: 'Article',
+                                    },
+                                    {
+                                        formattedValue: 'Date',
+                                    },
+                                ],
+                            },
+                            {
+                                values: [
+                                    {
+                                        formattedValue: '2500',
+                                    },
+                                    {
+                                        formattedValue: 'George',
+                                    },
+                                    {
+                                        formattedValue: 'Banana',
+                                    },
+                                    {
+                                        formattedValue: '2023-10-24T15:08:57.627Z',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+        ],
+    };
+};
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================

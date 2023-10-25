@@ -10,6 +10,7 @@ import validateJson from './validateJson.js';
 const requestJson = async (url, options = {}) => {
     const fetchOptions = {...options};
     delete fetchOptions.schema;
+    delete fetchOptions.mock;
 
     if (fetchOptions.searchParams) {
         url += '?' + new URLSearchParams(fetchOptions.searchParams).toString();
@@ -31,32 +32,34 @@ const requestJson = async (url, options = {}) => {
         fetchOptions.headers = headers;
     }
 
-    let response;
-    try {
-        response = await fetchWithLoading(url, fetchOptions);
-    } catch (e) {
-        throw new Error(`Failed to fetch ${prettifyUrl(url)}!`);
-    }
-
-    const text = await response.text();
-    let json;
-    if (text) {
+    let json = window.USE_MOCK && options.mock?.(url, options);
+    if (!json) {
+        let response;
         try {
-            json = JSON.parse(text);
+            response = await fetchWithLoading(url, fetchOptions);
         } catch (e) {
-            throw new Error(`Cannot parse json from ${prettifyUrl(url)}! ${e.message}`);
+            throw new Error(`Failed to fetch ${prettifyUrl(url)}!`);
         }
-        const {error} = json;
-        if (error) {
-            let message;
-            if (typeof error === 'string') {
-                message = error;
-            } else if (error.message) {
-                message = error.message;
-            } else {
-                message = JSON.stringify(error);
+
+        const text = await response.text();
+        if (text) {
+            try {
+                json = JSON.parse(text);
+            } catch (e) {
+                throw new Error(`Cannot parse json from ${prettifyUrl(url)}! ${e.message}`);
             }
-            throw new Error(prettifyUrl(url) + ': ' + message);
+            const {error} = json;
+            if (error) {
+                let message;
+                if (typeof error === 'string') {
+                    message = error;
+                } else if (error.message) {
+                    message = error.message;
+                } else {
+                    message = JSON.stringify(error);
+                }
+                throw new Error(prettifyUrl(url) + ': ' + message);
+            }
         }
     }
 
