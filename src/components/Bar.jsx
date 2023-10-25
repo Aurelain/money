@@ -12,6 +12,8 @@ import {HEADER_HEIGHT, HEADER_SAFETY, PRIMARY_COLOR, STORE_KEY} from '../SETTING
 import assume from '../utils/assume.js';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
+import requestHistory from '../state/actions/requestHistory.js';
+import Database from '../ui/Icons/Database.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -45,6 +47,7 @@ const SX = {
     },
 };
 
+const MENU_FORCE_VAULTS = 'MENU_FORCE_VAULTS';
 const MENU_SHOW_CONSOLE = 'MENU_SHOW_CONSOLE';
 const MENU_LOG_OUT = 'MENU_LOG_OUT';
 
@@ -114,6 +117,9 @@ class Bar extends React.PureComponent {
      */
     onMenuChoice = async ({name}) => {
         switch (name) {
+            case MENU_FORCE_VAULTS:
+                await requestHistory(true);
+                break;
             case MENU_SHOW_CONSOLE:
                 localStorage.setItem('console', 'emulated');
                 window.location.reload();
@@ -150,6 +156,11 @@ class Bar extends React.PureComponent {
         const list = [];
         list.push(
             ...[
+                {
+                    name: MENU_FORCE_VAULTS,
+                    icon: Database,
+                    label: 'Recheck vaults',
+                },
                 {
                     name: MENU_SHOW_CONSOLE,
                     icon: Console,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 import Select from '../../ui/Select.jsx';
 import SelectSX from './SelectSX.jsx';
-import AppsBox from '../../ui/Icons/AppsBox.jsx';
+import Gift from '../../ui/Icons/Gift.jsx';
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -15,7 +15,7 @@ class SelectValue extends React.PureComponent {
             <Select
                 cssNormal={this.memoButtonCss(isFilter)}
                 label={'Product'}
-                icon={AppsBox}
+                icon={Gift}
                 variant={'simple'}
                 listProps={this.memoListProps()}
                 onSelect={onSelect}

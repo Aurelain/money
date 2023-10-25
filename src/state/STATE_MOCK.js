@@ -8,6 +8,10 @@ const STATE_MOCK = {
         expirationTimestamp: 0,
     },
     vaults: {},
+    history: [],
+    options: {
+        preferredFrom: '',
+    },
     volatile: {},
 };
 

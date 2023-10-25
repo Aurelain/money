@@ -1,1 +1,144 @@
-(()=>{var u=e=>{self.clients.matchAll().then(function(t){if(t)for(let n of t)n.postMessage(e)})},c=u;var m=()=>{self.addEventListener("error",w,!0),self.addEventListener("unhandledrejection",g,!0)},w=e=>{l(e.type,e)},g=e=>{l(e.type,e.reason)},l=(e,{message:t,stack:n})=>{c({type:"PANIC",panic:{type:e,message:t,stack:n}})};m();var f=!1,a,i,y=async(e,t={})=>{a=e,i=t,self.skipWaiting(),self.addEventListener("install",E),self.addEventListener("activate",A),self.addEventListener("fetch",C)},h=()=>self.location.href.replace(/\/[^/]*$/,""),E=e=>{self.skipWaiting(),e.waitUntil((async()=>{let t=await caches.open(a),n=h(),o=[],{cachedPaths:s=[]}=i;for(let r of s)o.push(n+r);await t.addAll(o)})())},A=e=>{e.waitUntil((async()=>{let t=await caches.keys();await Promise.all(t.map(n=>{if(n!==a)return caches.delete(n)})),await self.clients.claim(),c({type:"ACTIVATED",version:a})})())},C=e=>{if(f)return;let{url:t,mode:n}=e.request,{ignoredFetches:o=[]}=i;for(let r of o)if(t.includes(r))return;let s;n==="navigate"?s=P():s=v(t),e.respondWith(s)},P=async()=>{let e=h(),t=await caches.match(e+"/"),n=await T(e+"/index.html?"+Math.random());if(n){if(t){let o=await t.clone().text(),s=await n.clone().text();o!==s&&(f=!0,await self.registration.unregister())}return n}else return t},T=async e=>{try{return await fetch(e)}catch{}},v=async e=>await caches.match(e)||new Response(null,{status:404}),d=y;var p=["/","/index.html","/js/main-8LNO6DMa.js","/manifest.json","/meta/192.png","/meta/512.png","/meta/apple-splash-1080-2340.png","/meta/dot.png","/meta/money-1024.png","/meta/money.png","/meta/money.svg"],R=["googleapis","google","dot.png"],S=async()=>{let e=JSON.stringify(p);await d(e,{cachedPaths:p,ignoredFetches:R})};S();})();
+(() => {
+  // sw/utils/announceClients.js
+  var announceClients = (message) => {
+    self.clients.matchAll().then(function(clients) {
+      if (clients) {
+        for (const client of clients) {
+          client.postMessage(message);
+        }
+      }
+    });
+  };
+  var announceClients_default = announceClients;
+
+  // sw/utils/interceptSwErrors.js
+  var interceptSwErrors = () => {
+    self.addEventListener("error", onError, true);
+    self.addEventListener("unhandledrejection", onUnhandledRejection, true);
+  };
+  var onError = (event) => {
+    panic(event.type, event);
+  };
+  var onUnhandledRejection = (event) => {
+    panic(event.type, event.reason);
+  };
+  var panic = (type, { message, stack }) => {
+    announceClients_default({ type: "PANIC", panic: { type, message, stack } });
+  };
+  interceptSwErrors();
+
+  // sw/utils/setupSw.js
+  var isUnregistered = false;
+  var currentVersion;
+  var currentOptions;
+  var setupSw = async (version, options = {}) => {
+    currentVersion = version;
+    currentOptions = options;
+    self.skipWaiting();
+    self.addEventListener("install", onWorkerInstall);
+    self.addEventListener("activate", onWorkerActivate);
+    self.addEventListener("fetch", onWorkerFetch);
+  };
+  var getSwHome = () => {
+    return self.location.href.replace(/\/[^/]*$/, "");
+  };
+  var onWorkerInstall = (event) => {
+    self.skipWaiting();
+    event.waitUntil(
+      (async () => {
+        const cache = await caches.open(currentVersion);
+        const home = getSwHome();
+        const absolutePaths = [];
+        const { cachedPaths = [] } = currentOptions;
+        for (const relativePath of cachedPaths) {
+          absolutePaths.push(home + relativePath);
+        }
+        await cache.addAll(absolutePaths);
+      })()
+    );
+  };
+  var onWorkerActivate = (event) => {
+    event.waitUntil(
+      (async () => {
+        const names = await caches.keys();
+        await Promise.all(
+          names.map((name) => {
+            if (name !== currentVersion) {
+              return caches.delete(name);
+            }
+          })
+        );
+        await self.clients.claim();
+        announceClients_default({ type: "ACTIVATED", version: currentVersion });
+      })()
+    );
+  };
+  var onWorkerFetch = (event) => {
+    if (isUnregistered) {
+      return;
+    }
+    const { url, mode } = event.request;
+    const { ignoredFetches = [] } = currentOptions;
+    for (const key of ignoredFetches) {
+      if (url.includes(key)) {
+        return;
+      }
+    }
+    let responsePromise;
+    if (mode === "navigate") {
+      responsePromise = respondToRoot();
+    } else {
+      responsePromise = respondToFile(url);
+    }
+    event.respondWith(responsePromise);
+  };
+  var respondToRoot = async () => {
+    const home = getSwHome();
+    const cachedResponse = await caches.match(home + "/");
+    const freshResponse = await fetchUrl(home + "/index.html?" + Math.random());
+    if (freshResponse) {
+      if (cachedResponse) {
+        const cachedText = await cachedResponse.clone().text();
+        const freshText = await freshResponse.clone().text();
+        if (cachedText !== freshText) {
+          isUnregistered = true;
+          await self.registration.unregister();
+        }
+      }
+      return freshResponse;
+    } else {
+      return cachedResponse;
+    }
+  };
+  var fetchUrl = async (url) => {
+    try {
+      return await fetch(url);
+    } catch (e) {
+    }
+  };
+  var respondToFile = async (url) => {
+    const cachedResponse = await caches.match(url);
+    return cachedResponse || new Response(null, { status: 404 });
+  };
+  var setupSw_default = setupSw;
+
+  // sw/sw.js
+  var CACHED_PATHS = ["/","/index.html","/js/main-QHmO3ebi.js","/js/main-QHmO3ebi.js.map","/manifest.json","/meta/192.png","/meta/512.png","/meta/apple-splash-1080-2340.png","/meta/dot.png","/meta/money-1024.png","/meta/money.png","/meta/money.svg"];
+  var IGNORED_FETCHES = [
+    "googleapis",
+    // https://oauth2.googleapis.com/token
+    "google",
+    // https://accounts.google.com/gsi/client
+    "dot.png"
+    // ./meta/dot.png
+  ];
+  var run = async () => {
+    const version = JSON.stringify(CACHED_PATHS);
+    await setupSw_default(version, {
+      cachedPaths: CACHED_PATHS,
+      ignoredFetches: IGNORED_FETCHES
+    });
+  };
+  run();
+})();
+//# sourceMappingURL=sw.js.map

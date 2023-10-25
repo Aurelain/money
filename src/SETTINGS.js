@@ -2,7 +2,7 @@ export const USE_MOCK = Boolean(window.location.href.match(/\d/)) || window.loca
 window.USE_MOCK = USE_MOCK; // for the benefit of `requestJson()`
 
 export const STORE_KEY = 'money-store'; // the name in IndexedDB
-export const PRIMARY_COLOR = '#f5c045';
+export const PRIMARY_COLOR = '#ec6f24';
 export const SECONDARY_COLOR = '#fff59d';
 export const BOX_SHADOW = `
     0px 3px 1px -2px rgba(0,0,0,0.2),
@@ -18,7 +18,7 @@ export const FOOTER_SAFETY = parseInt(getComputedStyle(document.documentElement)
 export const FILTER_HEIGHT = 32;
 
 export const VAULT_DIR_NAME = 'Money';
-export const DATE_FORMAT = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\d/;
+export const DATE_FORMAT = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\dZ$/;
 
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?
 // prettier-ignore
