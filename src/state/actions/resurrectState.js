@@ -19,6 +19,7 @@ const MOCK = USE_MOCK && STATE_MOCK;
  */
 const resurrectState = async () => {
     const stored = USE_MOCK ? MOCK : (await localforage.getItem(STORE_KEY)) || {};
+    console.log('stored:', stored);
 
     try {
         healJson(stored, STATE_SCHEMA);

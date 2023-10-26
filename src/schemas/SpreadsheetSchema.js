@@ -17,19 +17,11 @@ const SpreadsheetSchema = {
         },
         sheets: {
             type: 'array',
+            minItems: 1,
+            maxItems: 1,
             items: {
                 type: 'object',
                 properties: {
-                    properties: {
-                        type: 'object',
-                        properties: {
-                            title: {
-                                type: 'string',
-                                minLength: 1,
-                            },
-                        },
-                        required: ['title'],
-                    },
                     data: {
                         type: 'array',
                         minItems: 1,
@@ -38,32 +30,33 @@ const SpreadsheetSchema = {
                             type: 'object',
                             properties: {
                                 rowData: {
-                                    type: 'array', // optional
+                                    type: 'array',
                                     items: {
                                         type: 'object',
                                         properties: {
                                             values: {
-                                                type: 'array', // optional
+                                                type: 'array',
                                                 items: {
                                                     type: 'object',
                                                     properties: {
                                                         formattedValue: {
-                                                            type: 'string', // optional
+                                                            type: 'string',
+                                                            minLength: 1,
                                                         },
                                                     },
-                                                    required: [],
+                                                    required: ['formattedValue'],
                                                 },
                                             },
                                         },
-                                        required: [],
+                                        required: ['values'],
                                     },
                                 },
                             },
-                            required: [],
+                            required: ['rowData'],
                         },
                     },
                 },
-                required: ['properties', 'data'],
+                required: ['data'],
             },
         },
     },

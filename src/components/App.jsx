@@ -11,6 +11,7 @@ import History from './History.jsx';
 import requestHistory from '../state/actions/requestHistory.js';
 import Grid from './Grid.jsx';
 import {USE_MOCK} from '../SETTINGS.js';
+import requestOptions from '../state/actions/requestOptions.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -52,6 +53,7 @@ class App extends React.PureComponent {
 
         if (this.props.isAuthenticated) {
             // We were logged-in sometimes in the past. We should ensure we have the latest data:
+            await requestOptions();
             await requestHistory();
         }
     }

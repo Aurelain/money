@@ -27,7 +27,6 @@ export default {
                 '.': {
                     // The property value is actually the spreadsheet's `modifiedTime`
                     type: 'string',
-                    minLength: 1,
                 },
             },
         },
@@ -37,28 +36,26 @@ export default {
                 type: 'object',
                 additionalProperties: false,
                 properties: {
+                    spreadsheetId: {
+                        type: 'string',
+                    },
                     from: {
                         type: 'string',
-                        minLength: 1,
                     },
                     value: {
                         type: 'number',
-                        minimum: 1,
                     },
                     to: {
                         type: 'string',
-                        minLength: 1,
                     },
                     product: {
                         type: 'string',
-                        minLength: 1,
                     },
                     date: {
-                        type: 'number',
-                        minimum: 1,
+                        type: 'string',
                     },
                 },
-                required: ['from', 'value', 'to', 'product', 'date'],
+                required: ['spreadsheetId', 'from', 'value', 'to', 'product', 'date'],
             },
         },
         options: {

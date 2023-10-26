@@ -7,6 +7,7 @@ import requestJson from '../../utils/requestJson.js';
 import OauthCodeSchema from '../../schemas/OauthCodeSchema.js';
 import OauthTokenSchema from '../../schemas/OauthTokenSchema.js';
 import requestHistory from './requestHistory.js';
+import requestOptions from './requestOptions.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -15,6 +16,7 @@ let currentResolve;
 const SCOPES = [
     'https://www.googleapis.com/auth/drive',
     'https://www.googleapis.com/auth/drive.file',
+    'https://www.googleapis.com/auth/drive.appdata',
     'https://www.googleapis.com/auth/spreadsheets',
 ];
 
@@ -76,6 +78,7 @@ const onCodeReceived = async (codeClientResponse) => {
         state.volatile.isAuthenticated = true;
     });
 
+    await requestOptions();
     await requestHistory();
 
     currentResolve();

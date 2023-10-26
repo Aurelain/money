@@ -18,7 +18,7 @@ export const FOOTER_SAFETY = parseInt(getComputedStyle(document.documentElement)
 export const FILTER_HEIGHT = 32;
 
 export const VAULT_DIR_NAME = 'Money';
-export const DATE_FORMAT = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\dZ$/;
+export const DATE_FORMAT = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\+\d\d:\d\d$/;
 
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?
 // prettier-ignore
