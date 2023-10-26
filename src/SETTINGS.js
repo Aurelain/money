@@ -12,7 +12,6 @@ export const BOX_SHADOW = `
 export const CONTENT_MAX_WIDTH = 768;
 export const HEADER_HEIGHT = 60;
 export const HEADER_SAFETY = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
-export const GRID_HEADER_HEIGHT = 32;
 export const FOOTER_HEIGHT = 48;
 export const FOOTER_SAFETY = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab')) || 0;
 export const FILTER_HEIGHT = 32;

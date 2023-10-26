@@ -1,28 +1,20 @@
-import {FILTER_HEIGHT, SECONDARY_COLOR} from '../../SETTINGS.js';
+import memoize from 'memoize-one';
 
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
-const SelectSX = {
-    root: {
-        background: SECONDARY_COLOR,
-        width: '25%',
-        height: FILTER_HEIGHT,
-        justifyContent: 'start',
-        paddingLeft: 4,
-        pointerEvents: 'auto',
-        color: '#49220b',
-        fontWeight: 'bold',
-    },
-    isSelect: {
-        borderTop: 'solid 1px rgba(0,0,0,0.1)',
-    },
-    isFilter: {
-        borderBottom: 'solid 1px rgba(0,0,0,0.1)',
-    },
+/**
+ * Creates a memoizator (https://en.wikipedia.org/wiki/Memoization).
+ * This memoizator can then be used (later-on) to filter out the falsy arguments.
+ * @return {function(...any)}
+ */
+const memo = () => {
+    return memoize((...args) => {
+        return args.filter((item) => item);
+    });
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default SelectSX;
+export default memo;

@@ -1,5 +1,7 @@
 import React from 'react';
-import memoize from 'memoize-one';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import gsap from 'gsap';
 import {
     FOOTER_SAFETY,
     FOOTER_HEIGHT,
@@ -12,11 +14,14 @@ import Button from '../ui/Button.jsx';
 import Plus from '../ui/Icons/Plus.jsx';
 import TrashCan from '../ui/Icons/TrashCan.jsx';
 import defocus from '../utils/defocus.js';
-import Database from '../ui/Icons/Database.jsx';
 import SelectFrom from './filters/SelectFrom.jsx';
 import SelectValue from './filters/SelectValue.jsx';
 import SelectTo from './filters/SelectTo.jsx';
 import SelectProduct from './filters/SelectProduct.jsx';
+import {selectFocusedDate} from '../state/selectors.js';
+import memo from '../utils/memo.js';
+import Close from '../ui/Icons/Close.jsx';
+import clearFocus from '../state/actions/clearFocus.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -45,12 +50,19 @@ const SX = {
         borderTop: 'solid 1px rgba(0,0,0,0.1)',
     },
     commandLine: {
+        position: 'relative',
         height: FOOTER_HEIGHT + FOOTER_SAFETY,
         paddingBottom: FOOTER_SAFETY,
         background: PRIMARY_COLOR,
         display: 'flex',
         flexDirection: 'row',
         borderTop: 'solid 1px rgba(0,0,0,0.1)',
+    },
+    focused: {
+        background: 'red',
+    },
+    focusedButton: {
+        padding: 8,
     },
     selectCalendar: {
         padding: '0 8px',
@@ -74,17 +86,30 @@ const SX = {
         height: '100%',
         padding: 8,
     },
+    date: {
+        position: 'absolute',
+        top: 10,
+        left: 45,
+        padding: 6,
+        background: 'red',
+        color: 'white',
+        borderRadius: 12,
+        pointerEvents: 'none',
+    },
 };
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
 class Footer extends React.PureComponent {
+    memoCommandLineCss = memo();
+    focusedRef = React.createRef();
     state = {
         value: '',
     };
 
     render() {
+        const {focusedDate} = this.props;
         const {value} = this.state;
         return (
             <div css={SX.root}>
@@ -93,7 +118,20 @@ class Footer extends React.PureComponent {
                     <SelectValue onSelect={this.onFromSelect} />
                     <SelectTo onSelect={this.onFromSelect} />
                     <SelectProduct onSelect={this.onFromSelect} />
-                    <div css={SX.commandLine}>
+                    <div css={this.memoCommandLineCss(SX.commandLine, focusedDate && SX.focused)}>
+                        {focusedDate && (
+                            <Button
+                                icon={TrashCan}
+                                cssNormal={SX.focusedButton}
+                                variant={'inverted'}
+                                onClick={this.onTrashClick}
+                            />
+                        )}
+                        {focusedDate && (
+                            <div ref={this.focusedRef} css={SX.date}>
+                                {prettifyDate(focusedDate)}
+                            </div>
+                        )}
                         {/*
                         We avoid issues with autoComplete and the credit-card bar showing by using <textarea>.
                         Reference:
@@ -117,10 +155,27 @@ class Footer extends React.PureComponent {
                             onHold={this.onPlusHold}
                             disabled={!value}
                         />
+                        {focusedDate && (
+                            <Button
+                                icon={Close}
+                                cssNormal={SX.focusedButton}
+                                variant={'inverted'}
+                                onClick={this.onCloseClick}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
         );
+    }
+
+    componentDidUpdate(prevProps) {
+        const {focusedDate} = this.props;
+        if (prevProps.focusedDate !== focusedDate) {
+            if (focusedDate) {
+                gsap.fromTo(this.focusedRef.current, {opacity: 1}, {opacity: 0, delay: 0.5});
+            }
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -155,7 +210,15 @@ class Footer extends React.PureComponent {
      *
      */
     create = () => {
+        const {focusedDate} = this.props;
         const {value} = this.state;
+        console.log('create:', value);
+        if (focusedDate) {
+            // TODO
+            clearFocus();
+        } else {
+            // TODO
+        }
         this.setState({value: ''});
     };
 
@@ -165,9 +228,45 @@ class Footer extends React.PureComponent {
     onFromSelect = () => {
         // TODO
     };
+
+    /**
+     *
+     */
+    onTrashClick = () => {
+        console.log('onTrashClick');
+    };
+
+    /**
+     *
+     */
+    onCloseClick = () => {
+        clearFocus();
+    };
 }
+
+// =====================================================================================================================
+//  H E L P E R S
+// =====================================================================================================================
+/**
+ *
+ */
+const prettifyDate = (date) => {
+    const matched = date.match(/(.*?)T(\d\d:\d\d)/);
+    return matched[1] + ', ' + matched[2];
+};
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default Footer;
+Footer.propTypes = {
+    // -------------------------------- redux:
+    focusedDate: PropTypes.string,
+};
+
+const mapStateToProps = (state) => {
+    return {
+        focusedDate: selectFocusedDate(state),
+    };
+};
+
+export default connect(mapStateToProps)(Footer);

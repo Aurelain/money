@@ -1,28 +1,18 @@
-import {FILTER_HEIGHT, SECONDARY_COLOR} from '../../SETTINGS.js';
+import {setState} from '../store.js';
 
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
-const SelectSX = {
-    root: {
-        background: SECONDARY_COLOR,
-        width: '25%',
-        height: FILTER_HEIGHT,
-        justifyContent: 'start',
-        paddingLeft: 4,
-        pointerEvents: 'auto',
-        color: '#49220b',
-        fontWeight: 'bold',
-    },
-    isSelect: {
-        borderTop: 'solid 1px rgba(0,0,0,0.1)',
-    },
-    isFilter: {
-        borderBottom: 'solid 1px rgba(0,0,0,0.1)',
-    },
+/**
+ *
+ */
+const clearFocus = () => {
+    setState((state) => {
+        delete state.volatile.focusedDate;
+    });
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default SelectSX;
+export default clearFocus;

@@ -1,21 +1,28 @@
 import React from 'react';
-import {HEADER_HEIGHT, HEADER_SAFETY, FOOTER_SAFETY, GRID_HEADER_HEIGHT, FOOTER_HEIGHT} from '../SETTINGS.js';
-import connectGoogle from '../state/actions/connectGoogle.js';
+import {
+    HEADER_HEIGHT,
+    HEADER_SAFETY,
+    FOOTER_SAFETY,
+    FOOTER_HEIGHT,
+    FILTER_HEIGHT,
+    CONTENT_MAX_WIDTH,
+} from '../SETTINGS.js';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {selectHistory, selectFocusedDate} from '../state/selectors.js';
+import Row from './Row.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const SX = {
     root: {
-        paddingTop: HEADER_HEIGHT + HEADER_SAFETY + GRID_HEADER_HEIGHT,
-        paddingRight: 8,
-        paddingBottom: FOOTER_HEIGHT + FOOTER_SAFETY,
-        paddingLeft: 8,
-        '& > *:first-of-type': {
-            marginTop: 8,
-        },
+        paddingTop: HEADER_HEIGHT + HEADER_SAFETY + FILTER_HEIGHT,
+        paddingBottom: FOOTER_HEIGHT + FOOTER_SAFETY + FILTER_HEIGHT + 64,
         margin: 'auto',
-        maxWidth: 640,
+        maxWidth: CONTENT_MAX_WIDTH,
+        display: 'flex',
+        flexDirection: 'column',
     },
 };
 
@@ -24,22 +31,34 @@ const SX = {
 // =====================================================================================================================
 class History extends React.PureComponent {
     render() {
-        return <div css={SX.root}></div>;
+        const {history, focusedDate} = this.props;
+        return (
+            <div css={SX.root}>
+                {history.map((row) => {
+                    const {date} = row;
+                    return <Row key={date} {...row} isSelected={focusedDate === date} />;
+                })}
+            </div>
+        );
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
-    /**
-     *
-     */
-    onButtonClick = async () => {
-        await connectGoogle();
-    };
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-History.propTypes = {};
-export default History;
+History.propTypes = {
+    // -------------------------------- redux:
+    history: PropTypes.array.isRequired,
+    focusedDate: PropTypes.string,
+};
+
+const mapStateToProps = (state) => ({
+    history: selectHistory(state),
+    focusedDate: selectFocusedDate(state),
+});
+
+export default connect(mapStateToProps)(History);
