@@ -1,30 +1,29 @@
+import {VAULT_OPTIONS} from '../SETTINGS.js';
+
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
-const STATE_MOCK = {
-    tokens: {
-        accessToken: 'foo',
-        refreshToken: 'foo',
-        expirationTimestamp: 0,
-    },
-    vaults: {},
-    history: [],
-    options: {
-        defaults: {
-            from: 'Foo',
-            value: '100',
-            to: 'Bar',
-            product: 'Misc',
+const VAULTS_MOCK = {
+    files: [
+        {
+            id: 'Money_Foo1',
+            name: 'Money_Foo1',
+            modifiedTime: '2023-10-24T15:08:57.627Z',
         },
-        aliases: {
-            Foo: 'a',
+        {
+            id: 'Money_Foo2',
+            name: 'Money_Foo2',
+            modifiedTime: '2023-10-24T15:08:57.627Z',
         },
-        formulas: ['Foo+Bar'],
-    },
-    volatile: {},
+        {
+            id: VAULT_OPTIONS,
+            name: VAULT_OPTIONS,
+            modifiedTime: '2023-10-20T15:08:57.627Z',
+        },
+    ],
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default STATE_MOCK;
+export default VAULTS_MOCK;

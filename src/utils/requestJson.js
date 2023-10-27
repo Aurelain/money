@@ -65,9 +65,10 @@ const getJson = async (url, fetchOptions) => {
 
     if (fetchOptions.body) {
         fetchOptions.method = fetchOptions.method || 'POST';
-        fetchOptions.body = JSON.stringify(fetchOptions.body);
-        fetchOptions.headers = {...fetchOptions.headers};
-        fetchOptions.headers['Content-Type'] = 'application/json';
+        const {body} = fetchOptions;
+        fetchOptions.body = typeof body === 'object' ? JSON.stringify(body) : body;
+        fetchOptions.headers = fetchOptions.headers || {};
+        fetchOptions.headers['Content-Type'] = fetchOptions.headers['Content-Type'] || 'application/json';
     }
 
     if (fetchOptions.headers) {

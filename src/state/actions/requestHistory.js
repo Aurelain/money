@@ -4,13 +4,17 @@ import {selectHistory, selectVaults} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import SpreadsheetSchema from '../../schemas/SpreadsheetSchema.js';
 import assume from '../../utils/assume.js';
-import {DATE_FORMAT, VAULT_DIR_NAME} from '../../SETTINGS.js';
-import condense from '../../utils/condense.js';
+import {DATE_FORMAT, VAULT_OPTIONS, VAULT_PREFIX} from '../../SETTINGS.js';
 import VaultsSchema from '../../schemas/VaultsSchema.js';
-import SPREADSHEET1_MOCK from '../../system/SPREADSHEET1_MOCK.js';
-import SPREADSHEET2_MOCK from '../../system/SPREADSHEET2_MOCK.js';
+import SPREADSHEET1_MOCK from '../../mocks/SPREADSHEET1_MOCK.js';
+import SPREADSHEET2_MOCK from '../../mocks/SPREADSHEET2_MOCK.js';
 import diffShallow from '../../utils/diffShallow.js';
 import objectify from '../../utils/objectify.js';
+import OptionsSpreadsheetSchema from '../../schemas/OptionsSpreadsheetSchema.js';
+import healJson from '../../utils/healJson.js';
+import OptionsSchema from '../../schemas/OptionsSchema.js';
+import OPTIONS_MOCK from '../../mocks/OPTIONS_MOCK.js';
+import VAULTS_MOCK from '../../mocks/VAULTS_MOCK.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -25,33 +29,37 @@ const requestHistory = async (isForced = false) => {
 
     const state = getState();
     const prevVaults = isForced ? {} : selectVaults(state);
-    const nextVaults = await discoverVaults();
+    const {vaults, optionsVaultId} = await discoverVaults();
 
-    const changes = diffShallow(prevVaults, nextVaults);
+    const changes = diffShallow(prevVaults, vaults);
     if (!changes) {
         console.log('Nothing changed.');
         return;
     }
 
-    const prevHistory = selectHistory(state);
-    const nextHistory = prevHistory.filter((item) => item.spreadsheetId in changes.unchanged);
+    // Import the options from the `Money_Options` spreadsheet, if necessary:
+    if (optionsVaultId && !(optionsVaultId in changes.unchanged)) {
+        await loadOptions(optionsVaultId);
+    }
 
-    const historyByDate = objectify(nextHistory, 'date');
     const pendingIds = {...changes.created, ...changes.updated};
+    delete pendingIds[optionsVaultId];
 
+    const prevHistory = selectHistory(state);
+    const history = prevHistory.filter((item) => item.spreadsheetId in changes.unchanged);
+
+    const historyByDate = objectify(history, 'date');
     for (const id in pendingIds) {
         const spreadsheet = await requestSpreadsheet(id);
         const rows = validateSpreadsheet(spreadsheet, id, historyByDate);
-        nextHistory.push(...rows);
+        history.push(...rows);
     }
 
-    nextHistory.sort(compareHistoryItems);
-
-    console.log('nextHistory:', nextHistory);
+    history.sort(compareHistoryItems);
 
     setState((state) => {
-        state.vaults = nextVaults;
-        state.history = nextHistory;
+        state.vaults = vaults;
+        state.history = history;
     });
 };
 
@@ -64,37 +72,64 @@ const requestHistory = async (isForced = false) => {
 const discoverVaults = async () => {
     const result = await requestApi('https://www.googleapis.com/drive/v3/files', {
         searchParams: {
-            q: condense(`
-                name contains '${VAULT_DIR_NAME}' and
-                mimeType = 'application/vnd.google-apps.spreadsheet' and
-                'root' in parents
-            `),
+            q:
+                `name contains '${VAULT_PREFIX}'` +
+                ' and trashed=false' +
+                " and mimeType='application/vnd.google-apps.spreadsheet'",
             fields: 'files(id,name,modifiedTime)',
         },
         schema: VaultsSchema,
-        mock: {
-            files: [
-                {
-                    id: 'Money_Foo1',
-                    name: 'Money_Foo1',
-                    modifiedTime: '2023-10-24T15:08:57.627Z',
-                },
-                {
-                    id: 'Money_Foo2',
-                    name: 'Money_Foo2',
-                    modifiedTime: '2023-10-24T15:08:57.627Z',
-                },
-            ],
-        },
+        mock: VAULTS_MOCK,
     });
 
     const vaults = {};
+    let optionsVaultId = '';
     for (const {id, name, modifiedTime} of result.files) {
-        if (name.startsWith(VAULT_DIR_NAME)) {
+        if (name.startsWith(VAULT_PREFIX)) {
             vaults[id] = modifiedTime;
         }
+        if (name === VAULT_OPTIONS) {
+            optionsVaultId = id;
+        }
     }
-    return vaults;
+
+    return {
+        vaults,
+        optionsVaultId,
+    };
+};
+
+/**
+ *
+ */
+const loadOptions = async (optionsVaultId) => {
+    const response = await requestApi(`https://sheets.googleapis.com/v4/spreadsheets/${optionsVaultId}`, {
+        searchParams: {
+            includeGridData: true,
+        },
+        schema: OptionsSpreadsheetSchema,
+        mock: OPTIONS_MOCK,
+    });
+
+    let options;
+    try {
+        const firstCellValue = response.sheets[0].data[0].rowData[0].values[0].formattedValue;
+        options = JSON.parse(firstCellValue);
+    } catch (e) {
+        console.warn(e);
+        return;
+    }
+
+    try {
+        healJson(options, OptionsSchema);
+    } catch (e) {
+        console.warn(e);
+        return;
+    }
+
+    setState((state) => {
+        state.options = options;
+    });
 };
 
 /**

@@ -1,3 +1,6 @@
+import cloneShallow from '../utils/cloneShallow.js';
+import OptionsSchema from '../schemas/OptionsSchema.js';
+
 export default {
     $id: 'STATE_SCHEMA',
     type: 'object',
@@ -58,16 +61,7 @@ export default {
                 required: ['spreadsheetId', 'from', 'value', 'to', 'product', 'date'],
             },
         },
-        options: {
-            type: 'object',
-            additionalProperties: false,
-            properties: {
-                preferredFrom: {
-                    type: 'string',
-                },
-            },
-            required: ['preferredFrom'],
-        },
+        options: cloneShallow(OptionsSchema, '$id'),
         volatile: {
             type: 'object',
             additionalProperties: false,

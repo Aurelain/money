@@ -1,30 +1,17 @@
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
-const STATE_MOCK = {
-    tokens: {
-        accessToken: 'foo',
-        refreshToken: 'foo',
-        expirationTimestamp: 0,
-    },
-    vaults: {},
-    history: [],
-    options: {
-        defaults: {
-            from: 'Foo',
-            value: '100',
-            to: 'Bar',
-            product: 'Misc',
-        },
-        aliases: {
-            Foo: 'a',
-        },
-        formulas: ['Foo+Bar'],
-    },
-    volatile: {},
+/**
+ *
+ */
+const stringifySelectors = ({from, value, to, product}) => {
+    let draft = from + ' ' + value + ' ' + to + ' ' + product;
+    draft = draft.replace(/\s+/g, ' ');
+    draft = draft.trim();
+    return draft;
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default STATE_MOCK;
+export default stringifySelectors;

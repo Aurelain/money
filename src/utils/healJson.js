@@ -50,7 +50,7 @@ const healJson = (json, schema, options = {}) => {
                 break;
             }
             case 'type': {
-                const match = instanceDotPath.match(/\[(\d+)]$|\.(\w+)$/);
+                const match = instanceDotPath.match(/\[(\d+)]$|\.(\w+)$/); // TODO: this errors when not an array
                 const key = match[1] || match[2];
                 const dataParentPath = instanceDotPath.replace(/\[\d+]$|\.\w+$/, '');
                 const dataParent = getDeep(json, dataParentPath);
