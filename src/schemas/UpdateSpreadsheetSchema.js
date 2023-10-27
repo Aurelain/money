@@ -1,33 +1,29 @@
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
-const STATE_MOCK = {
-    tokens: {
-        accessToken: 'foo',
-        refreshToken: 'foo',
-        expirationTimestamp: 0,
-    },
-    vaults: {},
-    history: [],
-    options: {
-        defaults: {
-            from: 'Foo',
-            value: '100',
-            to: 'Bar',
-            product: 'Misc',
+const UpdateSpreadsheetSchema = {
+    $id: 'UpdateSpreadsheetSchema',
+    type: 'object',
+    properties: {
+        spreadsheetId: {
+            type: 'string',
+            minLength: 1,
         },
-        meta: {
-            Foo: {
-                alias: 'f',
-                suffix: '👪',
-            },
-        },
-        formulas: ['Foo+Bar'],
     },
-    volatile: {},
+    required: ['spreadsheetId'],
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default STATE_MOCK;
+export default UpdateSpreadsheetSchema;
+
+/*
+{
+    "spreadsheetId": "1c_VIhcRrYVOsMFHT9hi6HNXR5mZ7FILNjknEGLS2Zeo",
+    "replies": [
+        {},
+        {}
+    ]
+}
+*/

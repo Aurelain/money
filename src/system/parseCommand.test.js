@@ -16,7 +16,7 @@ const tests = [
                 to: '',
                 product: '',
             },
-            alias: {},
+            meta: {},
         },
         output: {
             from: '',
@@ -36,7 +36,7 @@ const tests = [
                 to: 'Bar',
                 product: 'Diverse',
             },
-            alias: {},
+            meta: {},
         },
         output: {
             from: 'Foo',
@@ -56,7 +56,7 @@ const tests = [
                 to: 'Bar',
                 product: 'Diverse',
             },
-            alias: {},
+            meta: {},
         },
         output: {
             from: 'Hello',
@@ -76,7 +76,7 @@ const tests = [
                 to: 'Bar',
                 product: 'Diverse',
             },
-            alias: {},
+            meta: {},
         },
         output: {
             from: 'Foo',
@@ -96,7 +96,7 @@ const tests = [
                 to: 'Bar',
                 product: 'Diverse',
             },
-            alias: {},
+            meta: {},
         },
         output: {
             from: 'Foo',
@@ -116,7 +116,7 @@ const tests = [
                 to: 'Bar',
                 product: 'Diverse',
             },
-            alias: {},
+            meta: {},
         },
         output: {
             from: 'Lorem',
@@ -136,12 +136,22 @@ const tests = [
                 to: 'Bar',
                 product: 'Diverse',
             },
-            alias: {
-                a: 'Lorem',
-                b: 'Ipsum',
-                c: 'Dolor',
-                5: 'Sit',
-                6: 'Amet',
+            meta: {
+                Lorem: {
+                    alias: 'a',
+                },
+                Ipsum: {
+                    alias: 'b',
+                },
+                Dolor: {
+                    alias: 'c',
+                },
+                Sit: {
+                    alias: '5',
+                },
+                Amet: {
+                    alias: '6',
+                },
             },
         },
         output: {

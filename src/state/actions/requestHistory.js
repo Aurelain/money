@@ -15,6 +15,7 @@ import healJson from '../../utils/healJson.js';
 import OptionsSchema from '../../schemas/OptionsSchema.js';
 import OPTIONS_MOCK from '../../mocks/OPTIONS_MOCK.js';
 import VAULTS_MOCK from '../../mocks/VAULTS_MOCK.js';
+import createOptionsSpreadsheet from '../../system/createOptionsSpreadsheet.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -30,6 +31,10 @@ const requestHistory = async (isForced = false) => {
     const state = getState();
     const prevVaults = isForced ? {} : selectVaults(state);
     const {vaults, optionsVaultId} = await discoverVaults();
+
+    if (!optionsVaultId) {
+        await createOptionsSpreadsheet();
+    }
 
     const changes = diffShallow(prevVaults, vaults);
     if (!changes) {
@@ -85,13 +90,18 @@ const discoverVaults = async () => {
     const vaults = {};
     let optionsVaultId = '';
     for (const {id, name, modifiedTime} of result.files) {
+        if (name.startsWith(VAULT_OPTIONS && name !== VAULT_OPTIONS)) {
+            continue;
+        }
         if (name.startsWith(VAULT_PREFIX)) {
             vaults[id] = modifiedTime;
         }
         if (name === VAULT_OPTIONS) {
+            assume(!optionsVaultId, 'Duplicate options files!');
             optionsVaultId = id;
         }
     }
+    console.log('vaults: ' + JSON.stringify(vaults, null, 4));
 
     return {
         vaults,
@@ -116,20 +126,17 @@ const loadOptions = async (optionsVaultId) => {
         const firstCellValue = response.sheets[0].data[0].rowData[0].values[0].formattedValue;
         options = JSON.parse(firstCellValue);
     } catch (e) {
-        console.warn(e);
-        return;
+        options = {};
     }
 
-    try {
-        healJson(options, OptionsSchema);
-    } catch (e) {
-        console.warn(e);
-        return;
-    }
+    healJson(options, OptionsSchema);
 
     setState((state) => {
         state.options = options;
+        state.optionsVaultId = optionsVaultId;
     });
+
+    // TODO write to cloud
 };
 
 /**

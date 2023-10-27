@@ -119,6 +119,9 @@ class Bar extends React.PureComponent {
         switch (name) {
             case MENU_FORCE_VAULTS:
                 await requestHistory(true);
+                this.setState({
+                    isMenuOpen: false,
+                });
                 break;
             case MENU_SHOW_CONSOLE:
                 localStorage.setItem('console', 'emulated');

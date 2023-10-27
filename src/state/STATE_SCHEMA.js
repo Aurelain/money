@@ -62,10 +62,13 @@ export default {
             },
         },
         options: cloneShallow(OptionsSchema, '$id'),
+        optionsVaultId: {
+            type: 'string',
+        },
         volatile: {
             type: 'object',
             additionalProperties: false,
         },
     },
-    required: ['tokens', 'vaults', 'history', 'options', 'volatile'],
+    required: ['tokens', 'vaults', 'history', 'options', 'optionsVaultId', 'volatile'],
 };

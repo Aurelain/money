@@ -25,11 +25,21 @@ const OptionsSchema = {
             },
             required: ['from', 'value', 'to', 'product'],
         },
-        aliases: {
+        meta: {
             type: 'object',
             patternProperties: {
                 '.': {
-                    type: 'string',
+                    type: 'object',
+                    additionalProperties: false,
+                    properties: {
+                        alias: {
+                            type: 'string',
+                        },
+                        suffix: {
+                            type: 'string',
+                        },
+                    },
+                    required: ['alias', 'suffix'],
                 },
             },
         },
@@ -40,7 +50,7 @@ const OptionsSchema = {
             },
         },
     },
-    required: ['defaults', 'aliases', 'formulas'],
+    required: ['defaults', 'meta', 'formulas'],
 };
 
 // =====================================================================================================================
@@ -56,8 +66,11 @@ export default OptionsSchema;
         "to": "Bar",
         "product": "Misc"
     },
-    "aliases": {
-        "Foo": "a"
+    "meta": {
+        "Foo": {
+            "alias": "f",
+            "suffix": "👪"
+        }
     },
     "formulas": [
         "Foo+Bar"

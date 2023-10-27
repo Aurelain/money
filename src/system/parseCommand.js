@@ -4,12 +4,13 @@
 /**
  *
  */
-const parseCommand = ({command, defaults, alias}) => {
+const parseCommand = ({command, defaults, meta}) => {
     let {from, value, to, product} = defaults;
 
-    for (const c in alias) {
-        const re = new RegExp('\\b' + c + '\\b', 'gi');
-        command = command.replace(re, alias[c]);
+    for (const keyword in meta) {
+        const {short} = meta[keyword];
+        const re = new RegExp('\\b' + short + '\\b', 'gi');
+        command = command.replace(re, keyword);
     }
 
     command = command.replace(/\s+/g, ' ');

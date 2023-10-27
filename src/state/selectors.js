@@ -6,3 +6,4 @@ export const selectVaults = (state) => state.vaults;
 export const selectHistory = (state) => state.history;
 export const selectFocusedDate = (state) => state.volatile.focusedDate;
 export const selectOptions = (state) => state.options;
+export const selectOptionsVaultId = (state) => state.optionsVaultId;

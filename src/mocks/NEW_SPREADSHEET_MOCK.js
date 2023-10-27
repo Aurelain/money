@@ -1,33 +1,11 @@
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
-const STATE_MOCK = {
-    tokens: {
-        accessToken: 'foo',
-        refreshToken: 'foo',
-        expirationTimestamp: 0,
-    },
-    vaults: {},
-    history: [],
-    options: {
-        defaults: {
-            from: 'Foo',
-            value: '100',
-            to: 'Bar',
-            product: 'Misc',
-        },
-        meta: {
-            Foo: {
-                alias: 'f',
-                suffix: '👪',
-            },
-        },
-        formulas: ['Foo+Bar'],
-    },
-    volatile: {},
+const NEW_SPREADSHEET_MOCK = {
+    spreadsheetId: 'foo',
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default STATE_MOCK;
+export default NEW_SPREADSHEET_MOCK;
