@@ -11,9 +11,9 @@ import memoHistoryComputation from '../../system/memoHistoryComputation.js';
 // =====================================================================================================================
 class SelectValue extends React.PureComponent {
     render() {
-        const {onSelect, isFilter, history} = this.props;
+        const {onSelect, isFilter, history, label = 'Value'} = this.props;
         const {values} = memoHistoryComputation(history);
-        return <Selector isFilter={isFilter} onSelect={onSelect} label={'Value'} icon={Cash} listItems={values} />;
+        return <Selector isFilter={isFilter} onSelect={onSelect} label={label} icon={Cash} listItems={values} />;
     }
 }
 
@@ -24,6 +24,7 @@ SelectValue.propTypes = {
     // -------------------------------- direct:
     isFilter: PropTypes.bool,
     onSelect: PropTypes.func,
+    label: PropTypes.string,
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,
 };
