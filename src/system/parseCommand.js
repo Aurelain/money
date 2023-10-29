@@ -8,8 +8,8 @@ const parseCommand = ({command, defaults, meta}) => {
     let {from, value, to, product} = defaults;
 
     for (const keyword in meta) {
-        const {short} = meta[keyword];
-        const re = new RegExp('\\b' + short + '\\b', 'gi');
+        const {alias} = meta[keyword];
+        const re = new RegExp('\\b' + alias + '\\b', 'gi');
         command = command.replace(re, keyword);
     }
 

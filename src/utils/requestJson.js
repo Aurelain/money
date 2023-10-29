@@ -8,6 +8,11 @@ import validateJson from './validateJson.js';
  *
  */
 const requestJson = async (url, options = {}) => {
+    if (options.verbose) {
+        console.groupCollapsed(prettifyUrl(url));
+        console.log(options);
+    }
+
     let json;
     if (options.mock && (window.USE_MOCK || options.forceMock)) {
         if (typeof options.mock === 'function') {
@@ -22,7 +27,8 @@ const requestJson = async (url, options = {}) => {
         delete fetchOptions.schema;
         delete fetchOptions.mock;
         delete fetchOptions.forceMock;
-        json = await getJson(url, fetchOptions);
+        delete fetchOptions.verbose;
+        json = await getJson(url, fetchOptions, options.verbose);
     }
 
     if (json) {
@@ -48,6 +54,10 @@ const requestJson = async (url, options = {}) => {
         }
     }
 
+    if (options.verbose) {
+        console.log(JSON.stringify(json, null, 4));
+        console.groupEnd();
+    }
     return json;
 };
 

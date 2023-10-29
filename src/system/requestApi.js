@@ -15,6 +15,7 @@ const requestApi = async (url, options = {}) => {
 
     const result = await requestJson(url, {
         ...options,
+        verbose: true,
         headers: {
             ...options.headers,
             Authorization: `Bearer ${accessToken}`,

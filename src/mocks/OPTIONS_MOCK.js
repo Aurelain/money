@@ -1,3 +1,5 @@
+import STATE_MOCK from '../state/STATE_MOCK.js';
+
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
@@ -10,18 +12,7 @@ const OPTIONS_MOCK = {
                         {
                             values: [
                                 {
-                                    formattedValue: JSON.stringify({
-                                        defaults: {
-                                            from: 'Foo',
-                                            value: '100',
-                                            to: 'Bar',
-                                            product: 'Misc',
-                                        },
-                                        aliases: {
-                                            Foo: 'a',
-                                        },
-                                        formulas: ['Foo+Bar'],
-                                    }),
+                                    formattedValue: JSON.stringify(STATE_MOCK.options),
                                 },
                             ],
                         },

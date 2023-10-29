@@ -9,7 +9,7 @@ import {
 } from '../SETTINGS.js';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {selectHistory, selectFocusedDate} from '../state/selectors.js';
+import {selectHistory, selectFocusedDate, selectMeta} from '../state/selectors.js';
 import Row from './Row.jsx';
 
 // =====================================================================================================================
@@ -31,12 +31,12 @@ const SX = {
 // =====================================================================================================================
 class History extends React.PureComponent {
     render() {
-        const {history, focusedDate} = this.props;
+        const {history, focusedDate, meta} = this.props;
         return (
             <div css={SX.root}>
                 {history.map((row) => {
                     const {date} = row;
-                    return <Row key={date} {...row} isSelected={focusedDate === date} />;
+                    return <Row key={date} {...row} isSelected={focusedDate === date} meta={meta} />;
                 })}
             </div>
         );
@@ -54,11 +54,13 @@ History.propTypes = {
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,
     focusedDate: PropTypes.string,
+    meta: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     history: selectHistory(state),
     focusedDate: selectFocusedDate(state),
+    meta: selectMeta(state),
 });
 
 export default connect(mapStateToProps)(History);

@@ -94,14 +94,13 @@ const discoverVaults = async () => {
             continue;
         }
         if (name.startsWith(VAULT_PREFIX)) {
-            vaults[id] = modifiedTime;
+            vaults[id] = name + ', ' + modifiedTime;
         }
         if (name === VAULT_OPTIONS) {
             assume(!optionsVaultId, 'Duplicate options files!');
             optionsVaultId = id;
         }
     }
-    console.log('vaults: ' + JSON.stringify(vaults, null, 4));
 
     return {
         vaults,
@@ -129,14 +128,18 @@ const loadOptions = async (optionsVaultId) => {
         options = {};
     }
 
+    const before = JSON.stringify(options);
     healJson(options, OptionsSchema);
+    const after = JSON.stringify(options);
 
     setState((state) => {
         state.options = options;
         state.optionsVaultId = optionsVaultId;
     });
 
-    // TODO write to cloud
+    if (before !== after) {
+        // TODO write to cloud
+    }
 };
 
 /**

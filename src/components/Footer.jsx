@@ -89,7 +89,7 @@ const SX = {
     date: {
         position: 'absolute',
         top: 10,
-        left: 45,
+        right: 96,
         padding: 6,
         background: 'red',
         color: 'white',

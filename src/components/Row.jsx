@@ -40,21 +40,24 @@ const SX = {
 class Row extends React.PureComponent {
     memoRootSx = memo();
     render() {
-        const {from, value, to, product, isSelected} = this.props;
+        const {from, value, to, product, isSelected, meta} = this.props;
 
+        const fromSuffix = meta[from]?.suffix || '';
+        const toSuffix = meta[to]?.suffix || '';
         return (
             <Button
                 css={this.memoRootSx(SX.root, isSelected && SX.isSelected)}
                 label={
                     <>
-                        <div css={SX.column}>{from}</div>
+                        <div css={SX.column}>{from + fromSuffix}</div>
                         <div css={SX.column}>{value}</div>
-                        <div css={SX.column}>{to}</div>
+                        <div css={SX.column}>{to + toSuffix}</div>
                         <div css={SX.column}>{product}</div>
                     </>
                 }
                 variant={'simple'}
                 onClick={this.onRootClick}
+                onHold={this.onRootHold}
             />
         );
     }
@@ -66,6 +69,16 @@ class Row extends React.PureComponent {
      *
      */
     onRootClick = () => {
+        const {isSelected} = this.props;
+        if (isSelected) {
+            clearFocus();
+        }
+    };
+
+    /**
+     *
+     */
+    onRootHold = () => {
         const {date, isSelected} = this.props;
         if (isSelected) {
             clearFocus();
@@ -86,6 +99,12 @@ Row.propTypes = {
     product: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
     isSelected: PropTypes.bool.isRequired,
+    meta: PropTypes.objectOf(
+        PropTypes.shape({
+            alias: PropTypes.string.isRequired,
+            suffix: PropTypes.string.isRequired,
+        }),
+    ).isRequired,
 };
 
 export default Row;

@@ -11,19 +11,20 @@ const STATE_MOCK = {
     history: [],
     options: {
         defaults: {
-            from: 'Foo',
+            from: 'God',
             value: '100',
             to: 'Bar',
             product: 'Misc',
         },
         meta: {
-            Foo: {
-                alias: 'f',
-                suffix: '👪',
+            God: {
+                alias: 'g',
+                suffix: '🤡',
             },
         },
         formulas: ['Foo+Bar'],
     },
+    optionsVaultId: '',
     volatile: {},
 };
 
