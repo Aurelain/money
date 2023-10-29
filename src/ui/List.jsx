@@ -35,6 +35,8 @@ class List extends React.PureComponent {
                     if (typeof item === 'function') {
                         const Component = item;
                         return <Component key={index} />;
+                    } else if (typeof item === 'string') {
+                        item = {name: item, label: item};
                     } else if ('ref' in item) {
                         return item;
                     }

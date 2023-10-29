@@ -1,65 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import memoize from 'memoize-one';
-import Select from '../../ui/Select.jsx';
+import {connect} from 'react-redux';
 import AccountMinus from '../../ui/Icons/AccountMinus.jsx';
-import SelectSX from './SelectSX.jsx';
+import {selectHistory} from '../../state/selectors.js';
+import Selector from './Selector.jsx';
+import memoHistoryComputation from '../../system/memoHistoryComputation.js';
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
 class SelectFrom extends React.PureComponent {
     render() {
-        const {onSelect, isFilter} = this.props;
+        const {onSelect, isFilter, history} = this.props;
+        const {accounts} = memoHistoryComputation(history);
         return (
-            <Select
-                cssNormal={this.memoButtonCss(isFilter)}
-                label={'From'}
-                icon={AccountMinus}
-                variant={'simple'}
-                listProps={this.memoListProps()}
-                onSelect={onSelect}
-            />
+            <Selector isFilter={isFilter} onSelect={onSelect} label={'From'} icon={AccountMinus} listItems={accounts} />
         );
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // P R I V A T E
-    // -----------------------------------------------------------------------------------------------------------------
-    /**
-     *
-     */
-    memoButtonCss = memoize((isFilter) => {
-        const css = [SelectSX.root];
-        css.push(isFilter ? SelectSX.isFilter : SelectSX.isSelect);
-        return css;
-    });
-
-    /**
-     *
-     */
-    memoListProps = memoize(() => {
-        return {
-            items: [
-                {
-                    name: 'foo',
-                    label: 'foo',
-                },
-                {
-                    name: 'bar',
-                    label: 'bar',
-                },
-            ],
-        };
-    });
 }
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
 SelectFrom.propTypes = {
+    // -------------------------------- direct:
     isFilter: PropTypes.bool,
     onSelect: PropTypes.func,
+    // -------------------------------- redux:
+    history: PropTypes.array.isRequired,
 };
 
-export default SelectFrom;
+const mapStateToProps = (state) => {
+    return {
+        history: selectHistory(state),
+    };
+};
+
+export default connect(mapStateToProps)(SelectFrom);
