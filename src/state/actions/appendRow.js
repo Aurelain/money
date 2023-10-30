@@ -52,6 +52,7 @@ const requestAppend = async (spreadsheetId, row) => {
     return await requestApi(
         `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1!A1:E1:append`,
         {
+            description: 'Appending row',
             searchParams: {
                 valueInputOption: 'RAW',
             },

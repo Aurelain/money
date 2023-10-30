@@ -36,6 +36,7 @@ const deleteRow = async (date) => {
  */
 const requestDeletion = async (spreadsheetId, index) => {
     return await requestApi(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
+        description: 'Deleting row',
         body: {
             requests: [
                 {

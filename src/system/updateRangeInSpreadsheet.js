@@ -8,6 +8,7 @@ import requestApi from './requestApi.js';
  */
 const updateRangeInSpreadsheet = async (spreadsheetId, range, values) => {
     return await requestApi(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}`, {
+        description: 'Updating range',
         searchParams: {
             valueInputOption: 'RAW',
         },

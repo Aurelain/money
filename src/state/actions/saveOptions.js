@@ -48,6 +48,7 @@ const saveOptions = async () => {
 const createOptions = async (options) => {
     const {contentType, body} = composeMultipart(options);
     return await requestApi('https://www.googleapis.com/upload/drive/v3/files', {
+        description: 'Spawning options',
         searchParams: {
             // spaces: 'appDataFolder',
             uploadType: 'multipart',

@@ -190,9 +190,6 @@ class Footer extends React.PureComponent {
                 });
             } else {
                 defocus();
-                this.setState({
-                    command: '',
-                });
             }
         }
     }

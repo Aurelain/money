@@ -76,6 +76,7 @@ const requestHistory = async (isForced = false) => {
  */
 const discoverVaults = async () => {
     const result = await requestApi('https://www.googleapis.com/drive/v3/files', {
+        description: 'Discovering',
         searchParams: {
             q:
                 `name contains '${VAULT_PREFIX}'` +
@@ -113,6 +114,7 @@ const discoverVaults = async () => {
  */
 const loadOptions = async (optionsVaultId) => {
     const response = await requestApi(`https://sheets.googleapis.com/v4/spreadsheets/${optionsVaultId}`, {
+        description: 'Loading options',
         searchParams: {
             includeGridData: true,
         },
@@ -147,6 +149,7 @@ const loadOptions = async (optionsVaultId) => {
  */
 const requestSpreadsheet = async (spreadsheetId) => {
     return await requestApi(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}`, {
+        description: 'Reading spreadsheet',
         searchParams: {
             includeGridData: true,
         },

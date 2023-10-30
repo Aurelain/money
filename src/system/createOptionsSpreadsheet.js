@@ -31,6 +31,7 @@ const createOptionsSpreadsheet = async () => {
  */
 const createSpreadsheet = async () => {
     return await requestApi('https://sheets.googleapis.com/v4/spreadsheets', {
+        description: 'Creating options',
         method: 'POST',
         schema: NewSpreadsheetSchema,
         mock: NEW_SPREADSHEET_MOCK,
@@ -42,6 +43,7 @@ const createSpreadsheet = async () => {
  */
 const updateSpreadsheet = async (spreadsheetId, options) => {
     return await requestApi(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
+        description: 'Renaming options',
         method: 'POST',
         body: {
             requests: [

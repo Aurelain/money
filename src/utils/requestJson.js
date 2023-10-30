@@ -9,7 +9,11 @@ import validateJson from './validateJson.js';
  */
 const requestJson = async (url, options = {}) => {
     if (options.verbose) {
-        console.groupCollapsed(prettifyUrl(url));
+        const {description, method, body} = options;
+        const resolvedMethod = method || (body ? 'POST' : 'GET');
+        const verboseUrl = resolvedMethod + ' ' + prettifyUrl(url);
+        const groupName = description ? `${description} (${verboseUrl})` : verboseUrl;
+        console.groupCollapsed(groupName);
         console.log(options);
     }
 
@@ -28,6 +32,7 @@ const requestJson = async (url, options = {}) => {
         delete fetchOptions.mock;
         delete fetchOptions.forceMock;
         delete fetchOptions.verbose;
+        delete fetchOptions.description;
         json = await getJson(url, fetchOptions, options.verbose);
     }
 
@@ -118,7 +123,7 @@ const prettifyUrl = (url) => {
     const first = urlParts.shift();
     const domainParts = first.split('.');
     const mainDomain = domainParts.at(-2) || first;
-    return last + '@' + mainDomain;
+    return mainDomain + '/…/' + last;
 };
 
 // =====================================================================================================================
