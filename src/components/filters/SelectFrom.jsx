@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import AccountMinus from '../../ui/Icons/AccountMinus.jsx';
-import {selectHistory} from '../../state/selectors.js';
-import Selector from './Selector.jsx';
+import {selectHistory, selectPreferredFrom} from '../../state/selectors.js';
+import SelectWrapper from './SelectWrapper.jsx';
 import memoHistoryComputation from '../../system/memoHistoryComputation.js';
 
 // =====================================================================================================================
@@ -11,10 +11,17 @@ import memoHistoryComputation from '../../system/memoHistoryComputation.js';
 // =====================================================================================================================
 class SelectFrom extends React.PureComponent {
     render() {
-        const {onSelect, isFilter, history, label = 'From'} = this.props;
+        const {onSelect, isFilter, history, label = 'From', preferred} = this.props;
         const {accounts} = memoHistoryComputation(history);
         return (
-            <Selector isFilter={isFilter} onSelect={onSelect} label={label} icon={AccountMinus} listItems={accounts} />
+            <SelectWrapper
+                isFilter={isFilter}
+                onSelect={onSelect}
+                label={label}
+                preferred={preferred}
+                icon={AccountMinus}
+                listItems={accounts}
+            />
         );
     }
 }
@@ -29,11 +36,13 @@ SelectFrom.propTypes = {
     label: PropTypes.string,
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,
+    preferred: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = (state) => {
     return {
         history: selectHistory(state),
+        preferred: selectPreferredFrom(state),
     };
 };
 

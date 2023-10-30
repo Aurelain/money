@@ -9,3 +9,7 @@ export const selectOptions = (state) => state.options;
 export const selectOptionsVaultId = (state) => state.optionsVaultId;
 export const selectMeta = (state) => state.options.meta;
 export const selectDefaults = (state) => state.options.defaults;
+export const selectPreferredFrom = (state) => state.options.defaults.from;
+export const selectPreferredValue = (state) => state.options.defaults.value;
+export const selectPreferredTo = (state) => state.options.defaults.to;
+export const selectPreferredProduct = (state) => state.options.defaults.product;

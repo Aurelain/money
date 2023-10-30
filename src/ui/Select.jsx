@@ -22,6 +22,8 @@ const SX = {
     },
     list: {
         position: 'absolute',
+        overflow: 'auto',
+        maxHeight: 300,
     },
 };
 
@@ -136,9 +138,9 @@ class Select extends React.PureComponent {
 //  E X P O R T
 // =====================================================================================================================
 Select.propTypes = {
-    button: PropTypes.func,
+    button: PropTypes.elementType,
     buttonProps: PropTypes.object,
-    list: PropTypes.func,
+    list: PropTypes.elementType,
     listProps: PropTypes.object,
     onOpen: PropTypes.func,
     onSelect: PropTypes.func,

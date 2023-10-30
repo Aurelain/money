@@ -4,12 +4,12 @@ import {connect} from 'react-redux';
 import gsap from 'gsap';
 import memoize from 'memoize-one';
 import {
-    FOOTER_SAFETY,
+    CONTENT_MAX_WIDTH,
+    FILTER_HEIGHT,
     FOOTER_HEIGHT,
+    FOOTER_SAFETY,
     PRIMARY_COLOR,
     SECONDARY_COLOR,
-    FILTER_HEIGHT,
-    CONTENT_MAX_WIDTH,
 } from '../SETTINGS.js';
 import Button from '../ui/Button.jsx';
 import Plus from '../ui/Icons/Plus.jsx';
@@ -24,7 +24,6 @@ import memo from '../utils/memo.js';
 import Close from '../ui/Icons/Close.jsx';
 import clearFocus from '../state/actions/clearFocus.js';
 import parseCommand from '../system/parseCommand.js';
-import embellishName from '../system/embellishName.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -229,8 +228,8 @@ class Footer extends React.PureComponent {
     /**
      *
      */
-    onFromSelect = () => {
-        // TODO
+    onFromSelect = ({name}) => {
+        console.log('onFromSelect:', name);
     };
 
     /**
@@ -251,12 +250,7 @@ class Footer extends React.PureComponent {
      *
      */
     memoSelectValues = memoize((command, defaults, meta) => {
-        let {from, value, to, product} = parseCommand({command, defaults, meta});
-        from = embellishName(from, defaults.from, meta);
-        value = embellishName(value, defaults.value, meta);
-        to = embellishName(to, defaults.to, meta);
-        product = embellishName(product, defaults.product, meta);
-        return {from, value, to, product};
+        return parseCommand({command, defaults, meta});
     });
 }
 
