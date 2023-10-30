@@ -1,4 +1,4 @@
-import {setState} from '../store.js';
+import condense from '../utils/condense.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -6,13 +6,11 @@ import {setState} from '../store.js';
 /**
  *
  */
-const clearFocus = () => {
-    setState((state) => {
-        delete state.volatile.focusedDate;
-    });
+const buildCommand = ({from, value, to, product}) => {
+    return condense([from, value, to, product].join(' '));
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default clearFocus;
+export default buildCommand;

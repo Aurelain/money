@@ -32,7 +32,7 @@ class List extends React.PureComponent {
         return (
             <div css={[SX.root, styling]} ref={innerRef}>
                 {items.map((item, index) => {
-                    if (typeof item === 'function') {
+                    if (typeof item === 'function' || item.$$typeof) {
                         const Component = item;
                         return <Component key={index} />;
                     } else if (typeof item === 'string') {

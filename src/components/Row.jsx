@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '../ui/Button.jsx';
 import focusDate from '../state/actions/focusDate.js';
 import memo from '../utils/memo.js';
-import clearFocus from '../state/actions/clearFocus.js';
+import clearFocusedDate from '../state/actions/clearFocusedDate.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -71,7 +71,7 @@ class Row extends React.PureComponent {
     onRootClick = () => {
         const {isSelected} = this.props;
         if (isSelected) {
-            clearFocus();
+            clearFocusedDate();
         }
     };
 
@@ -81,7 +81,7 @@ class Row extends React.PureComponent {
     onRootHold = () => {
         const {date, isSelected} = this.props;
         if (isSelected) {
-            clearFocus();
+            clearFocusedDate();
         } else {
             focusDate(date);
         }

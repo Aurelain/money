@@ -19,11 +19,12 @@ import SelectFrom from './filters/SelectFrom.jsx';
 import SelectValue from './filters/SelectValue.jsx';
 import SelectTo from './filters/SelectTo.jsx';
 import SelectProduct from './filters/SelectProduct.jsx';
-import {selectDefaults, selectFocusedDate, selectMeta} from '../state/selectors.js';
+import {selectDefaults, selectFocusedDate, selectHistory, selectMeta} from '../state/selectors.js';
 import memo from '../utils/memo.js';
 import Close from '../ui/Icons/Close.jsx';
-import clearFocus from '../state/actions/clearFocus.js';
+import clearFocusedDate from '../state/actions/clearFocusedDate.js';
 import parseCommand from '../system/parseCommand.js';
+import buildCommand from '../system/buildCommand.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -106,6 +107,7 @@ const SX = {
 class Footer extends React.PureComponent {
     memoCommandLineCss = memo();
     focusedRef = React.createRef();
+    digestion; // filled by `memoDigestion`, contains `{from, value, to, product}`
     state = {
         command: '',
     };
@@ -113,14 +115,14 @@ class Footer extends React.PureComponent {
     render() {
         const {focusedDate, defaults, meta} = this.props;
         const {command} = this.state;
-        const {from, value, to, product} = this.memoSelectValues(command, defaults, meta);
+        const {from, value, to, product} = this.memoDigestion(command, defaults, meta);
         return (
             <div css={SX.root}>
                 <div css={SX.content}>
                     <SelectFrom onSelect={this.onFromSelect} label={from} />
-                    <SelectValue onSelect={this.onFromSelect} label={value} />
-                    <SelectTo onSelect={this.onFromSelect} label={to} />
-                    <SelectProduct onSelect={this.onFromSelect} label={product} />
+                    <SelectValue onSelect={this.onValueSelect} label={value} />
+                    <SelectTo onSelect={this.onToSelect} label={to} />
+                    <SelectProduct onSelect={this.onProductSelect} label={product} />
                     <div css={this.memoCommandLineCss(SX.commandLine, focusedDate && SX.focused)}>
                         {focusedDate && (
                             <Button
@@ -177,6 +179,14 @@ class Footer extends React.PureComponent {
         if (prevProps.focusedDate !== focusedDate) {
             if (focusedDate) {
                 gsap.fromTo(this.focusedRef.current, {opacity: 1}, {opacity: 0, delay: 0.5});
+                this.setState({
+                    command: buildCommand(this.props.focusedRow),
+                });
+            } else {
+                defocus();
+                this.setState({
+                    command: '',
+                });
             }
         }
     }
@@ -218,7 +228,7 @@ class Footer extends React.PureComponent {
         console.log('create:', command);
         if (focusedDate) {
             // TODO
-            clearFocus();
+            clearFocusedDate();
         } else {
             // TODO
         }
@@ -229,7 +239,38 @@ class Footer extends React.PureComponent {
      *
      */
     onFromSelect = ({name}) => {
-        console.log('onFromSelect:', name);
+        this.applyDigestion('from', name);
+    };
+
+    /**
+     *
+     */
+    onValueSelect = ({name}) => {
+        this.applyDigestion('value', name);
+    };
+
+    /**
+     *
+     */
+    onToSelect = ({name}) => {
+        this.applyDigestion('to', name);
+    };
+
+    /**
+     *
+     */
+    onProductSelect = ({name}) => {
+        this.applyDigestion('product', name);
+    };
+
+    /**
+     *
+     */
+    applyDigestion = (digestionProp, digestionValue) => {
+        const freshDigestion = {...this.digestion, [digestionProp]: digestionValue};
+        this.setState({
+            command: buildCommand(freshDigestion),
+        });
     };
 
     /**
@@ -243,14 +284,15 @@ class Footer extends React.PureComponent {
      *
      */
     onCloseClick = () => {
-        clearFocus();
+        clearFocusedDate();
     };
 
     /**
      *
      */
-    memoSelectValues = memoize((command, defaults, meta) => {
-        return parseCommand({command, defaults, meta});
+    memoDigestion = memoize((command, defaults, meta) => {
+        this.digestion = parseCommand({command, defaults, meta}); // harmless side-effect
+        return this.digestion;
     });
 }
 
@@ -271,13 +313,21 @@ const prettifyDate = (date) => {
 Footer.propTypes = {
     // -------------------------------- redux:
     focusedDate: PropTypes.string,
+    focusedRow: PropTypes.object,
     defaults: PropTypes.object.isRequired,
     meta: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => {
+    const focusedDate = selectFocusedDate(state);
+    let focusedRow;
+    if (focusedDate) {
+        const history = selectHistory(state);
+        focusedRow = history.find((item) => item.date === focusedDate);
+    }
     return {
-        focusedDate: selectFocusedDate(state),
+        focusedDate,
+        focusedRow,
         defaults: selectDefaults(state),
         meta: selectMeta(state),
     };

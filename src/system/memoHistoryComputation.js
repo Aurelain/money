@@ -11,8 +11,10 @@ const memoHistoryComputation = memoize((history) => {
     const valuesBag = {};
     const productsBag = {};
     for (const row of history) {
-        accountsBag[row.from] = true;
-        accountsBag[row.to] = true;
+        accountsBag[row.from] = accountsBag[row.from] || 0;
+        accountsBag[row.from] -= row.value;
+        accountsBag[row.to] = accountsBag[row.to] || 0;
+        accountsBag[row.to] += row.value;
         valuesBag[row.value] = true;
         productsBag[row.product] = true;
     }
@@ -25,6 +27,7 @@ const memoHistoryComputation = memoize((history) => {
         accounts,
         values,
         products,
+        accountsBag,
     };
 });
 

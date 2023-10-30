@@ -27,7 +27,7 @@ const SX = {
         left: 0,
         bottom: 0,
         width: '90%',
-        maxWidth: 300,
+        maxWidth: 240,
         color: '#000',
         background: '#fff',
         borderTopRightRadius: 16,
@@ -36,6 +36,8 @@ const SX = {
         boxShadow: 'rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px',
         transitionProperty: 'transform',
         transitionDuration: TRANSITION_DURATION,
+        display: 'flex',
+        flexDirection: 'column',
     },
     menuIsOpen: {
         transform: 'translateX(0)',
@@ -48,7 +50,13 @@ const SX = {
     subtitle: {
         fontSize: '0.5em',
     },
+    content: {
+        position: 'relative',
+        flexGrow: 1,
+        overflow: 'auto',
+    },
     list: {
+        borderTop: 'solid 1px rgba(0,0,0,0.1)',
         borderRadius: 0,
         boxShadow: 'none',
     },
@@ -59,7 +67,8 @@ const SX = {
 // =====================================================================================================================
 class SideMenu extends React.PureComponent {
     render() {
-        const {isOpen, title, subtitle, list, listItemCss, onClick} = this.props;
+        const {isOpen, title, subtitle, content, list, listItemCss, onClick} = this.props;
+        const ContentComponent = content;
         return createPortal(
             <div css={[SX.overlay, isOpen && SX.overlayIsOpen]} onClick={this.onOverlayClick}>
                 <div css={[SX.menu, isOpen && SX.menuIsOpen]} onClick={this.onMenuClick}>
@@ -67,6 +76,7 @@ class SideMenu extends React.PureComponent {
                         {title}
                         {subtitle && <div css={SX.subtitle}>{subtitle}</div>}
                     </div>
+                    <div css={SX.content}>{ContentComponent && <ContentComponent />}</div>
                     {list && <List styling={SX.list} items={list} itemCss={listItemCss} onClick={onClick} />}
                 </div>
             </div>,
@@ -98,6 +108,7 @@ class SideMenu extends React.PureComponent {
 SideMenu.propTypes = {
     title: PropTypes.string.isRequired,
     subtitle: PropTypes.string,
+    content: PropTypes.elementType,
     list: PropTypes.arrayOf(
         PropTypes.oneOfType([
             PropTypes.shape({
@@ -105,7 +116,7 @@ SideMenu.propTypes = {
                 label: PropTypes.oneOfType([PropTypes.string, PropTypes.func, PropTypes.node]),
                 icon: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
             }),
-            PropTypes.func,
+            PropTypes.elementType,
             PropTypes.node,
         ]),
     ),

@@ -14,6 +14,7 @@ import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fe
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
 import requestHistory from '../state/actions/requestHistory.js';
 import Database from '../ui/Icons/Database.jsx';
+import Totals from './Totals.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -73,6 +74,7 @@ class Bar extends React.PureComponent {
                     onClose={this.onMenuClose}
                     onClick={this.onMenuChoice}
                     title={'Money'}
+                    content={Totals}
                     list={this.memoMenuList()}
                     listItemCss={SX.listItem}
                 />
