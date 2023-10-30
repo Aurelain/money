@@ -25,6 +25,9 @@ import Close from '../ui/Icons/Close.jsx';
 import clearFocusedDate from '../state/actions/clearFocusedDate.js';
 import parseCommand from '../system/parseCommand.js';
 import buildCommand from '../system/buildCommand.js';
+import validateSelectors from '../system/validateSelectors.js';
+import appendRow from '../state/actions/appendRow.js';
+import memoHistoryComputation from '../system/memoHistoryComputation.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -113,9 +116,10 @@ class Footer extends React.PureComponent {
     };
 
     render() {
-        const {focusedDate, defaults, meta} = this.props;
+        const {focusedDate, defaults, meta, history} = this.props;
         const {command} = this.state;
         const {from, value, to, product} = this.memoDigestion(command, defaults, meta);
+        const isValid = this.memoIsValid(command, this.digestion, history);
         return (
             <div css={SX.root}>
                 <div css={SX.content}>
@@ -158,7 +162,7 @@ class Footer extends React.PureComponent {
                             variant={'inverted'}
                             onClick={this.onPlusClick}
                             onHold={this.onPlusHold}
-                            disabled={!command}
+                            disabled={!isValid}
                         />
                         {focusedDate && (
                             <Button
@@ -179,8 +183,9 @@ class Footer extends React.PureComponent {
         if (prevProps.focusedDate !== focusedDate) {
             if (focusedDate) {
                 gsap.fromTo(this.focusedRef.current, {opacity: 1}, {opacity: 0, delay: 0.5});
+                const focusedRow = this.props.history.find((item) => item.date === focusedDate);
                 this.setState({
-                    command: buildCommand(this.props.focusedRow),
+                    command: buildCommand(focusedRow),
                 });
             } else {
                 defocus();
@@ -222,17 +227,17 @@ class Footer extends React.PureComponent {
     /**
      *
      */
-    create = () => {
+    create = async () => {
         const {focusedDate} = this.props;
         const {command} = this.state;
         console.log('create:', command);
+        this.setState({command: ''});
         if (focusedDate) {
             // TODO
             clearFocusedDate();
         } else {
-            // TODO
+            await appendRow(command);
         }
-        this.setState({command: ''});
     };
 
     /**
@@ -294,6 +299,17 @@ class Footer extends React.PureComponent {
         this.digestion = parseCommand({command, defaults, meta}); // harmless side-effect
         return this.digestion;
     });
+
+    /**
+     *
+     */
+    memoIsValid = memoize((command, digestion, history) => {
+        if (!command || !validateSelectors(digestion)) {
+            return false;
+        }
+        const {accountsBag} = memoHistoryComputation(history);
+        return digestion.from in accountsBag || digestion.to in accountsBag;
+    });
 }
 
 // =====================================================================================================================
@@ -313,21 +329,15 @@ const prettifyDate = (date) => {
 Footer.propTypes = {
     // -------------------------------- redux:
     focusedDate: PropTypes.string,
-    focusedRow: PropTypes.object,
+    history: PropTypes.array,
     defaults: PropTypes.object.isRequired,
     meta: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => {
-    const focusedDate = selectFocusedDate(state);
-    let focusedRow;
-    if (focusedDate) {
-        const history = selectHistory(state);
-        focusedRow = history.find((item) => item.date === focusedDate);
-    }
     return {
-        focusedDate,
-        focusedRow,
+        focusedDate: selectFocusedDate(state),
+        history: selectHistory(state),
         defaults: selectDefaults(state),
         meta: selectMeta(state),
     };

@@ -37,7 +37,7 @@ class Totals extends React.PureComponent {
                     return (
                         <div key={name} css={SX.account}>
                             {embellishLabel(name, '', meta)}
-                            <div css={SX.accountTotal}>{formatNumber(accountsBag[name])}</div>
+                            <div css={SX.accountTotal}>{formatNumber(accountsBag[name].total)}</div>
                         </div>
                     );
                 })}

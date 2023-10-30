@@ -11,10 +11,12 @@ const memoHistoryComputation = memoize((history) => {
     const valuesBag = {};
     const productsBag = {};
     for (const row of history) {
-        accountsBag[row.from] = accountsBag[row.from] || 0;
-        accountsBag[row.from] -= row.value;
-        accountsBag[row.to] = accountsBag[row.to] || 0;
-        accountsBag[row.to] += row.value;
+        registerAccount(row.from, row, accountsBag);
+        accountsBag[row.from].total -= row.value;
+
+        registerAccount(row.to, row, accountsBag);
+        accountsBag[row.to].total += row.value;
+
         valuesBag[row.value] = true;
         productsBag[row.product] = true;
     }
@@ -34,7 +36,23 @@ const memoHistoryComputation = memoize((history) => {
 // =====================================================================================================================
 //  P R I V A T E
 // =====================================================================================================================
-
+/**
+ *
+ */
+const registerAccount = (name, {date, spreadsheetId}, accountsBag) => {
+    const account = accountsBag[name];
+    if (!account) {
+        accountsBag[name] = {
+            total: 0,
+            date,
+            spreadsheetId,
+        };
+    } else {
+        if (date < account.date) {
+            account.date = date;
+        }
+    }
+};
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
