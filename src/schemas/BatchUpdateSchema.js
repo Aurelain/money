@@ -1,29 +1,33 @@
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
-const UpdateSpreadsheetSchema = {
-    $id: 'UpdateSpreadsheetSchema',
+const BatchUpdateSchema = {
+    $id: 'BatchUpdateSchema',
     type: 'object',
     properties: {
-        updatedRows: {
-            type: 'number',
-            minimum: 1,
+        replies: {
+            type: 'array',
+            minItems: 1,
+            items: {
+                type: 'object',
+                additionalProperties: false,
+            },
         },
     },
-    required: ['updatedRows'],
+    required: ['replies'],
 };
 
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
-export default UpdateSpreadsheetSchema;
+export default BatchUpdateSchema;
 
 /*
 {
-    "spreadsheetId": "10fOxSoaprzG0SC69XqKn1xcoQYiSpZhjFpBcIlqGBDg",
-    "updatedRange": "Sheet1!A6:E6",
-    "updatedRows": 1,
-    "updatedColumns": 5,
-    "updatedCells": 5
+    "spreadsheetId": "1c_VIhcRrYVOsMFHT9hi6HNXR5mZ7FILNjknEGLS2Zeo",
+    "replies": [
+        {},
+        {}
+    ]
 }
 */

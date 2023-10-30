@@ -1,13 +1,9 @@
-import requestApi from '../../system/requestApi.js';
 import checkOffline from '../../system/checkOffline.js';
-import localizeTime from '../../utils/localizeTime.js';
-import APPEND_SPREADSHEET_MOCK from '../../mocks/APPEND_SPREADSHEET_MOCK.js';
-import AppendSpreadsheetSchema from '../../schemas/AppendSpreadsheetSchema.js';
 import {getState, setState} from '../store.js';
-import {selectDefaults, selectHistory, selectMeta} from '../selectors.js';
-import parseCommand from '../../system/parseCommand.js';
-import memoHistoryComputation from '../../system/memoHistoryComputation.js';
+import {selectHistory} from '../selectors.js';
 import buildRowPayload from '../../system/buildRowPayload.js';
+import assume from '../../utils/assume.js';
+import updateRangeInSpreadsheet from '../../system/updateRangeInSpreadsheet.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -16,16 +12,21 @@ import buildRowPayload from '../../system/buildRowPayload.js';
  *
  */
 const updateRow = async (focusedDate, command) => {
+    const state = getState();
+    const history = selectHistory(state);
+    const historyIndex = history.findIndex((item) => item.date === focusedDate);
+    const existingRow = history[historyIndex];
+
     const {spreadsheetId, row} = buildRowPayload(command);
-    /*
+    assume(spreadsheetId === existingRow.spreadsheetId, 'The edit is too radical! Consider deletion instead.');
+
+    const [from, value, to, product] = row;
     setState((state) => {
-        state.history.push({
-            spreadsheetId,
+        Object.assign(state.history[historyIndex], {
             from,
             value,
             to,
             product,
-            date,
         });
     });
 
@@ -33,9 +34,12 @@ const updateRow = async (focusedDate, command) => {
         return;
     }
 
-    const response = await requestAppend(spreadsheetId, row);
-    console.log('response:', response);
-    */
+    // Overwrite date:
+    row[row.length - 1] = existingRow.date;
+
+    const rowNumber = existingRow.index + 1;
+    const range = `Sheet1!A${rowNumber}:E${rowNumber}`;
+    await updateRangeInSpreadsheet(spreadsheetId, range, [row]);
 };
 
 // =====================================================================================================================

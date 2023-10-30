@@ -1,4 +1,6 @@
 import requestApi from './requestApi.js';
+import UpdateSpreadsheetSchema from '../schemas/UpdateSpreadsheetSchema.js';
+import UPDATE_SPREADSHEET_MOCK from '../mocks/UPDATE_SPREADSHEET_MOCK.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -18,8 +20,8 @@ const updateRangeInSpreadsheet = async (spreadsheetId, range, values) => {
             majorDimension: 'ROWS',
             values,
         },
-        // schema: AppendSpreadsheetSchema,
-        // mock: APPEND_SPREADSHEET_MOCK,
+        schema: UpdateSpreadsheetSchema,
+        mock: UPDATE_SPREADSHEET_MOCK,
     });
 };
 

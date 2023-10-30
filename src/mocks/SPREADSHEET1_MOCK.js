@@ -59,6 +59,9 @@ const SPREADSHEET1_MOCK = {
     },
     sheets: [
         {
+            properties: {
+                sheetId: 0,
+            },
             data: [
                 {
                     rowData: DATA.map((row) => ({

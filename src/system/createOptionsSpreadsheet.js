@@ -5,8 +5,8 @@ import NEW_SPREADSHEET_MOCK from '../mocks/NEW_SPREADSHEET_MOCK.js';
 import {VAULT_OPTIONS} from '../SETTINGS.js';
 import healJson from '../utils/healJson.js';
 import OptionsSchema from '../schemas/OptionsSchema.js';
-import UpdateSpreadsheetSchema from '../schemas/UpdateSpreadsheetSchema.js';
-import UPDATE_SPREADSHEET_MOCK from '../mocks/UPDATE_SPREADSHEET_MOCK.js';
+import BatchUpdateSchema from '../schemas/BatchUpdateSchema.js';
+import BATCH_UPDATE_MOCK from '../mocks/BATCH_UPDATE_MOCK.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -78,8 +78,8 @@ const updateSpreadsheet = async (spreadsheetId, options) => {
                 },
             ],
         },
-        schema: UpdateSpreadsheetSchema,
-        mock: UPDATE_SPREADSHEET_MOCK,
+        schema: BatchUpdateSchema,
+        mock: BATCH_UPDATE_MOCK,
     });
 };
 

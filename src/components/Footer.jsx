@@ -29,6 +29,8 @@ import validateSelectors from '../system/validateSelectors.js';
 import appendRow from '../state/actions/appendRow.js';
 import memoHistoryComputation from '../system/memoHistoryComputation.js';
 import deleteRow from '../state/actions/deleteRow.js';
+import updateRow from '../state/actions/updateRow.js';
+import Check from '../ui/Icons/Check.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -96,7 +98,7 @@ const SX = {
     date: {
         position: 'absolute',
         top: 10,
-        right: 96,
+        right: 84,
         padding: 6,
         background: 'red',
         color: 'white',
@@ -157,12 +159,10 @@ class Footer extends React.PureComponent {
                             onKeyDown={this.onInputKeyDown}
                         />
                         <Button
-                            icon={Plus}
-                            holdIcon={TrashCan}
+                            icon={focusedDate ? Check : Plus}
                             cssNormal={SX.plus}
                             variant={'inverted'}
                             onClick={this.onPlusClick}
-                            onHold={this.onPlusHold}
                             disabled={!isValid}
                         />
                         {focusedDate && (
@@ -183,6 +183,7 @@ class Footer extends React.PureComponent {
         const {focusedDate} = this.props;
         if (prevProps.focusedDate !== focusedDate) {
             if (focusedDate) {
+                gsap.killTweensOf(this.focusedRef.current);
                 gsap.fromTo(this.focusedRef.current, {opacity: 1}, {opacity: 0, delay: 0.5});
                 const focusedRow = this.props.history.find((item) => item.date === focusedDate);
                 this.setState({
@@ -228,11 +229,10 @@ class Footer extends React.PureComponent {
     create = async () => {
         const {focusedDate} = this.props;
         const {command} = this.state;
-        console.log('create:', command);
         this.setState({command: ''});
         if (focusedDate) {
-            // TODO
             clearFocusedDate();
+            await updateRow(focusedDate, command);
         } else {
             await appendRow(command);
         }
