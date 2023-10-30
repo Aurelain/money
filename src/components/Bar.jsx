@@ -15,6 +15,7 @@ import DotsCircle from '../ui/Animations/DotsCircle.jsx';
 import requestHistory from '../state/actions/requestHistory.js';
 import Database from '../ui/Icons/Database.jsx';
 import Totals from './Totals.jsx';
+import formatNumber from '../system/formatNumber.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -41,6 +42,9 @@ const SX = {
         flexGrow: 1,
         fontSize: 24,
     },
+    formulas: {
+        flexGrow: 1,
+    },
     listItem: {
         overflow: 'hidden',
         whiteSpace: 'nowrap',
@@ -66,8 +70,13 @@ class Bar extends React.PureComponent {
         const reloadIcon = isLoading ? DotsCircle : Reload;
         return (
             <div css={SX.root}>
-                <Button icon={Menu} cssNormal={SX.btn} onClick={this.onMenuClick} variant={'inverted'} />
-                <Button label={'2 500'} cssNormal={SX.btnGrow} onClick={this.onMenuClick} variant={'inverted'} />
+                <Button
+                    icon={Menu}
+                    label={this.memoMenuLabel()}
+                    cssNormal={SX.btnGrow}
+                    onClick={this.onMenuClick}
+                    variant={'inverted'}
+                />
                 <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
                 <SideMenu
                     isOpen={isMenuOpen}
@@ -153,6 +162,13 @@ class Bar extends React.PureComponent {
     onFetchChange = (isLoading) => {
         this.setState({isLoading});
     };
+
+    /**
+     *
+     */
+    memoMenuLabel = memoize(() => {
+        return <div css={SX.formulas}>{formatNumber(2500)}</div>;
+    });
 
     /**
      *

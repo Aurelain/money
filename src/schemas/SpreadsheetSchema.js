@@ -22,6 +22,15 @@ const SpreadsheetSchema = {
             items: {
                 type: 'object',
                 properties: {
+                    properties: {
+                        type: 'object',
+                        properties: {
+                            sheetId: {
+                                type: 'number',
+                            },
+                        },
+                        required: ['sheetId'],
+                    },
                     data: {
                         type: 'array',
                         minItems: 1,
@@ -56,7 +65,7 @@ const SpreadsheetSchema = {
                         },
                     },
                 },
-                required: ['data'],
+                required: ['properties', 'data'],
             },
         },
     },

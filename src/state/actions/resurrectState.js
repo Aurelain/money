@@ -35,6 +35,7 @@ const resurrectState = async () => {
             state[key] = stored[key];
         }
         state.volatile.isAuthenticated = Boolean(selectAccessToken(state)); // ugly :(
+        // state.volatile.focusedDate = '2023-10-30T12:36:20+02:00';
     });
 };
 

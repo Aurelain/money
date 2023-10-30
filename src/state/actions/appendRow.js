@@ -27,10 +27,6 @@ const appendRow = async (command) => {
     const date = localizeTime(new Date());
     const row = [from, value, to, product, date];
 
-    if (checkOffline()) {
-        return;
-    }
-
     setState((state) => {
         state.history.push({
             spreadsheetId,
@@ -41,6 +37,10 @@ const appendRow = async (command) => {
             date,
         });
     });
+
+    if (checkOffline()) {
+        return;
+    }
 
     const response = await requestAppend(spreadsheetId, row);
     console.log('response:', response);

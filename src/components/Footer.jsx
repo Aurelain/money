@@ -28,6 +28,7 @@ import buildCommand from '../system/buildCommand.js';
 import validateSelectors from '../system/validateSelectors.js';
 import appendRow from '../state/actions/appendRow.js';
 import memoHistoryComputation from '../system/memoHistoryComputation.js';
+import deleteRow from '../state/actions/deleteRow.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -282,7 +283,8 @@ class Footer extends React.PureComponent {
      *
      */
     onTrashClick = () => {
-        console.log('onTrashClick');
+        const {focusedDate} = this.props;
+        deleteRow(focusedDate);
     };
 
     /**
