@@ -15,7 +15,7 @@ const deleteRow = async (date) => {
     const state = getState();
     const history = selectHistory(state);
     const historyIndex = history.findIndex((item) => item.date === date);
-    const {spreadsheetId, sheetId, index} = history[historyIndex];
+    const {spreadsheetId, index} = history[historyIndex];
 
     setState((state) => {
         state.volatile.focusedDate = '';
@@ -25,7 +25,7 @@ const deleteRow = async (date) => {
     if (checkOffline()) {
         return;
     }
-    await requestDeletion(spreadsheetId, sheetId, index);
+    await requestDeletion(spreadsheetId, index);
 };
 
 // =====================================================================================================================
@@ -34,14 +34,14 @@ const deleteRow = async (date) => {
 /**
  *
  */
-const requestDeletion = async (spreadsheetId, sheetId, index) => {
+const requestDeletion = async (spreadsheetId, index) => {
     return await requestApi(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}:batchUpdate`, {
         body: {
             requests: [
                 {
                     deleteDimension: {
                         range: {
-                            sheetId,
+                            // sheetId, // this seems to be optional
                             dimension: 'ROWS',
                             startIndex: index,
                             endIndex: index + 1,

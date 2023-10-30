@@ -164,7 +164,6 @@ const validateSpreadsheet = (spreadsheet, spreadsheetId, historyByDate) => {
     const {sheets, properties} = spreadsheet;
     const {title} = properties;
     const [sheet] = sheets;
-    const {sheetId} = sheet.properties;
     const {rowData} = sheet.data[0];
     const {length} = rowData;
 
@@ -186,7 +185,6 @@ const validateSpreadsheet = (spreadsheet, spreadsheetId, historyByDate) => {
 
         const item = {
             spreadsheetId,
-            sheetId,
             index: i,
             from,
             value,

@@ -42,9 +42,6 @@ export default {
                     spreadsheetId: {
                         type: 'string',
                     },
-                    sheetId: {
-                        type: 'number',
-                    },
                     index: {
                         type: 'number',
                     },

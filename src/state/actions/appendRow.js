@@ -1,12 +1,9 @@
 import requestApi from '../../system/requestApi.js';
 import checkOffline from '../../system/checkOffline.js';
-import localizeTime from '../../utils/localizeTime.js';
 import APPEND_SPREADSHEET_MOCK from '../../mocks/APPEND_SPREADSHEET_MOCK.js';
 import AppendSpreadsheetSchema from '../../schemas/AppendSpreadsheetSchema.js';
-import {getState, setState} from '../store.js';
-import {selectDefaults, selectHistory, selectMeta} from '../selectors.js';
-import parseCommand from '../../system/parseCommand.js';
-import memoHistoryComputation from '../../system/memoHistoryComputation.js';
+import {setState} from '../store.js';
+import buildRowPayload from '../../system/buildRowPayload.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -15,21 +12,16 @@ import memoHistoryComputation from '../../system/memoHistoryComputation.js';
  *
  */
 const appendRow = async (command) => {
-    const state = getState();
-    const defaults = selectDefaults(state);
-    const meta = selectMeta(state);
-    const digestion = parseCommand({command, defaults, meta});
-    const history = selectHistory(state);
-    const {accountsBag} = memoHistoryComputation(history);
-    const spreadsheetId = getHostSpreadsheetId(digestion, accountsBag);
-    const {from, to, product} = digestion;
-    let value = Number(digestion.value);
-    const date = localizeTime(new Date());
-    const row = [from, value, to, product, date];
+    const rowPayload = buildRowPayload(command);
+    const {spreadsheetId, row} = rowPayload;
+    const [from, value, to, product, date] = row;
 
+    let historyIndex;
     setState((state) => {
+        historyIndex = state.history.length;
         state.history.push({
             spreadsheetId,
+            index: 0, // to be updated
             from,
             value,
             to,
@@ -43,14 +35,18 @@ const appendRow = async (command) => {
     }
 
     const response = await requestAppend(spreadsheetId, row);
-    console.log('response:', response);
+    const {updatedRange} = response.updates;
+    const rowIndex = Number(updatedRange.match(/!A(\d+)/)[1]) - 1;
+    setState((state) => {
+        state.history[historyIndex].index = rowIndex;
+    });
 };
 
 // =====================================================================================================================
 //  P R I V A T E
 // =====================================================================================================================
 /**
- *
+ * https://developers.google.com/sheets/api/samples/writing#append-values
  */
 const requestAppend = async (spreadsheetId, row) => {
     return await requestApi(
@@ -68,25 +64,6 @@ const requestAppend = async (spreadsheetId, row) => {
             mock: APPEND_SPREADSHEET_MOCK,
         },
     );
-};
-
-/**
- *
- */
-const getHostSpreadsheetId = ({from, to}, accountsBag) => {
-    let winner;
-    const fromAccountDate = accountsBag[from]?.date;
-    if (!fromAccountDate) {
-        winner = to;
-    } else {
-        const toAccountDate = accountsBag[to]?.date;
-        if (!toAccountDate) {
-            winner = from;
-        } else {
-            winner = fromAccountDate <= toAccountDate ? from : to;
-        }
-    }
-    return accountsBag[winner].spreadsheetId;
 };
 
 // =====================================================================================================================

@@ -56,8 +56,9 @@ class Row extends React.PureComponent {
                     </>
                 }
                 variant={'simple'}
-                onClick={this.onRootClick}
-                onHold={this.onRootHold}
+                // onClick={this.onRootClick}
+                // onHold={this.onRootHold}
+                onClick={this.onRootHold}
             />
         );
     }
