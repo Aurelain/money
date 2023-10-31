@@ -25,6 +25,8 @@ export const FIELD_VALUE = 'value';
 export const FIELD_TO = 'to';
 export const FIELD_PRODUCT = 'product';
 
+export const CREDIT_KEYWORD = 'Credit';
+
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?
 // prettier-ignore
 // eslint-disable-next-line max-len

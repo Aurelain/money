@@ -4,6 +4,7 @@ import memoize from 'memoize-one';
 import {createPortal} from 'react-dom';
 import Button from './Button.jsx';
 import List from './List.jsx';
+import getScrollBarWidth from '../utils/getScrollBarWidth.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -120,7 +121,7 @@ class Select extends React.PureComponent {
         const list = this.listRef.current;
         const buttonBounds = this.buttonRef.current.getBoundingClientRect();
         const listBounds = list.getBoundingClientRect();
-        const windowWidth = window.innerWidth - 20;
+        const windowWidth = window.innerWidth - getScrollBarWidth();
 
         let left = buttonBounds.left;
         if (left + listBounds.width > windowWidth) {

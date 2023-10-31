@@ -11,12 +11,14 @@ import assume from '../utils/assume.js';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
 import requestHistory from '../state/actions/requestHistory.js';
-import Database from '../ui/Icons/Database.jsx';
 import Totals from './Totals.jsx';
 import {selectFormulas, selectHistory} from '../state/selectors.js';
 import Sigma from '../ui/Icons/Sigma.jsx';
 import configureFormula from '../state/actions/configureFormula.js';
 import memoFormulaResults from '../system/memoFormulaResults.js';
+import RefreshCircle from '../ui/Icons/RefreshCircle.jsx';
+import Bank from '../ui/Icons/Bank.jsx';
+import showDebts from '../state/actions/showDebts.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -51,10 +53,12 @@ const SX = {
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
+        padding: 8,
     },
 };
 
 const MENU_ADD_FORMULA = 'MENU_ADD_FORMULA';
+const MENU_DEBTS = 'MENU_DEBTS';
 const MENU_FORCE_VAULTS = 'MENU_FORCE_VAULTS';
 const MENU_LOG_OUT = 'MENU_LOG_OUT';
 const LIST = [
@@ -64,9 +68,14 @@ const LIST = [
         label: 'Add formula',
     },
     {
+        name: MENU_DEBTS,
+        icon: Bank,
+        label: 'Show debts',
+    },
+    {
         name: MENU_FORCE_VAULTS,
-        icon: Database,
-        label: 'Recheck vaults',
+        icon: RefreshCircle,
+        label: 'Refresh vaults',
     },
     // {
     //     name: MENU_SHOW_CONSOLE,
@@ -155,6 +164,9 @@ class Bar extends React.PureComponent {
         switch (name) {
             case MENU_ADD_FORMULA:
                 await configureFormula();
+                break;
+            case MENU_DEBTS:
+                showDebts();
                 break;
             case MENU_FORCE_VAULTS:
                 await requestHistory(true);

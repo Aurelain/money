@@ -23,12 +23,18 @@ const SX = {
     btnNormal: {
         padding: 4,
         justifyContent: 'start',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
     },
     btnSelected: {
         background: '#1976d2',
         padding: 4,
         color: '#fff',
         justifyContent: 'start',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
     },
     btnSelectedHover: {
         color: 'yellow',
@@ -89,27 +95,31 @@ class CustomList extends React.PureComponent {
      */
     scrollToSelected = () => {
         const {selectedValue, items, innerRef} = this.props;
-        let winner = -1;
+        let winnerIndex = -1;
         let maxSimilarity = -1;
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
             const similarity = countSimilarStartingLetters(selectedValue, item);
             if (similarity > maxSimilarity) {
                 maxSimilarity = similarity;
-                winner = i;
+                winnerIndex = i;
             }
         }
-        if (winner < 0) {
+        if (winnerIndex < 0) {
             return;
         }
         const root = innerRef.current;
         const elements = root.childNodes;
-        const {offsetTop} = elements[winner];
-        const idealScrollTop = offsetTop - root.offsetHeight / 2;
-        const boundaryTop = root.scrollTop;
-        const boundaryBottom = boundaryTop + root.offsetHeight;
-        if (idealScrollTop < top || idealScrollTop > boundaryBottom) {
-            root.scrollTop = idealScrollTop;
+        const winner = elements[winnerIndex];
+        const {offsetTop, offsetHeight} = winner;
+        let futureScrollTop = -1;
+        if (offsetTop < root.scrollTop) {
+            futureScrollTop = offsetTop;
+        } else if (offsetTop + offsetHeight > root.scrollTop + root.offsetHeight) {
+            futureScrollTop = root.scrollTop + root.offsetHeight - offsetHeight;
+        }
+        if (futureScrollTop >= 0) {
+            root.scrollTop = futureScrollTop;
         }
     };
 }

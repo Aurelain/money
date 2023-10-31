@@ -241,8 +241,16 @@ class Footer extends React.PureComponent {
      */
     onInputKeyDown = (event) => {
         if (event.key === 'Enter') {
-            this.create();
-            defocus();
+            event.preventDefault();
+            const {history} = this.props;
+            const {command} = this.state;
+            const isValid = this.memoIsValid(command, this.digestion, history);
+            if (isValid) {
+                this.create();
+                defocus();
+            }
+        } else if (event.key === 'Escape') {
+            this.exit();
         }
     };
 
@@ -278,10 +286,13 @@ class Footer extends React.PureComponent {
     create = () => {
         const {focusedDate} = this.props;
         const {command} = this.state;
-        this.exit();
         if (focusedDate) {
             updateRow(focusedDate, command);
+            this.exit();
         } else {
+            this.setState({
+                command: '',
+            });
             appendRow(command);
         }
     };

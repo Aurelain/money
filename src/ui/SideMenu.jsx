@@ -44,7 +44,7 @@ const SX = {
         transform: 'translateX(0)',
     },
     title: {
-        padding: 24,
+        padding: 8,
         borderBottom: 'solid 1px rgba(0,0,0,0.1)',
         fontSize: '2em',
     },

@@ -16,6 +16,7 @@ const SX = {
         backgroundColor: SECONDARY_COLOR,
         minHeight: 'auto',
         lineHeight: 1,
+        fontWeight: 'bold',
     },
     buttonHover: {
         background: '#ffffbc',
