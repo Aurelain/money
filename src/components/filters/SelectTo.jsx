@@ -12,7 +12,7 @@ import {FIELD_TO} from '../../SETTINGS.js';
 // =====================================================================================================================
 class SelectTo extends React.PureComponent {
     render() {
-        const {onSelect, onHold, onItemHold, isFilter, history, label = 'To', preferred} = this.props;
+        const {onSelect, onHold, onItemHold, isFilter, history, label = 'To', preferred, forcedOpen} = this.props;
         const {accounts} = memoHistoryComputation(history);
         return (
             <SelectWrapper
@@ -25,6 +25,7 @@ class SelectTo extends React.PureComponent {
                 icon={AccountPlus}
                 listItems={accounts}
                 data={FIELD_TO}
+                forcedOpen={forcedOpen}
             />
         );
     }
@@ -40,6 +41,7 @@ SelectTo.propTypes = {
     onHold: PropTypes.func,
     onItemHold: PropTypes.func,
     label: PropTypes.string,
+    forcedOpen: PropTypes.bool,
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,
     preferred: PropTypes.string.isRequired,

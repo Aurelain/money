@@ -12,7 +12,7 @@ import {FIELD_PRODUCT} from '../../SETTINGS.js';
 // =====================================================================================================================
 class SelectProduct extends React.PureComponent {
     render() {
-        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Product', preferred} = this.props;
+        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Product', preferred, forcedOpen} = this.props;
         const {products} = memoHistoryComputation(history);
         return (
             <SelectWrapper
@@ -25,6 +25,7 @@ class SelectProduct extends React.PureComponent {
                 icon={Gift}
                 listItems={products}
                 data={FIELD_PRODUCT}
+                forcedOpen={forcedOpen}
             />
         );
     }
@@ -40,6 +41,7 @@ SelectProduct.propTypes = {
     onHold: PropTypes.func,
     onItemHold: PropTypes.func,
     label: PropTypes.string,
+    forcedOpen: PropTypes.bool,
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,
     preferred: PropTypes.string.isRequired,

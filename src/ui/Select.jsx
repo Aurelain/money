@@ -18,6 +18,10 @@ const SX = {
         inset: 0,
         zIndex: 999999,
         touchAction: 'none', // to prevent scrolling on mobile
+        pointerEvents: 'none',
+        '&>*': {
+            pointerEvents: 'auto',
+        },
     },
     fog: {
         position: 'absolute',
@@ -35,14 +39,14 @@ const SX = {
 //  C O M P O N E N T
 // =====================================================================================================================
 class Select extends React.PureComponent {
+    buttonRef = React.createRef();
+    listRef = React.createRef();
     state = {
         isOpen: false,
     };
-    buttonRef = React.createRef();
-    listRef = React.createRef();
 
     render() {
-        const {button, list, listProps, forcedOpen, data, ...other} = this.props;
+        const {button, list, listProps, forcedOpen, data, tenacious, ...other} = this.props;
         const {isOpen} = this.state;
         const ButtonClass = typeof button === 'function' ? button : Button;
         const ListClass = typeof list === 'function' ? list : List;
@@ -54,7 +58,7 @@ class Select extends React.PureComponent {
                 {(isOpen || forcedOpen) &&
                     createPortal(
                         <div css={SX.overlay}>
-                            <div css={SX.fog} onClick={this.onFogClick} />
+                            {!tenacious && <div css={SX.fog} onClick={this.onFogClick} />}
                             <ListClass
                                 {...finalListProps}
                                 onSelect={this.onListSelect}
@@ -75,7 +79,7 @@ class Select extends React.PureComponent {
     }
 
     componentDidUpdate() {
-        if (this.state.isOpen) {
+        if (this.state.isOpen || this.props.forcedOpen) {
             this.refreshListPosition();
         }
     }
@@ -102,8 +106,11 @@ class Select extends React.PureComponent {
      *
      */
     onListSelect = (payload) => {
-        this.setState({isOpen: false});
-        this.props.onSelect(payload);
+        const {tenacious, onSelect} = this.props;
+        if (!tenacious) {
+            this.setState({isOpen: false});
+        }
+        onSelect(payload);
     };
 
     /**
@@ -155,6 +162,7 @@ Select.propTypes = {
     onOpen: PropTypes.func,
     onSelect: PropTypes.func,
     forcedOpen: PropTypes.bool,
+    tenacious: PropTypes.bool,
     data: PropTypes.any,
 };
 

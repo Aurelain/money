@@ -30,6 +30,16 @@ const SX = {
         color: '#fff',
         justifyContent: 'start',
     },
+    btnSelectedHover: {
+        color: 'yellow',
+        background: '#1976d2',
+        filter: 'brightness(1.20)',
+    },
+    btnSelectedActive: {
+        color: 'brown',
+        background: '#1976d2',
+        filter: 'brightness(0.8)',
+    },
 };
 
 // =====================================================================================================================
@@ -51,6 +61,8 @@ class CustomList extends React.PureComponent {
                             onClick={onSelect}
                             onHold={onHold}
                             cssNormal={isSelected ? SX.btnSelected : SX.btnNormal}
+                            cssHover={isSelected ? SX.btnSelectedHover : undefined}
+                            cssActive={isSelected ? SX.btnSelectedActive : undefined}
                             data={data}
                         />
                     );
@@ -76,10 +88,47 @@ class CustomList extends React.PureComponent {
      *
      */
     scrollToSelected = () => {
-        console.log('scrollToSelected:');
+        const {selectedValue, items, innerRef} = this.props;
+        let winner = -1;
+        let maxSimilarity = -1;
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const similarity = countSimilarStartingLetters(selectedValue, item);
+            if (similarity > maxSimilarity) {
+                maxSimilarity = similarity;
+                winner = i;
+            }
+        }
+        if (winner < 0) {
+            return;
+        }
+        const root = innerRef.current;
+        const elements = root.childNodes;
+        const {offsetTop} = elements[winner];
+        const idealScrollTop = offsetTop - root.offsetHeight / 2;
+        const boundaryTop = root.scrollTop;
+        const boundaryBottom = boundaryTop + root.offsetHeight;
+        if (idealScrollTop < top || idealScrollTop > boundaryBottom) {
+            root.scrollTop = idealScrollTop;
+        }
     };
 }
 
+// =====================================================================================================================
+//  H E L P E R S
+// =====================================================================================================================
+/**
+ *
+ */
+const countSimilarStartingLetters = (primary, secondary) => {
+    const length = Math.min(primary.length, secondary.length);
+    for (let i = 0; i < length; i++) {
+        if (primary.charAt(i) !== secondary.charAt(i)) {
+            return i;
+        }
+    }
+    return length;
+};
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================

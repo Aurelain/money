@@ -12,7 +12,7 @@ import {FIELD_VALUE} from '../../SETTINGS.js';
 // =====================================================================================================================
 class SelectValue extends React.PureComponent {
     render() {
-        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Money', preferred} = this.props;
+        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Money', preferred, forcedOpen} = this.props;
         const {values} = memoHistoryComputation(history);
         return (
             <SelectWrapper
@@ -25,6 +25,7 @@ class SelectValue extends React.PureComponent {
                 icon={Cash}
                 listItems={values}
                 data={FIELD_VALUE}
+                forcedOpen={forcedOpen}
             />
         );
     }
@@ -40,6 +41,7 @@ SelectValue.propTypes = {
     onHold: PropTypes.func,
     onItemHold: PropTypes.func,
     label: PropTypes.string,
+    forcedOpen: PropTypes.bool,
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,
     preferred: PropTypes.string.isRequired,

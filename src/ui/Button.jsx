@@ -116,6 +116,8 @@ class Button extends React.PureComponent {
             innerRef,
             ...otherProps
         } = this.props;
+        delete otherProps.name;
+        delete otherProps.data;
         delete otherProps.onHold;
         delete otherProps.onHoldStart;
         delete otherProps.onHoldCancel;

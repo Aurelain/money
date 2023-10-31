@@ -115,14 +115,17 @@ const SX = {
 class Footer extends React.PureComponent {
     memoCommandLineCss = memo();
     focusedRef = React.createRef();
+    textareaRef = React.createRef();
     digestion; // filled by `memoDigestion`, contains `{from, value, to, product}`
+    isFocusLockedInstant = false;
     state = {
+        isFocusLocked: false,
         command: '',
     };
 
     render() {
         const {focusedDate, defaults, meta, history} = this.props;
-        const {command} = this.state;
+        const {command, isFocusLocked} = this.state;
         const {from, value, to, product} = this.memoDigestion(command, defaults, meta);
         const isValid = this.memoIsValid(command, this.digestion, history);
         return (
@@ -133,24 +136,28 @@ class Footer extends React.PureComponent {
                         onHold={this.onSelectorHold}
                         onItemHold={this.onSelectorItemHold}
                         label={from}
+                        forcedOpen={isFocusLocked}
                     />
                     <SelectValue
                         onSelect={this.onSelectorSelect}
                         onHold={this.onSelectorHold}
                         onItemHold={this.onSelectorItemHold}
                         label={value}
+                        forcedOpen={isFocusLocked}
                     />
                     <SelectTo
                         onSelect={this.onSelectorSelect}
                         onHold={this.onSelectorHold}
                         onItemHold={this.onSelectorItemHold}
                         label={to}
+                        forcedOpen={isFocusLocked}
                     />
                     <SelectProduct
                         onSelect={this.onSelectorSelect}
                         onHold={this.onSelectorHold}
                         onItemHold={this.onSelectorItemHold}
                         label={product}
+                        forcedOpen={isFocusLocked}
                     />
                     <div css={this.memoCommandLineCss(SX.commandLine, focusedDate && SX.focused)}>
                         {focusedDate && (
@@ -173,12 +180,15 @@ class Footer extends React.PureComponent {
                         - https://gist.github.com/niksumeiko/360164708c3b326bd1c8
                         */}
                         <textarea
+                            ref={this.textareaRef}
                             autoComplete={'off'}
                             css={SX.field}
                             spellCheck={false}
                             value={command}
                             onChange={this.onInputChange}
                             onKeyDown={this.onInputKeyDown}
+                            onFocus={this.onInputFocus}
+                            onBlur={this.onInputBlur}
                         />
                         <Button
                             icon={focusedDate ? Check : Plus}
@@ -187,14 +197,12 @@ class Footer extends React.PureComponent {
                             onClick={this.onPlusClick}
                             disabled={!isValid}
                         />
-                        {focusedDate && (
-                            <Button
-                                icon={Close}
-                                cssNormal={SX.focusedButton}
-                                variant={'inverted'}
-                                onClick={this.onCloseClick}
-                            />
-                        )}
+                        <Button
+                            icon={Close}
+                            cssNormal={SX.focusedButton}
+                            variant={'inverted'}
+                            onClick={this.onCloseClick}
+                        />
                     </div>
                 </div>
             </div>
@@ -241,6 +249,25 @@ class Footer extends React.PureComponent {
     /**
      *
      */
+    onInputFocus = () => {
+        this.isFocusLockedInstant = true;
+        this.setState({
+            isFocusLocked: true,
+        });
+    };
+
+    /**
+     *
+     */
+    onInputBlur = () => {
+        if (this.isFocusLockedInstant) {
+            this.textareaRef.current.focus();
+        }
+    };
+
+    /**
+     *
+     */
     onPlusClick = () => {
         this.create();
     };
@@ -251,9 +278,8 @@ class Footer extends React.PureComponent {
     create = () => {
         const {focusedDate} = this.props;
         const {command} = this.state;
-        this.setState({command: ''});
+        this.exit();
         if (focusedDate) {
-            clearFocusedDate();
             updateRow(focusedDate, command);
         } else {
             appendRow(command);
@@ -297,7 +323,20 @@ class Footer extends React.PureComponent {
      *
      */
     onCloseClick = () => {
+        this.exit();
+    };
+
+    /**
+     *
+     */
+    exit = () => {
+        this.isFocusLockedInstant = false;
         clearFocusedDate();
+        this.setState({
+            isFocusLocked: false,
+            command: '',
+        });
+        defocus();
     };
 
     /**
