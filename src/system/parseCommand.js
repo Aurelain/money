@@ -7,15 +7,19 @@
 const parseCommand = ({command, defaults, meta}) => {
     let {from, value, to, product} = defaults;
 
+    command = command.replace(/\s+/g, ' ');
+    command = ' ' + command + ' '; // pad with space to help with matches. Avoid `\b` because of diacritics.
+
     for (const keyword in meta) {
         const {alias} = meta[keyword];
-        const re = new RegExp('\\b' + alias + '\\b', 'gi');
-        command = command.replace(re, keyword);
+        if (alias) {
+            const re = new RegExp(' ' + alias + ' ', 'gi');
+            command = command.replace(re, keyword);
+        }
     }
 
-    command = command.replace(/\s+/g, ' ');
+    command = command.replace(/ \S/g, (found) => found.toLocaleUpperCase());
     command = command.trim();
-    command = command.replace(/\b\w/g, (found) => found.toLocaleUpperCase());
 
     const parts = command.split(' ');
     if (parts[0].match(/^\d+$/)) {

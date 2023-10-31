@@ -129,7 +129,7 @@ class Select extends React.PureComponent {
         }
 
         let top = buttonBounds.top + buttonBounds.height;
-        if (top + listBounds.height > window.innerHeight) {
+        if (top + listBounds.height > window.innerHeight - 30) {
             top = buttonBounds.top - listBounds.height;
         }
 

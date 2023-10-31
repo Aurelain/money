@@ -13,20 +13,21 @@ const configureLabel = async (label) => {
     const state = getState();
     const meta = selectMeta(state);
     const entry = meta[label];
-    const suggestion = entry ? `${entry.alias},${entry.suffix}` : '';
-    const reply = prompt(`Configure "${label}"\nSyntax: alias,suffix`, suggestion);
+    const suggestion = entry ? `${entry.alias},${entry.suffix},${entry.owner}` : '';
+    const reply = prompt(`Configure "${label}"\nSyntax: alias,suffix,owner`, suggestion);
     if (reply === null) {
         return;
     }
 
     setState((state) => {
-        let [alias = '', suffix = ''] = reply.split(',');
+        let [alias = '', suffix = '', owner = ''] = reply.split(',');
         alias = condense(alias);
         suffix = condense(suffix);
-        if (!alias && !suffix) {
+        owner = condense(owner);
+        if (!alias && !suffix && !owner) {
             delete state.options.meta[label];
         } else {
-            state.options.meta[label] = {alias, suffix};
+            state.options.meta[label] = {alias, suffix, owner};
         }
     });
 
