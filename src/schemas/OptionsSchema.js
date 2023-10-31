@@ -38,8 +38,11 @@ const OptionsSchema = {
                         suffix: {
                             type: 'string',
                         },
+                        owner: {
+                            type: 'string',
+                        },
                     },
-                    required: ['alias', 'suffix'],
+                    required: ['alias', 'suffix', 'owner'],
                 },
             },
         },

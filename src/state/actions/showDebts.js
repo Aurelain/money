@@ -1,4 +1,6 @@
-import {setState} from '../store.js';
+import {getState} from '../store.js';
+import {selectHistory, selectMeta} from '../selectors.js';
+import {CREDIT_KEYWORD} from '../../SETTINGS.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -7,9 +9,39 @@ import {setState} from '../store.js';
  *
  */
 const showDebts = () => {
-    alert(
-        'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus aliquet est ut quam rutrum fringilla. Suspendisse et odio. Sed fringilla risus vel est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam auctor mi quis eros. Morbi justo nulla, lobortis imperdiet, consequat at, auctor ut, tortor. Sed est ipsum, posuere dictum, egestas ac, aliquam eu, sapien. Aenean ornare enim at mi. Phasellus id libero viverra felis elementum lobortis. Curabitur nec sapien gravida lacus lobortis tempor. Quisque eget mi a turpis rutrum venenatis. Nam tempus luctus nunc. Nulla ut orci ac est laoreet malesuada.',
-    );
+    const state = getState();
+    const history = selectHistory(state);
+    const meta = selectMeta(state);
+
+    const relations = {};
+    for (const item of history) {
+        const {from, value, to, product} = item;
+        if (product === CREDIT_KEYWORD) {
+            const fromOwner = meta[from]?.owner || from;
+            const toOwner = meta[to]?.owner || to;
+            const relationName = [fromOwner, toOwner].sort().join('_');
+            relations[relationName] = relations[relationName] || {
+                [fromOwner]: 0,
+                [toOwner]: 0,
+            };
+            relations[relationName][fromOwner] -= value;
+            relations[relationName][toOwner] += value;
+        }
+    }
+
+    const lines = [];
+    for (const key in relations) {
+        const relation = relations[key];
+        const [actor1, actor2] = Object.keys(relation);
+        const value = relation[actor1];
+        if (value) {
+            const creditor = value < 0 ? actor1 : actor2;
+            const debtor = value < 0 ? actor2 : actor2;
+            lines.push(`${debtor} must pay ${value} to ${creditor}!`);
+        }
+    }
+    const summary = lines.length ? lines.join('\n') : 'No debt!';
+    alert(summary);
 };
 
 // =====================================================================================================================
