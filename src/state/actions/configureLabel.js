@@ -14,7 +14,7 @@ const configureLabel = async (label) => {
     const meta = selectMeta(state);
     const entry = meta[label];
     const suggestion = entry ? `${entry.alias},${entry.suffix}` : '';
-    const reply = prompt(`Configure "alias,suffix" for "${label}":`, suggestion);
+    const reply = prompt(`Configure "${label}"\nSyntax: alias,suffix`, suggestion);
     if (reply === null) {
         return;
     }

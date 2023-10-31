@@ -22,7 +22,16 @@ const STATE_MOCK = {
                 suffix: '🤡',
             },
         },
-        formulas: ['Foo+Bar'],
+        formulas: [
+            {
+                label: 'MyTotal1',
+                operations: 'AIng+Abigail', // -8500+1900=-6600
+            },
+            {
+                label: 'MyTotal2',
+                operations: 'Aiden-(Alexandru/2)', // 5800-(-2800/2)=5800+1400=7200
+            },
+        ],
     },
     optionsVaultId: '',
     volatile: {},

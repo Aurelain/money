@@ -38,6 +38,7 @@ const SX = {
         transitionDuration: TRANSITION_DURATION,
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
     },
     menuIsOpen: {
         transform: 'translateX(0)',
@@ -67,7 +68,7 @@ const SX = {
 // =====================================================================================================================
 class SideMenu extends React.PureComponent {
     render() {
-        const {isOpen, title, subtitle, content, list, listItemCss, onClick} = this.props;
+        const {isOpen, title, subtitle, content, list, listItemCss, onSelect} = this.props;
         const ContentComponent = content;
         return createPortal(
             <div css={[SX.overlay, isOpen && SX.overlayIsOpen]} onClick={this.onOverlayClick}>
@@ -77,7 +78,7 @@ class SideMenu extends React.PureComponent {
                         {subtitle && <div css={SX.subtitle}>{subtitle}</div>}
                     </div>
                     <div css={SX.content}>{ContentComponent && <ContentComponent />}</div>
-                    {list && <List styling={SX.list} items={list} itemCss={listItemCss} onClick={onClick} />}
+                    {list && <List styling={SX.list} items={list} itemCss={listItemCss} onSelect={onSelect} />}
                 </div>
             </div>,
             document.body,
@@ -124,6 +125,6 @@ SideMenu.propTypes = {
     children: PropTypes.node,
     isOpen: PropTypes.bool,
     onClose: PropTypes.func,
-    onClick: PropTypes.func,
+    onSelect: PropTypes.func,
 };
 export default SideMenu;

@@ -46,7 +46,17 @@ const OptionsSchema = {
         formulas: {
             type: 'array',
             items: {
-                type: 'string',
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                    label: {
+                        type: 'string',
+                    },
+                    operations: {
+                        type: 'string',
+                    },
+                },
+                required: ['label', 'operations'],
             },
         },
     },

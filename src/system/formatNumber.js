@@ -10,6 +10,10 @@ const HS = ' '; // https://en.wikipedia.org/wiki/Space_(punctuation)#Unit_symb
  *
  */
 const formatNumber = (number) => {
+    number = Math.round(number);
+    if (!Number.isInteger(number)) {
+        return 'Invalid';
+    }
     const digits = number.toString().split('');
     const {length} = digits;
     for (let i = length - 3; i >= 0; i -= 3) {
