@@ -67,7 +67,6 @@ class App extends React.PureComponent {
         const hasBecomeVisible = !document.hidden;
         const isExpired = Date.now() > this.constructionTimestamp + VISIBILITY_EXPIRATION;
         if (isAuthenticated && hasBecomeVisible && isExpired) {
-            window.scrollTo(0, 0);
             window.location.reload();
         }
     };

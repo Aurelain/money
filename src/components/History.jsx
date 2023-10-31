@@ -1,3 +1,4 @@
+import memoize from 'memoize-one';
 import React from 'react';
 import {
     HEADER_HEIGHT,
@@ -11,6 +12,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {selectHistory, selectFocusedDate, selectMeta} from '../state/selectors.js';
 import Row from './Row.jsx';
+import Button from '../ui/Button.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -24,17 +26,32 @@ const SX = {
         display: 'flex',
         flexDirection: 'column',
     },
+    more: {
+        width: '25%',
+        padding: 8,
+    },
 };
+
+const ITEMS_PER_PAGE = 30;
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
 class History extends React.PureComponent {
+    state = {
+        pages: 1,
+    };
+
     render() {
         const {history, focusedDate, meta} = this.props;
+        const {pages} = this.state;
+        const historySubset = this.memoHistorySubset(history, pages);
         return (
             <div css={SX.root}>
-                {history.map((row) => {
+                {historySubset.length !== history.length && (
+                    <Button cssNormal={SX.more} label={'...'} onClick={this.onMoreClick} variant={'simple'} />
+                )}
+                {historySubset.map((row) => {
                     const {date} = row;
                     return <Row key={date} {...row} isSelected={focusedDate === date} meta={meta} />;
                 })}
@@ -42,16 +59,43 @@ class History extends React.PureComponent {
         );
     }
 
+    componentDidMount() {
+        scrollToBottom();
+        setTimeout(scrollToBottom, 100);
+    }
+
     componentDidUpdate(prevProps) {
         if (prevProps.history !== this.props.history) {
-            window.scrollTo(0, 999999);
+            scrollToBottom();
         }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    memoHistorySubset = memoize((history, pages) => {
+        const {length} = history;
+        const tailLength = pages * ITEMS_PER_PAGE;
+        if (tailLength >= length) {
+            return history;
+        } else {
+            return history.slice(length - tailLength);
+        }
+    });
+
+    onMoreClick = () => {
+        this.setState({
+            pages: this.state.pages + 1,
+        });
+    };
 }
+
+// =====================================================================================================================
+//  H E L P E R S
+// =====================================================================================================================
+const scrollToBottom = () => {
+    window.scrollTo(0, 999999);
+};
 
 // =====================================================================================================================
 //  E X P O R T
