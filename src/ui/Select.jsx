@@ -16,9 +16,13 @@ const SX = {
     overlay: {
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0,0,0,0)',
         zIndex: 999999,
         touchAction: 'none', // to prevent scrolling on mobile
+    },
+    fog: {
+        position: 'absolute',
+        inset: 0,
+        backgroundColor: 'rgba(0,0,0,0.1)',
     },
     list: {
         position: 'absolute',
@@ -49,8 +53,9 @@ class Select extends React.PureComponent {
                 <ButtonClass {...other} onClick={this.onButtonClick} onHold={onHold} innerRef={this.buttonRef} />
                 {(isOpen || forcedOpen) &&
                     createPortal(
-                        <div css={SX.overlay} onClick={this.onOverlayClick}>
-                            <ListClass {...finalListProps} onRelease={this.onListRelease} innerRef={this.listRef} />
+                        <div css={SX.overlay}>
+                            <div css={SX.fog} onClick={this.onFogClick} />
+                            <ListClass {...finalListProps} onSelect={this.onListSelect} innerRef={this.listRef} />
                         </div>,
                         document.body,
                     )}
@@ -84,14 +89,14 @@ class Select extends React.PureComponent {
     /**
      *
      */
-    onOverlayClick = () => {
+    onFogClick = () => {
         this.setState({isOpen: false});
     };
 
     /**
      *
      */
-    onListRelease = (payload) => {
+    onListSelect = (payload) => {
         this.setState({isOpen: false});
         this.props.onSelect(payload);
     };

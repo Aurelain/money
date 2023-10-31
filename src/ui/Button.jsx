@@ -80,6 +80,7 @@ const SX = {
 };
 const HOLD_TIMEOUT = 500; // milliseconds
 const HOLD_TOLERANCE = 10; // pixels
+const OFFSET_TOLERANCE = 10; // pixels
 const CLICK_TIMEOUT = 50; // milliseconds
 const RELEASE_TIMEOUT = 50; // milliseconds
 
@@ -99,6 +100,7 @@ class Button extends React.PureComponent {
     releaseTimeout;
     initialX;
     initialY;
+    initialBoundingClientRect;
 
     render() {
         const {label, icon, holdIcon, cssNormal, cssHover, cssActive, variant, disabled, innerRef, ...otherProps} =
@@ -221,6 +223,7 @@ class Button extends React.PureComponent {
         window.addEventListener('pointerup', this.onWindowRelease);
         window.addEventListener('touchend', this.onWindowRelease);
         window.addEventListener('scroll', this.onWindowScrollWhilePressing);
+        this.initialBoundingClientRect = event.currentTarget.getBoundingClientRect();
         if (this.props.onHold) {
             this.initialX = event.clientX;
             this.initialY = event.clientY;
@@ -261,6 +264,15 @@ class Button extends React.PureComponent {
 
         if (checkButtonInButton(target, ref.current)) {
             // The user clicked on a button that is a child of ours. That button should have priority.
+            return;
+        }
+
+        const {top, left} = ref.current.getBoundingClientRect();
+        if (
+            Math.abs(top - this.initialBoundingClientRect.top) > OFFSET_TOLERANCE ||
+            Math.abs(left - this.initialBoundingClientRect.left) > OFFSET_TOLERANCE
+        ) {
+            // Happens on mobile, when the user scrolls while pressing a button
             return;
         }
 

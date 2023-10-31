@@ -27,7 +27,7 @@ const SX = {
 // =====================================================================================================================
 class List extends React.PureComponent {
     render() {
-        const {items, itemCss, onClick, onRelease, styling, innerRef} = this.props;
+        const {items, itemCss, onSelect, styling, innerRef} = this.props;
         const cssNormal = this.memoCssNormal(itemCss);
         return (
             <div css={[SX.root, styling]} ref={innerRef}>
@@ -49,8 +49,7 @@ class List extends React.PureComponent {
                             variant={'simple'}
                             label={label}
                             icon={icon}
-                            onClick={onClick}
-                            onRelease={onRelease}
+                            onClick={onSelect}
                             cssNormal={cssNormal}
                         />
                     );
@@ -80,8 +79,7 @@ List.propTypes = {
         ]),
     ),
     itemCss: PropTypes.object,
-    onClick: PropTypes.func,
-    onRelease: PropTypes.func,
+    onSelect: PropTypes.func,
     styling: PropTypes.oneOfType([PropTypes.array, PropTypes.object]), // TODO: rename to `css`
     innerRef: PropTypes.object,
 };
