@@ -5,22 +5,25 @@ import AccountMinus from '../../ui/Icons/AccountMinus.jsx';
 import {selectHistory, selectPreferredFrom} from '../../state/selectors.js';
 import SelectWrapper from './SelectWrapper.jsx';
 import memoHistoryComputation from '../../system/memoHistoryComputation.js';
+import {FIELD_FROM} from '../../SETTINGS.js';
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
 class SelectFrom extends React.PureComponent {
     render() {
-        const {onSelect, isFilter, history, label = 'From', preferred} = this.props;
+        const {onSelect, onHold, isFilter, history, label = 'From', preferred} = this.props;
         const {accounts} = memoHistoryComputation(history);
         return (
             <SelectWrapper
                 isFilter={isFilter}
                 onSelect={onSelect}
+                onHold={onHold}
                 label={label}
                 preferred={preferred}
                 icon={AccountMinus}
                 listItems={accounts}
+                data={FIELD_FROM}
             />
         );
     }
@@ -33,6 +36,7 @@ SelectFrom.propTypes = {
     // -------------------------------- direct:
     isFilter: PropTypes.bool,
     onSelect: PropTypes.func,
+    onHold: PropTypes.func,
     label: PropTypes.string,
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,

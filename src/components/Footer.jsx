@@ -31,6 +31,7 @@ import memoHistoryComputation from '../system/memoHistoryComputation.js';
 import deleteRow from '../state/actions/deleteRow.js';
 import updateRow from '../state/actions/updateRow.js';
 import Check from '../ui/Icons/Check.jsx';
+import toggleFavorite from '../state/actions/toggleFavorite.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -126,10 +127,10 @@ class Footer extends React.PureComponent {
         return (
             <div css={SX.root}>
                 <div css={SX.content}>
-                    <SelectFrom onSelect={this.onFromSelect} label={from} />
-                    <SelectValue onSelect={this.onValueSelect} label={value} />
-                    <SelectTo onSelect={this.onToSelect} label={to} />
-                    <SelectProduct onSelect={this.onProductSelect} label={product} />
+                    <SelectFrom onSelect={this.onSelectorSelect} onHold={this.onSelectorHold} label={from} />
+                    <SelectValue onSelect={this.onSelectorSelect} onHold={this.onSelectorHold} label={value} />
+                    <SelectTo onSelect={this.onSelectorSelect} onHold={this.onSelectorHold} label={to} />
+                    <SelectProduct onSelect={this.onSelectorSelect} onHold={this.onSelectorHold} label={product} />
                     <div css={this.memoCommandLineCss(SX.commandLine, focusedDate && SX.focused)}>
                         {focusedDate && (
                             <Button
@@ -226,44 +227,31 @@ class Footer extends React.PureComponent {
     /**
      *
      */
-    create = async () => {
+    create = () => {
         const {focusedDate} = this.props;
         const {command} = this.state;
         this.setState({command: ''});
         if (focusedDate) {
             clearFocusedDate();
-            await updateRow(focusedDate, command);
+            updateRow(focusedDate, command);
         } else {
-            await appendRow(command);
+            appendRow(command);
         }
     };
 
     /**
      *
      */
-    onFromSelect = ({name}) => {
-        this.applyDigestion('from', name);
+    onSelectorSelect = ({name, data: category}) => {
+        this.applyDigestion(category, name);
     };
 
     /**
      *
      */
-    onValueSelect = ({name}) => {
-        this.applyDigestion('value', name);
-    };
-
-    /**
-     *
-     */
-    onToSelect = ({name}) => {
-        this.applyDigestion('to', name);
-    };
-
-    /**
-     *
-     */
-    onProductSelect = ({name}) => {
-        this.applyDigestion('product', name);
+    onSelectorHold = ({name, data: category}) => {
+        this.applyDigestion(category, name);
+        toggleFavorite(category, name);
     };
 
     /**

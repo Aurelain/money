@@ -37,7 +37,7 @@ const SX = {
 // =====================================================================================================================
 class CustomList extends React.PureComponent {
     render() {
-        const {items, onSelect, innerRef, selectedValue, preferredValue, meta} = this.props;
+        const {items, onSelect, onHold, innerRef, selectedValue, preferredValue, meta, data} = this.props;
         return (
             <div css={SX.root} ref={innerRef}>
                 {items.map((value) => {
@@ -49,7 +49,9 @@ class CustomList extends React.PureComponent {
                             variant={'simple'}
                             label={embellishLabel(value, preferredValue, meta)}
                             onClick={onSelect}
+                            onHold={onHold}
                             cssNormal={isSelected ? SX.btnSelected : SX.btnNormal}
+                            data={data}
                         />
                     );
                 })}
@@ -84,10 +86,12 @@ class CustomList extends React.PureComponent {
 CustomList.propTypes = {
     items: PropTypes.arrayOf(PropTypes.string).isRequired,
     onSelect: PropTypes.func,
+    onHold: PropTypes.func,
     innerRef: PropTypes.object.isRequired,
     selectedValue: PropTypes.string,
     preferredValue: PropTypes.string,
     meta: PropTypes.object.isRequired,
+    data: PropTypes.any,
 };
 
 export default CustomList;

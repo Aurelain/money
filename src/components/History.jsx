@@ -29,6 +29,7 @@ const SX = {
     more: {
         width: '25%',
         padding: 8,
+        justifyContent: 'start',
     },
 };
 

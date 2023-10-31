@@ -20,6 +20,11 @@ export const VAULT_PREFIX = 'Money_';
 export const VAULT_OPTIONS = VAULT_PREFIX + 'Options';
 export const DATE_FORMAT = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\+\d\d:\d\d$/;
 
+export const FIELD_FROM = 'from';
+export const FIELD_VALUE = 'value';
+export const FIELD_TO = 'to';
+export const FIELD_PRODUCT = 'product';
+
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?
 // prettier-ignore
 // eslint-disable-next-line max-len

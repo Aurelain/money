@@ -16,6 +16,7 @@ import OptionsSchema from '../../schemas/OptionsSchema.js';
 import OPTIONS_MOCK from '../../mocks/OPTIONS_MOCK.js';
 import VAULTS_MOCK from '../../mocks/VAULTS_MOCK.js';
 import createOptionsSpreadsheet from '../../system/createOptionsSpreadsheet.js';
+import saveOptions from '../../system/saveOptions.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -140,7 +141,7 @@ const loadOptions = async (optionsVaultId) => {
     });
 
     if (before !== after) {
-        // TODO write to cloud
+        await saveOptions();
     }
 };
 

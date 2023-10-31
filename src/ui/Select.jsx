@@ -22,7 +22,7 @@ const SX = {
     fog: {
         position: 'absolute',
         inset: 0,
-        backgroundColor: 'rgba(0,0,0,0.1)',
+        backgroundColor: 'rgba(0,0,0,0)',
     },
     list: {
         position: 'absolute',
@@ -42,7 +42,7 @@ class Select extends React.PureComponent {
     listRef = React.createRef();
 
     render() {
-        const {button, list, listProps, forcedOpen, onHold, ...other} = this.props;
+        const {button, list, listProps, forcedOpen, data, ...other} = this.props;
         const {isOpen} = this.state;
         const ButtonClass = typeof button === 'function' ? button : Button;
         const ListClass = typeof list === 'function' ? list : List;
@@ -50,12 +50,18 @@ class Select extends React.PureComponent {
         return (
             <>
                 {/*TODO use press for quick selection*/}
-                <ButtonClass {...other} onClick={this.onButtonClick} onHold={onHold} innerRef={this.buttonRef} />
+                <ButtonClass {...other} onClick={this.onButtonClick} innerRef={this.buttonRef} />
                 {(isOpen || forcedOpen) &&
                     createPortal(
                         <div css={SX.overlay}>
                             <div css={SX.fog} onClick={this.onFogClick} />
-                            <ListClass {...finalListProps} onSelect={this.onListSelect} innerRef={this.listRef} />
+                            <ListClass
+                                {...finalListProps}
+                                onSelect={this.onListSelect}
+                                onHold={this.onListHold}
+                                innerRef={this.listRef}
+                                data={data}
+                            />
                         </div>,
                         document.body,
                     )}
@@ -99,6 +105,14 @@ class Select extends React.PureComponent {
     onListSelect = (payload) => {
         this.setState({isOpen: false});
         this.props.onSelect(payload);
+    };
+
+    /**
+     *
+     */
+    onListHold = (payload) => {
+        this.setState({isOpen: false});
+        this.props.onHold(payload);
     };
 
     /**
@@ -151,6 +165,7 @@ Select.propTypes = {
     onSelect: PropTypes.func,
     onHold: PropTypes.func,
     forcedOpen: PropTypes.bool,
+    data: PropTypes.any,
 };
 
 export default Select;

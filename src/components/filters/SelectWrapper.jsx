@@ -46,7 +46,7 @@ class SelectWrapper extends React.PureComponent {
     memoRootSx = memo();
 
     render() {
-        const {onSelect, isFilter, icon, label, preferred, listItems, meta} = this.props;
+        const {onSelect, onHold, isFilter, icon, label, preferred, listItems, meta, data} = this.props;
         return (
             <Select
                 cssNormal={this.memoRootSx(SX.root, isFilter && SX.isFilter)}
@@ -58,6 +58,8 @@ class SelectWrapper extends React.PureComponent {
                 list={CustomList}
                 listProps={this.memoListProps(listItems, label, preferred, meta)}
                 onSelect={onSelect}
+                onHold={onHold}
+                data={data}
             />
         );
     }
@@ -92,10 +94,12 @@ SelectWrapper.propTypes = {
     // -------------------------------- direct:
     isFilter: PropTypes.bool,
     onSelect: PropTypes.func,
+    onHold: PropTypes.func,
     label: PropTypes.string.isRequired,
     preferred: PropTypes.string.isRequired,
     icon: PropTypes.func.isRequired,
     listItems: PropTypes.array.isRequired,
+    data: PropTypes.any,
     // -------------------------------- redux:
     meta: PropTypes.object.isRequired,
 };

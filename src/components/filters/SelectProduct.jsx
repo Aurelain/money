@@ -5,22 +5,25 @@ import Gift from '../../ui/Icons/Gift.jsx';
 import {selectHistory, selectPreferredProduct} from '../../state/selectors.js';
 import SelectWrapper from './SelectWrapper.jsx';
 import memoHistoryComputation from '../../system/memoHistoryComputation.js';
+import {FIELD_PRODUCT} from '../../SETTINGS.js';
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
 class SelectProduct extends React.PureComponent {
     render() {
-        const {onSelect, isFilter, history, label = 'Product', preferred} = this.props;
+        const {onSelect, onHold, isFilter, history, label = 'Product', preferred} = this.props;
         const {products} = memoHistoryComputation(history);
         return (
             <SelectWrapper
                 isFilter={isFilter}
                 onSelect={onSelect}
+                onHold={onHold}
                 label={label}
                 preferred={preferred}
                 icon={Gift}
                 listItems={products}
+                data={FIELD_PRODUCT}
             />
         );
     }
@@ -33,6 +36,7 @@ SelectProduct.propTypes = {
     // -------------------------------- direct:
     isFilter: PropTypes.bool,
     onSelect: PropTypes.func,
+    onHold: PropTypes.func,
     label: PropTypes.string,
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,
