@@ -9,7 +9,11 @@ import saveOptions from '../../system/saveOptions.js';
  */
 const toggleFavorite = async (category, name) => {
     setState((state) => {
-        state.options.defaults[category] = name;
+        if (state.options.defaults[category] === name) {
+            state.options.defaults[category] = '';
+        } else {
+            state.options.defaults[category] = name;
+        }
     });
 
     await saveOptions();

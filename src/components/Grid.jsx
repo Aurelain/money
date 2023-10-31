@@ -75,10 +75,10 @@ class Grid extends React.PureComponent {
         return (
             <div css={SX.root}>
                 <div css={SX.content}>
-                    <SelectFrom onSelect={this.onFromSelect} isFilter={true} />
-                    <SelectValue onSelect={this.onFromSelect} isFilter={true} />
-                    <SelectTo onSelect={this.onFromSelect} isFilter={true} />
-                    <SelectProduct onSelect={this.onFromSelect} isFilter={true} />
+                    <SelectFrom isFilter={true} />
+                    <SelectValue isFilter={true} />
+                    <SelectTo isFilter={true} />
+                    <SelectProduct isFilter={true} />
                     <div css={SX.lines}>
                         <div css={SX.vertical} />
                         <div css={SX.vertical} />

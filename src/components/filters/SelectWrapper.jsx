@@ -46,7 +46,7 @@ class SelectWrapper extends React.PureComponent {
     memoRootSx = memo();
 
     render() {
-        const {onSelect, onHold, isFilter, icon, label, preferred, listItems, meta, data} = this.props;
+        const {onSelect, onHold, onItemHold, isFilter, icon, label, preferred, listItems, meta, data} = this.props;
         return (
             <Select
                 cssNormal={this.memoRootSx(SX.root, isFilter && SX.isFilter)}
@@ -56,9 +56,9 @@ class SelectWrapper extends React.PureComponent {
                 icon={icon}
                 variant={'simple'}
                 list={CustomList}
-                listProps={this.memoListProps(listItems, label, preferred, meta)}
+                listProps={this.memoListProps(listItems, label, preferred, meta, onItemHold)}
                 onSelect={onSelect}
-                onHold={onHold}
+                onHold={onHold} // goes to Button
                 data={data}
             />
         );
@@ -70,12 +70,13 @@ class SelectWrapper extends React.PureComponent {
     /**
      *
      */
-    memoListProps = memoize((listItems, label, preferred, meta) => {
+    memoListProps = memoize((listItems, label, preferred, meta, onItemHold) => {
         return {
             items: listItems,
             selectedValue: label,
             preferredValue: preferred,
             meta,
+            onHold: onItemHold, // goes to List
         };
     });
 
@@ -95,6 +96,7 @@ SelectWrapper.propTypes = {
     isFilter: PropTypes.bool,
     onSelect: PropTypes.func,
     onHold: PropTypes.func,
+    onItemHold: PropTypes.func,
     label: PropTypes.string.isRequired,
     preferred: PropTypes.string.isRequired,
     icon: PropTypes.func.isRequired,

@@ -12,13 +12,14 @@ import {FIELD_PRODUCT} from '../../SETTINGS.js';
 // =====================================================================================================================
 class SelectProduct extends React.PureComponent {
     render() {
-        const {onSelect, onHold, isFilter, history, label = 'Product', preferred} = this.props;
+        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Product', preferred} = this.props;
         const {products} = memoHistoryComputation(history);
         return (
             <SelectWrapper
                 isFilter={isFilter}
                 onSelect={onSelect}
                 onHold={onHold}
+                onItemHold={onItemHold}
                 label={label}
                 preferred={preferred}
                 icon={Gift}
@@ -37,6 +38,7 @@ SelectProduct.propTypes = {
     isFilter: PropTypes.bool,
     onSelect: PropTypes.func,
     onHold: PropTypes.func,
+    onItemHold: PropTypes.func,
     label: PropTypes.string,
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,

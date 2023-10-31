@@ -32,6 +32,7 @@ import deleteRow from '../state/actions/deleteRow.js';
 import updateRow from '../state/actions/updateRow.js';
 import Check from '../ui/Icons/Check.jsx';
 import toggleFavorite from '../state/actions/toggleFavorite.js';
+import configureLabel from '../state/actions/configureLabel.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -127,10 +128,30 @@ class Footer extends React.PureComponent {
         return (
             <div css={SX.root}>
                 <div css={SX.content}>
-                    <SelectFrom onSelect={this.onSelectorSelect} onHold={this.onSelectorHold} label={from} />
-                    <SelectValue onSelect={this.onSelectorSelect} onHold={this.onSelectorHold} label={value} />
-                    <SelectTo onSelect={this.onSelectorSelect} onHold={this.onSelectorHold} label={to} />
-                    <SelectProduct onSelect={this.onSelectorSelect} onHold={this.onSelectorHold} label={product} />
+                    <SelectFrom
+                        onSelect={this.onSelectorSelect}
+                        onHold={this.onSelectorHold}
+                        onItemHold={this.onSelectorItemHold}
+                        label={from}
+                    />
+                    <SelectValue
+                        onSelect={this.onSelectorSelect}
+                        onHold={this.onSelectorHold}
+                        onItemHold={this.onSelectorItemHold}
+                        label={value}
+                    />
+                    <SelectTo
+                        onSelect={this.onSelectorSelect}
+                        onHold={this.onSelectorHold}
+                        onItemHold={this.onSelectorItemHold}
+                        label={to}
+                    />
+                    <SelectProduct
+                        onSelect={this.onSelectorSelect}
+                        onHold={this.onSelectorHold}
+                        onItemHold={this.onSelectorItemHold}
+                        label={product}
+                    />
                     <div css={this.memoCommandLineCss(SX.commandLine, focusedDate && SX.focused)}>
                         {focusedDate && (
                             <Button
@@ -243,25 +264,25 @@ class Footer extends React.PureComponent {
      *
      */
     onSelectorSelect = ({name, data: category}) => {
-        this.applyDigestion(category, name);
+        const freshDigestion = {...this.digestion, [category]: name};
+        this.setState({
+            command: buildCommand(freshDigestion),
+        });
     };
 
     /**
      *
      */
-    onSelectorHold = ({name, data: category}) => {
-        this.applyDigestion(category, name);
+    onSelectorHold = ({data: category}) => {
+        const name = this.digestion[category];
         toggleFavorite(category, name);
     };
 
     /**
      *
      */
-    applyDigestion = (digestionProp, digestionValue) => {
-        const freshDigestion = {...this.digestion, [digestionProp]: digestionValue};
-        this.setState({
-            command: buildCommand(freshDigestion),
-        });
+    onSelectorItemHold = ({name}) => {
+        configureLabel(name);
     };
 
     /**

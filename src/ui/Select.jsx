@@ -50,7 +50,7 @@ class Select extends React.PureComponent {
         return (
             <>
                 {/*TODO use press for quick selection*/}
-                <ButtonClass {...other} onClick={this.onButtonClick} innerRef={this.buttonRef} />
+                <ButtonClass {...other} data={data} onClick={this.onButtonClick} innerRef={this.buttonRef} />
                 {(isOpen || forcedOpen) &&
                     createPortal(
                         <div css={SX.overlay}>
@@ -58,7 +58,6 @@ class Select extends React.PureComponent {
                             <ListClass
                                 {...finalListProps}
                                 onSelect={this.onListSelect}
-                                onHold={this.onListHold}
                                 innerRef={this.listRef}
                                 data={data}
                             />
@@ -110,14 +109,6 @@ class Select extends React.PureComponent {
     /**
      *
      */
-    onListHold = (payload) => {
-        this.setState({isOpen: false});
-        this.props.onHold(payload);
-    };
-
-    /**
-     *
-     */
     refreshListPosition = () => {
         const list = this.listRef.current;
         const buttonBounds = this.buttonRef.current.getBoundingClientRect();
@@ -163,7 +154,6 @@ Select.propTypes = {
     listProps: PropTypes.object,
     onOpen: PropTypes.func,
     onSelect: PropTypes.func,
-    onHold: PropTypes.func,
     forcedOpen: PropTypes.bool,
     data: PropTypes.any,
 };

@@ -12,13 +12,14 @@ import {FIELD_VALUE} from '../../SETTINGS.js';
 // =====================================================================================================================
 class SelectValue extends React.PureComponent {
     render() {
-        const {onSelect, onHold, isFilter, history, label = 'Value', preferred} = this.props;
+        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Money', preferred} = this.props;
         const {values} = memoHistoryComputation(history);
         return (
             <SelectWrapper
                 isFilter={isFilter}
                 onSelect={onSelect}
                 onHold={onHold}
+                onItemHold={onItemHold}
                 label={label}
                 preferred={preferred}
                 icon={Cash}
@@ -37,6 +38,7 @@ SelectValue.propTypes = {
     isFilter: PropTypes.bool,
     onSelect: PropTypes.func,
     onHold: PropTypes.func,
+    onItemHold: PropTypes.func,
     label: PropTypes.string,
     // -------------------------------- redux:
     history: PropTypes.array.isRequired,

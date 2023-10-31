@@ -5,7 +5,7 @@
  *
  */
 const embellishLabel = (label, preferredLabelValue, meta) => {
-    return label + (meta[label]?.suffix || '') + (label === preferredLabelValue ? '⭐' : '');
+    return label + (meta[label]?.suffix || '') + (label === preferredLabelValue && label ? '⭐' : '');
 };
 
 // =================================================================================================================

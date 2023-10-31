@@ -103,8 +103,19 @@ class Button extends React.PureComponent {
     initialBoundingClientRect;
 
     render() {
-        const {label, icon, holdIcon, cssNormal, cssHover, cssActive, variant, disabled, innerRef, ...otherProps} =
-            this.props;
+        const {
+            label,
+            icon,
+            holdIcon,
+            cssNormal,
+            cssHover,
+            cssActive,
+            variant,
+            disabled,
+            children,
+            innerRef,
+            ...otherProps
+        } = this.props;
         delete otherProps.onHold;
         delete otherProps.onHoldStart;
         delete otherProps.onHoldCancel;
@@ -114,6 +125,7 @@ class Button extends React.PureComponent {
         const {isHovering, isPressing, isHolding} = this.state;
         const ref = innerRef || this.rootRef;
         const iconInstance = this.memoIcon(icon, holdIcon, isHolding);
+        const content = label || children;
         return (
             <div
                 {...otherProps}
@@ -144,8 +156,8 @@ class Button extends React.PureComponent {
                 role={'button'}
             >
                 {iconInstance}
-                {iconInstance && label && ' '}
-                {this.memoContent(label)}
+                {iconInstance && content && ' '}
+                {this.memoContent(content)}
             </div>
         );
     }
@@ -172,13 +184,12 @@ class Button extends React.PureComponent {
     /**
      *
      */
-    memoContent = memoize((label) => {
-        if (typeof label === 'function') {
-            const Icon = label;
-            return <Icon />;
-        } else {
-            return label;
+    memoContent = memoize((content) => {
+        if (typeof content === 'function') {
+            const Content = content;
+            return <Content />;
         }
+        return content;
     });
 
     /**
@@ -445,5 +456,6 @@ Button.propTypes = {
     onRelease: PropTypes.func,
     innerRef: PropTypes.object,
     data: PropTypes.any,
+    children: PropTypes.string, // anything other than string (e.g. array or object) should receive a warning
 };
 export default Button;
