@@ -1,6 +1,7 @@
 import {getState} from '../store.js';
-import {selectHistory, selectMeta} from '../selectors.js';
+import {selectHistory} from '../selectors.js';
 import {CREDIT_KEYWORD} from '../../SETTINGS.js';
+import memoHistoryComputation from '../../system/memoHistoryComputation.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -11,14 +12,15 @@ import {CREDIT_KEYWORD} from '../../SETTINGS.js';
 const showDebts = () => {
     const state = getState();
     const history = selectHistory(state);
-    const meta = selectMeta(state);
+    const {accountsBag, virtualAccounts} = memoHistoryComputation(history);
 
     const relations = {};
     for (const item of history) {
         const {from, value, to, product} = item;
-        if (product.includes(CREDIT_KEYWORD)) {
-            const fromOwner = meta[from]?.owner || from;
-            const toOwner = meta[to]?.owner || to;
+        const isVirtual = virtualAccounts[from] || virtualAccounts[to];
+        if (isVirtual || product.includes(CREDIT_KEYWORD)) {
+            const fromOwner = accountsBag[from].owner;
+            const toOwner = accountsBag[to].owner;
             const relationName = [fromOwner, toOwner].sort().join('_');
             relations[relationName] = relations[relationName] || {
                 [fromOwner]: 0,
@@ -36,7 +38,7 @@ const showDebts = () => {
         const value = relation[actor1];
         if (value) {
             const creditor = value < 0 ? actor1 : actor2;
-            const debtor = value < 0 ? actor2 : actor2;
+            const debtor = value < 0 ? actor2 : actor1;
             lines.push(`${debtor} must pay ${value} to ${creditor}!`);
         }
     }

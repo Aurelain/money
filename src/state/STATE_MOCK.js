@@ -20,12 +20,10 @@ const STATE_MOCK = {
             God: {
                 alias: 'g',
                 suffix: '🤡',
-                owner: '',
             },
             AIng: {
                 alias: 'a',
                 suffix: '🦁',
-                owner: 'MyUser',
             },
         },
         formulas: [

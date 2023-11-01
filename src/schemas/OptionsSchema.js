@@ -38,11 +38,8 @@ const OptionsSchema = {
                         suffix: {
                             type: 'string',
                         },
-                        owner: {
-                            type: 'string',
-                        },
                     },
-                    required: ['alias', 'suffix', 'owner'],
+                    required: ['alias', 'suffix'],
                 },
             },
         },
@@ -86,7 +83,10 @@ export default OptionsSchema;
         }
     },
     "formulas": [
-        "Foo+Bar"
+        {
+            "label": "Foo",
+            "operations": "Hello + World"
+        }
     ]
 }
 */
