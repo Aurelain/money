@@ -19,7 +19,7 @@ const formatNumber = (number) => {
     for (let i = length - 3; i >= 0; i -= 3) {
         digits.splice(i, 0, HS);
     }
-    return digits.join('');
+    return digits.join('').trimStart();
 };
 
 // =====================================================================================================================

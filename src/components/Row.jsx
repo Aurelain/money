@@ -4,6 +4,7 @@ import Button from '../ui/Button.jsx';
 import focusDate from '../state/actions/focusDate.js';
 import memo from '../utils/memo.js';
 import clearFocusedDate from '../state/actions/clearFocusedDate.js';
+import formatNumber from '../system/formatNumber.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -37,6 +38,7 @@ const SX = {
         color: 'white',
     },
 };
+// const SX_AMOUNT = {...SX.column, textAlign: 'right'};
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -54,7 +56,7 @@ class Row extends React.PureComponent {
                 label={
                     <>
                         <div css={SX.column}>{from + fromSuffix}</div>
-                        <div css={SX.column}>{value}</div>
+                        <div css={SX.column}>{formatNumber(value)}</div>
                         <div css={SX.column}>{to + toSuffix}</div>
                         <div css={SX.column}>{product}</div>
                     </>

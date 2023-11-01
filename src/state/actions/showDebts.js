@@ -39,7 +39,7 @@ const showDebts = () => {
         if (value) {
             const creditor = value < 0 ? actor1 : actor2;
             const debtor = value < 0 ? actor2 : actor1;
-            lines.push(`${debtor} must pay ${value} to ${creditor}!`);
+            lines.push(`${debtor} must pay ${Math.abs(value)} to ${creditor}!`);
         }
     }
     const summary = lines.length ? lines.join('\n') : 'No debt!';

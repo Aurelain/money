@@ -1,4 +1,5 @@
 import memoize from 'memoize-one';
+import inferOwner from './inferOwner.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -62,19 +63,6 @@ const registerAccount = (name, row, accountsBag, virtualAccounts) => {
     }
 };
 
-/**
- *
- */
-const inferOwner = (name) => {
-    const {length} = name;
-    for (let i = 1; i < length; i++) {
-        const c = name.charAt(i);
-        if (c === c.toLocaleUpperCase()) {
-            return name.substring(0, i);
-        }
-    }
-    return name;
-};
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
