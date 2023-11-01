@@ -61,7 +61,7 @@ const requestHistory = async (isForced = false) => {
         history.push(...rows);
     }
 
-    const accountToSpreadsheet = linkAccountToSpreadsheet(history);
+    const accountToSpreadsheet = linkAccountToSpreadsheet(history, vaults);
     checkAndCleanDuplicates(history, accountToSpreadsheet, vaults);
     history.sort(compareHistoryItems);
     validateHistory(history);
@@ -202,11 +202,12 @@ const validateSpreadsheet = (spreadsheet, spreadsheetId) => {
 /**
  *
  */
-const linkAccountToSpreadsheet = (history) => {
+const linkAccountToSpreadsheet = (history, vaults) => {
     const bag = {};
     for (const row of history) {
         const {spreadsheetId, from, to} = row;
         if (from === ADMIN_ACCOUNT) {
+            check(!bag[to], 'Already born!', row, vaults);
             bag[to] = spreadsheetId;
             // Also spawn a link for the owner, even if it may not have been mentioned
             const owner = inferOwner(to);

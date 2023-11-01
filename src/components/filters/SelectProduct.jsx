@@ -5,7 +5,7 @@ import {selectHistory, selectPreferredProduct} from '../../state/selectors.js';
 import SelectWrapper from './SelectWrapper.jsx';
 import memoHistoryComputation from '../../system/memoHistoryComputation.js';
 import {FIELD_PRODUCT} from '../../SETTINGS.js';
-import InformationOutline from '../../ui/Icons/InformationOutline.jsx';
+import MessageProcessing from '../../ui/Icons/MessageProcessing.jsx';
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -22,7 +22,7 @@ class SelectProduct extends React.PureComponent {
                 onItemHold={onItemHold}
                 label={label}
                 preferred={preferred}
-                icon={InformationOutline}
+                icon={MessageProcessing}
                 listItems={products}
                 data={FIELD_PRODUCT}
                 forcedOpen={forcedOpen}
