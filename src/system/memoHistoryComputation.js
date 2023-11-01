@@ -21,6 +21,8 @@ const memoHistoryComputation = memoize((history) => {
         productsBag[row.product] = true;
     }
 
+    const virtualAccounts = {};
+
     const accounts = Object.keys(accountsBag).sort();
     const values = Object.keys(valuesBag).sort();
     const products = Object.keys(productsBag).sort();
@@ -30,6 +32,7 @@ const memoHistoryComputation = memoize((history) => {
         values,
         products,
         accountsBag,
+        virtualAccounts,
     };
 });
 
@@ -46,6 +49,7 @@ const registerAccount = (name, {date, spreadsheetId}, accountsBag) => {
             total: 0,
             date,
             spreadsheetId,
+            owner: name,
         };
     } else {
         if (date < account.date) {

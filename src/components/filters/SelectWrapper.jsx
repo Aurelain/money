@@ -102,7 +102,7 @@ SelectWrapper.propTypes = {
     onItemHold: PropTypes.func,
     label: PropTypes.string.isRequired,
     preferred: PropTypes.string.isRequired,
-    icon: PropTypes.func.isRequired,
+    icon: PropTypes.elementType.isRequired,
     listItems: PropTypes.array.isRequired,
     data: PropTypes.any,
     forcedOpen: PropTypes.bool,

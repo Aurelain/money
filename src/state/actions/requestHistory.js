@@ -180,7 +180,7 @@ const validateSpreadsheet = (spreadsheet, spreadsheetId, historyByDate) => {
 
         const value = Number(values[1].formattedValue);
         assume(Number.isInteger(value), `Non-integer in ${title} at row ${i}!`);
-        assume(value > 0, `Expecting positive value in ${title} at row ${i}!`);
+        assume(value >= 0, `Expecting non-negative value in ${title} at row ${i}!`);
 
         const to = values[2].formattedValue;
 

@@ -24,6 +24,10 @@ const SX = {
         background: 'red',
         color: 'white',
     },
+    isVirtual: {
+        opacity: 0.8,
+        fontStyle: 'italic',
+    },
     date: {
         position: 'absolute',
         top: 1,
@@ -40,13 +44,13 @@ const SX = {
 class Row extends React.PureComponent {
     memoRootSx = memo();
     render() {
-        const {from, value, to, product, isSelected, meta} = this.props;
+        const {from, value, to, product, isSelected, isVirtual, meta} = this.props;
 
         const fromSuffix = meta[from]?.suffix || '';
         const toSuffix = meta[to]?.suffix || '';
         return (
             <Button
-                css={this.memoRootSx(SX.root, isSelected && SX.isSelected)}
+                css={this.memoRootSx(SX.root, isSelected && SX.isSelected, isVirtual && SX.isVirtual)}
                 label={
                     <>
                         <div css={SX.column}>{from + fromSuffix}</div>
@@ -100,6 +104,7 @@ Row.propTypes = {
     product: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
     isSelected: PropTypes.bool.isRequired,
+    isVirtual: PropTypes.bool.isRequired,
     meta: PropTypes.objectOf(
         PropTypes.shape({
             alias: PropTypes.string.isRequired,

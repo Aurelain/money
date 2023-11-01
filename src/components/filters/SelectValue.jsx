@@ -12,7 +12,7 @@ import {FIELD_VALUE} from '../../SETTINGS.js';
 // =====================================================================================================================
 class SelectValue extends React.PureComponent {
     render() {
-        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Money', preferred, forcedOpen} = this.props;
+        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Amount', preferred, forcedOpen} = this.props;
         const {values} = memoHistoryComputation(history);
         return (
             <SelectWrapper

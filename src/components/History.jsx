@@ -13,6 +13,7 @@ import {connect} from 'react-redux';
 import {selectHistory, selectFocusedDate, selectMeta} from '../state/selectors.js';
 import Row from './Row.jsx';
 import Button from '../ui/Button.jsx';
+import memoHistoryComputation from '../system/memoHistoryComputation.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -47,14 +48,18 @@ class History extends React.PureComponent {
         const {history, focusedDate, meta} = this.props;
         const {pages} = this.state;
         const historySubset = this.memoHistorySubset(history, pages);
+        const {virtualAccounts} = memoHistoryComputation(history);
         return (
             <div css={SX.root}>
                 {historySubset.length !== history.length && (
                     <Button cssNormal={SX.more} label={'...'} onClick={this.onMoreClick} variant={'simple'} />
                 )}
                 {historySubset.map((row) => {
-                    const {date} = row;
-                    return <Row key={date} {...row} isSelected={focusedDate === date} meta={meta} />;
+                    const {from, to, date} = row;
+                    const isVirtual = from in virtualAccounts || to in virtualAccounts;
+                    return (
+                        <Row key={date} {...row} isSelected={focusedDate === date} isVirtual={isVirtual} meta={meta} />
+                    );
                 })}
             </div>
         );

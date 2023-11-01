@@ -19,10 +19,9 @@ const memoFormulaResults = memoize((history, formulas) => {
             const re = new RegExp('\\b' + accountName + '\\b', 'g');
             adaptedOperations = adaptedOperations.replace(re, accountsBag[accountName].total);
         }
-        // console.log('operations:', operations);
-        // console.log('adaptedOperations:', adaptedOperations);
 
         const result = evaluate(adaptedOperations);
+        // (typeof result !== 'number' || isNaN(result)) && console.warn(operations + ' → ' + adaptedOperations);
         results.push(formatNumber(result));
     }
 

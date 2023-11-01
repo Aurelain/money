@@ -16,7 +16,7 @@ const showDebts = () => {
     const relations = {};
     for (const item of history) {
         const {from, value, to, product} = item;
-        if (product === CREDIT_KEYWORD) {
+        if (product.includes(CREDIT_KEYWORD)) {
             const fromOwner = meta[from]?.owner || from;
             const toOwner = meta[to]?.owner || to;
             const relationName = [fromOwner, toOwner].sort().join('_');

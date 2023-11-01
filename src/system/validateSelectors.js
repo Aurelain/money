@@ -14,7 +14,7 @@ const validateSelectors = ({from, value, to, product}) => {
     }
 
     value = Number(value);
-    if (!Number.isInteger(value) || value <= 0) {
+    if (!Number.isInteger(value) || value < 0) {
         return false;
     }
 

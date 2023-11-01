@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import Gift from '../../ui/Icons/Gift.jsx';
 import {selectHistory, selectPreferredProduct} from '../../state/selectors.js';
 import SelectWrapper from './SelectWrapper.jsx';
 import memoHistoryComputation from '../../system/memoHistoryComputation.js';
 import {FIELD_PRODUCT} from '../../SETTINGS.js';
+import InformationOutline from '../../ui/Icons/InformationOutline.jsx';
 
 // =====================================================================================================================
 //  C O M P O N E N T
 // =====================================================================================================================
 class SelectProduct extends React.PureComponent {
     render() {
-        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Product', preferred, forcedOpen} = this.props;
+        const {onSelect, onHold, onItemHold, isFilter, history, label = 'Summary', preferred, forcedOpen} = this.props;
         const {products} = memoHistoryComputation(history);
         return (
             <SelectWrapper
@@ -22,7 +22,7 @@ class SelectProduct extends React.PureComponent {
                 onItemHold={onItemHold}
                 label={label}
                 preferred={preferred}
-                icon={Gift}
+                icon={InformationOutline}
                 listItems={products}
                 data={FIELD_PRODUCT}
                 forcedOpen={forcedOpen}

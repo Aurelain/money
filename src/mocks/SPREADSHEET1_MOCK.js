@@ -4,12 +4,13 @@ import {CREDIT_KEYWORD} from '../SETTINGS.js';
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const DATA = [
-    ['From', 'Value', 'To', 'Product', 'Date'],
-    ['God', 2500, 'FABcr', 'Init', '2023-10-24T15:08:57+03:00'],
-    ['God', 1800, 'FXBcr', 'Init', '2023-10-24T16:30:42+03:00'],
-    ['FABcr', 170, 'Profi', 'Diverse', '2023-10-24T17:45:19+03:00'],
-    ['FXBcr', 1200, 'Profi', 'Diverse', '2023-10-24T18:12:08+03:00'],
-    ['AIng', 5000, 'FABcr', 'Pomegranate', '2023-10-25T06:30:22+03:00'],
+    ['From', 'Amount', 'To', 'Summary', 'Date'],
+    ['God', 0, 'AnaCard', 'Init', '2022-10-20T16:41:47+03:00'],
+    ['God', 250, 'AnaCard', 'Lottery', '2022-10-21T16:41:47+03:00'],
+    ['Geta', 100, 'Penny', CREDIT_KEYWORD, '2022-10-28T16:43:47+03:00'],
+    ['Geta', 100, 'Ana', CREDIT_KEYWORD, '2022-10-29T16:43:47+03:00'],
+    ['AnaCard', 100, 'Geta', CREDIT_KEYWORD, '2022-11-01T16:43:47+02:00'],
+    ['FooCard', 5000, 'FABcr', 'Pomegranate', '2023-10-25T06:30:22+03:00'],
     ['Monica', 3200, 'Liam', 'Coconut', '2023-10-25T07:48:59+03:00'],
     ['Razvan', 1700, 'Aiden', 'Pear', '2023-10-25T08:25:14+03:00'],
     ['Camelia', 2200, 'Harper', 'Raspberry', '2023-10-25T09:11:27+03:00'],
@@ -22,7 +23,7 @@ const DATA = [
     ['Ionut', 2500, 'Michael', 'Nectarine', '2023-10-25T16:55:36+03:00'],
     ['Raluca', 2700, 'Avery', 'Cranberry', '2023-10-25T17:32:59+03:00'],
     ['Stefan', 3500, 'Jackson', 'Raisin', '2023-10-25T18:51:15+03:00'],
-    ['Anca', 1900, 'Abigail', 'Fig', '2023-10-25T19:28:47+03:00'],
+    ['Foo', 0, 'Abigail', 'Fig', '2023-10-25T19:28:47+03:00'],
     ['Raul', 3200, 'William', 'Melon', '2023-10-25T20:46:08+03:00'],
     ['Andreea', 2600, 'Sofia', 'Papaya', '2023-10-25T21:13:22+03:00'],
     ['Catalin', 1800, 'Ethan', 'Dragon Fruit', '2023-10-25T22:32:40+03:00'],
@@ -33,7 +34,6 @@ const DATA = [
     ['Silvia', 3000, 'Liam', 'Peach', '2023-10-26T11:43:25+03:00'],
     ['Doru', 2600, 'Emma', 'Mango', '2023-10-26T12:15:48+03:00'],
     ['Georgiana', 2500, 'James', 'Cherry', '2023-10-26T13:37:55+03:00'],
-    ['Vasile', 2200, 'Olivia', 'Pineapple', '2023-10-26T14:02:37+03:00'],
     ['Daniela', 1900, 'Mason', 'Blackberry', '2023-10-26T15:28:59+03:00'],
     ['Marian', 2800, 'Harper', 'Strawberry', '2023-10-26T16:51:03+03:00'],
     ['Marina', 3400, 'Noah', 'Grapes', '2023-10-26T17:19:15+03:00'],
@@ -50,8 +50,6 @@ const DATA = [
     ['Marius', 2300, 'Chloe', 'Lime', '2023-10-27T14:55:41+03:00'],
     ['Gabriela', 2200, 'Benjamin', 'Apricot', '2023-10-27T15:21:52+03:00'],
     ['Valeria', 2400, 'Noah', 'Raspberry', '2023-10-27T16:43:47+03:00'],
-    ['AIng', 1000, 'Noah', CREDIT_KEYWORD, '2023-10-28T16:43:47+03:00'],
-    ['Noah', 600, 'AIng', CREDIT_KEYWORD, '2023-10-29T16:43:47+03:00'],
 ];
 
 // =====================================================================================================================
