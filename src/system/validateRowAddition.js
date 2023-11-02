@@ -37,7 +37,7 @@ const run = (row, importantAccounts, history) => {
     if (!checkVirtual(row) && !from.includes(CREDIT_CARD_MARK)) {
         const fromTotal = computeTotal(from, history);
         if (importantAccounts[from]) {
-            assume(fromTotal - value >= 0, `Account ${from} is not allowed to become negative!`);
+            assume(fromTotal - value >= 0, `Account ${from} must not become negative!`);
         }
     }
 

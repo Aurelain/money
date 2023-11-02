@@ -5,7 +5,16 @@ import Cash from '../../ui/Icons/Cash.jsx';
 import {selectHistory, selectPreferredValue} from '../../state/selectors.js';
 import SelectWrapper from './SelectWrapper.jsx';
 import memoHistoryComputation from '../../system/memoHistoryComputation.js';
-import {FIELD_VALUE} from '../../SETTINGS.js';
+import {COLOR_AMOUNT, FIELD_VALUE} from '../../SETTINGS.js';
+
+// =====================================================================================================================
+//  D E C L A R A T I O N S
+// =====================================================================================================================
+const SX = {
+    custom: {
+        color: COLOR_AMOUNT,
+    },
+};
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -26,6 +35,7 @@ class SelectValue extends React.PureComponent {
                 listItems={values}
                 data={FIELD_VALUE}
                 forcedOpen={forcedOpen}
+                styling={SX.custom}
             />
         );
     }

@@ -4,8 +4,17 @@ import {connect} from 'react-redux';
 import {selectHistory, selectPreferredProduct} from '../../state/selectors.js';
 import SelectWrapper from './SelectWrapper.jsx';
 import memoHistoryComputation from '../../system/memoHistoryComputation.js';
-import {FIELD_PRODUCT} from '../../SETTINGS.js';
+import {COLOR_SUMMARY, FIELD_PRODUCT} from '../../SETTINGS.js';
 import MessageProcessing from '../../ui/Icons/MessageProcessing.jsx';
+
+// =====================================================================================================================
+//  D E C L A R A T I O N S
+// =====================================================================================================================
+const SX = {
+    custom: {
+        color: COLOR_SUMMARY,
+    },
+};
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -26,6 +35,7 @@ class SelectProduct extends React.PureComponent {
                 listItems={products}
                 data={FIELD_PRODUCT}
                 forcedOpen={forcedOpen}
+                styling={SX.custom}
             />
         );
     }

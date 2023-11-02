@@ -37,7 +37,7 @@ const run = (row) => {
     assume(from.match(PATTERN_ONLY_CHARACTERS), 'From-account must not contain whitespace!');
 
     assume(Number.isInteger(value), 'Amount must be integer!');
-    assume(value > 0, 'Amount must be positive!');
+    assume(value >= 0, 'Amount must be positive!');
 
     assume(typeof to === 'string', 'To-account must be a string!');
     assume(to.length, 'To-account must not be empty!');

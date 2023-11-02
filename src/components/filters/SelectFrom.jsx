@@ -5,7 +5,16 @@ import AccountMinus from '../../ui/Icons/AccountMinus.jsx';
 import {selectHistory, selectPreferredFrom} from '../../state/selectors.js';
 import SelectWrapper from './SelectWrapper.jsx';
 import memoHistoryComputation from '../../system/memoHistoryComputation.js';
-import {FIELD_FROM} from '../../SETTINGS.js';
+import {COLOR_FROM, FIELD_FROM} from '../../SETTINGS.js';
+
+// =====================================================================================================================
+//  D E C L A R A T I O N S
+// =====================================================================================================================
+const SX = {
+    custom: {
+        color: COLOR_FROM,
+    },
+};
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -26,6 +35,7 @@ class SelectFrom extends React.PureComponent {
                 listItems={accounts}
                 data={FIELD_FROM}
                 forcedOpen={forcedOpen}
+                styling={SX.custom}
             />
         );
     }

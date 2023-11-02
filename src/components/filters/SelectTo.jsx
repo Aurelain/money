@@ -5,7 +5,16 @@ import AccountPlus from '../../ui/Icons/AccountPlus.jsx';
 import {selectHistory, selectPreferredTo} from '../../state/selectors.js';
 import SelectWrapper from './SelectWrapper.jsx';
 import memoHistoryComputation from '../../system/memoHistoryComputation.js';
-import {FIELD_TO} from '../../SETTINGS.js';
+import {COLOR_TO, FIELD_TO} from '../../SETTINGS.js';
+
+// =====================================================================================================================
+//  D E C L A R A T I O N S
+// =====================================================================================================================
+const SX = {
+    custom: {
+        color: COLOR_TO,
+    },
+};
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -26,6 +35,7 @@ class SelectTo extends React.PureComponent {
                 listItems={accounts}
                 data={FIELD_TO}
                 forcedOpen={forcedOpen}
+                styling={SX.custom}
             />
         );
     }

@@ -46,18 +46,30 @@ class SelectWrapper extends React.PureComponent {
     memoRootSx = memo();
 
     render() {
-        const {onSelect, onHold, onItemHold, isFilter, icon, label, preferred, listItems, meta, data, forcedOpen} =
-            this.props;
+        const {
+            onSelect,
+            onHold,
+            onItemHold,
+            isFilter,
+            icon,
+            label,
+            preferred,
+            listItems,
+            meta,
+            data,
+            forcedOpen,
+            styling,
+        } = this.props;
         return (
             <Select
-                cssNormal={this.memoRootSx(SX.root, isFilter && SX.isFilter)}
+                cssNormal={this.memoRootSx(SX.root, isFilter && SX.isFilter, styling)}
                 cssHover={SX.buttonHover}
                 cssActive={SX.buttonActive}
                 label={this.memoEmbellishLabel(label, preferred, meta)}
                 icon={icon}
                 variant={'simple'}
                 list={CustomList}
-                listProps={this.memoListProps(listItems, label, preferred, meta, onItemHold)}
+                listProps={this.memoListProps(listItems, label, preferred, meta, onItemHold, styling)}
                 onSelect={onSelect}
                 onHold={onHold} // goes to Button
                 data={data}
@@ -73,13 +85,14 @@ class SelectWrapper extends React.PureComponent {
     /**
      *
      */
-    memoListProps = memoize((listItems, label, preferred, meta, onItemHold) => {
+    memoListProps = memoize((listItems, label, preferred, meta, onItemHold, styling) => {
         return {
             items: listItems,
             selectedValue: label,
             preferredValue: preferred,
             meta,
             onHold: onItemHold, // goes to List
+            styling,
         };
     });
 
@@ -106,6 +119,7 @@ SelectWrapper.propTypes = {
     listItems: PropTypes.array.isRequired,
     data: PropTypes.any,
     forcedOpen: PropTypes.bool,
+    styling: PropTypes.object,
     // -------------------------------- redux:
     meta: PropTypes.object.isRequired,
 };

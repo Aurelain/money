@@ -30,6 +30,11 @@ export const CREDIT_KEYWORD = 'Credit';
 export const VIRTUAL_KEYWORD = 'CreditV';
 export const CREDIT_CARD_MARK = 'CC';
 
+export const COLOR_FROM = 'red';
+export const COLOR_AMOUNT = '#15693f';
+export const COLOR_TO = 'blue';
+export const COLOR_SUMMARY = 'magenta';
+
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?
 // prettier-ignore
 // eslint-disable-next-line max-len

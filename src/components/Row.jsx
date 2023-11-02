@@ -5,6 +5,7 @@ import memo from '../utils/memo.js';
 import clearFocusedDate from '../state/actions/clearFocusedDate.js';
 import formatNumber from '../system/formatNumber.js';
 import deleteRow from '../state/actions/deleteRow.js';
+import {COLOR_AMOUNT, COLOR_FROM, COLOR_SUMMARY, COLOR_TO} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -20,6 +21,7 @@ const SX = {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
+        fontWeight: 500,
     },
     isSelected: {
         background: 'red',
@@ -39,7 +41,10 @@ const SX = {
         color: 'white',
     },
 };
-// const SX_AMOUNT = {...SX.column, textAlign: 'right'};
+const SX_FROM = {...SX.column, color: COLOR_FROM};
+const SX_AMOUNT = {...SX.column, color: COLOR_AMOUNT};
+const SX_TO = {...SX.column, color: COLOR_TO};
+const SX_SUMMARY = {...SX.column, color: COLOR_SUMMARY};
 
 // =====================================================================================================================
 //  C O M P O N E N T
@@ -57,10 +62,10 @@ class Row extends React.PureComponent {
                 style={isSelected ? SX.isSelected : {}}
                 label={
                     <>
-                        <div css={SX.column}>{from + fromSuffix}</div>
-                        <div css={SX.column}>{formatNumber(value)}</div>
-                        <div css={SX.column}>{to + toSuffix}</div>
-                        <div css={SX.column}>{product}</div>
+                        <div css={SX_FROM}>{from + fromSuffix}</div>
+                        <div css={SX_AMOUNT}>{formatNumber(value)}</div>
+                        <div css={SX_TO}>{to + toSuffix}</div>
+                        <div css={SX_SUMMARY}>{product}</div>
                     </>
                 }
                 variant={'simple'}

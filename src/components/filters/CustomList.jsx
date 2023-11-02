@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {BOX_SHADOW, CONTENT_MAX_WIDTH, SECONDARY_COLOR} from '../../SETTINGS.js';
+import {BOX_SHADOW, CONTENT_MAX_WIDTH} from '../../SETTINGS.js';
 import Button from '../../ui/Button.jsx';
 import embellishLabel from '../../system/embellishLabel.js';
+import memo from '../../utils/memo.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -13,12 +14,13 @@ const SX = {
         flexDirection: 'column',
         borderRadius: 4,
         boxShadow: BOX_SHADOW,
-        background: SECONDARY_COLOR,
+        background: '#fffecf',
         position: 'absolute',
         overflow: 'auto',
         maxHeight: 300,
         width: '25%',
         maxWidth: CONTENT_MAX_WIDTH / 4,
+        color: 'magenta',
     },
     btnNormal: {
         padding: 4,
@@ -26,6 +28,7 @@ const SX = {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
+        fontWeight: 500,
     },
     btnSelected: {
         background: '#1976d2',
@@ -52,10 +55,12 @@ const SX = {
 //  C O M P O N E N T
 // =====================================================================================================================
 class CustomList extends React.PureComponent {
+    memoRootSx = memo();
+
     render() {
-        const {items, onSelect, onHold, innerRef, selectedValue, preferredValue, meta, data} = this.props;
+        const {items, onSelect, onHold, innerRef, selectedValue, preferredValue, meta, data, styling} = this.props;
         return (
-            <div css={SX.root} ref={innerRef}>
+            <div css={this.memoRootSx(SX.root, styling)} ref={innerRef}>
                 {items.map((value) => {
                     const isSelected = value === selectedValue;
                     return (
@@ -151,6 +156,7 @@ CustomList.propTypes = {
     preferredValue: PropTypes.string,
     meta: PropTypes.object.isRequired,
     data: PropTypes.any,
+    styling: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };
 
 export default CustomList;

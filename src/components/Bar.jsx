@@ -1,4 +1,5 @@
 import React from 'react';
+import memoize from 'memoize-one';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import localforage from 'localforage';
@@ -55,6 +56,14 @@ const SX = {
         textOverflow: 'ellipsis',
         padding: 8,
     },
+    result: {
+        borderRight: 'solid 1px rgba(255,255,255,0.5)',
+        lineHeight: '32px',
+        padding: '4px 8px',
+        '&:last-of-type': {
+            borderRight: 0,
+        },
+    },
 };
 
 const MENU_ADD_FORMULA = 'MENU_ADD_FORMULA';
@@ -94,13 +103,12 @@ class Bar extends React.PureComponent {
 
     render() {
         const {history, formulas} = this.props;
-        const results = memoFormulaResults(history, formulas);
         const {isMenuOpen, isLoading} = this.state;
         const reloadIcon = isLoading ? DotsCircle : Reload;
         return (
             <div css={SX.root}>
                 <Button
-                    label={results.join(', ')}
+                    label={this.memoGrowLabel(history, formulas)}
                     cssNormal={SX.btnGrow}
                     onClick={this.onMenuClick}
                     variant={'inverted'}
@@ -204,6 +212,27 @@ class Bar extends React.PureComponent {
     onFetchChange = (isLoading) => {
         this.setState({isLoading});
     };
+
+    /**
+     *
+     */
+    memoGrowLabel = memoize((history, formulas) => {
+        const results = memoFormulaResults(history, formulas);
+        if (results.length < 2) {
+            return results[0];
+        }
+        return (
+            <>
+                {results.map((item, index) => {
+                    return (
+                        <div key={index} css={SX.result}>
+                            {item}
+                        </div>
+                    );
+                })}
+            </>
+        );
+    });
 }
 
 // =====================================================================================================================
