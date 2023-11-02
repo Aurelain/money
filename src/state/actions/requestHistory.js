@@ -4,7 +4,7 @@ import {selectHistory, selectVaults} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import SpreadsheetSchema from '../../schemas/SpreadsheetSchema.js';
 import assume from '../../utils/assume.js';
-import {ADMIN_ACCOUNT, DATE_FORMAT, VAULT_OPTIONS, VAULT_PREFIX} from '../../SETTINGS.js';
+import {ADMIN_ACCOUNT, VAULT_OPTIONS, VAULT_PREFIX} from '../../SETTINGS.js';
 import VaultsSchema from '../../schemas/VaultsSchema.js';
 import SPREADSHEET1_MOCK from '../../mocks/SPREADSHEET1_MOCK.js';
 import SPREADSHEET2_MOCK from '../../mocks/SPREADSHEET2_MOCK.js';
@@ -16,8 +16,9 @@ import OPTIONS_MOCK from '../../mocks/OPTIONS_MOCK.js';
 import VAULTS_MOCK from '../../mocks/VAULTS_MOCK.js';
 import createOptionsSpreadsheet from '../../system/createOptionsSpreadsheet.js';
 import saveOptions from '../../system/saveOptions.js';
-import validateRowInHistory from '../../system/validateRowInHistory.js';
+import validateRowAddition from '../../system/validateRowAddition.js';
 import inferOwner from '../../system/inferOwner.js';
+import validateRow from '../../system/validateRow.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -179,21 +180,15 @@ const validateSpreadsheet = (spreadsheet, spreadsheetId) => {
 
     for (let index = 1; index < length; index++) {
         const {values} = rowData[index];
-
         const from = values[0].formattedValue;
-
         const value = Number(values[1].formattedValue);
-        assume(Number.isInteger(value), `Non-integer in ${title} at row ${index}!`);
-        assume(value >= 0, `Expecting non-negative value in ${title} at row ${index}!`);
-
         const to = values[2].formattedValue;
-
         const product = values[3].formattedValue;
-
         const date = values[4].formattedValue;
-        assume(date.match(DATE_FORMAT), `Invalid date format in ${title} at row ${index}!`);
-
-        rows.push({spreadsheetId, index, from, value, to, product, date});
+        const row = {spreadsheetId, index, from, value, to, product, date};
+        const validation = validateRow(row);
+        assume(validation === true, validation + ` (${title}, row ${index}, ${date})`);
+        rows.push(row);
     }
 
     return rows;
@@ -272,7 +267,7 @@ const compareHistoryItems = (a, b) => {
 const validateHistory = (history) => {
     const incrementalHistory = [];
     for (const row of history) {
-        validateRowInHistory(row, incrementalHistory);
+        validateRowAddition(row, incrementalHistory);
         incrementalHistory.push(row);
     }
 };

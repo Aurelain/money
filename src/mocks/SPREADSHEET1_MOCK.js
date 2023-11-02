@@ -40,7 +40,7 @@ const DATA = [
     ['Ionut', 2500, 'Michael', 'Nectarine', '2023-10-25T16:55:36+03:00'],
     ['Raluca', 2700, 'Avery', 'Cranberry', '2023-10-25T17:32:59+03:00'],
     ['Stefan', 3500, 'Jackson', 'Raisin', '2023-10-25T18:51:15+03:00'],
-    ['Foo', 0, 'Abigail', 'Fig', '2023-10-25T19:28:47+03:00'],
+    ['Foo', 1, 'Abigail', 'Fig', '2023-10-25T19:28:47+03:00'],
     ['Raul', 3200, 'William', 'Melon', '2023-10-25T20:46:08+03:00'],
     ['Andreea', 2600, 'Sofia', 'Papaya', '2023-10-25T21:13:22+03:00'],
     ['Catalin', 1800, 'Ethan', 'Dragon Fruit', '2023-10-25T22:32:40+03:00'],
