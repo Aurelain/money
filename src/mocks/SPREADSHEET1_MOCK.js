@@ -1,33 +1,21 @@
-import {ADMIN_ACCOUNT, CREDIT_KEYWORD, VIRTUAL_KEYWORD} from '../SETTINGS.js';
+import {CREDIT_KEYWORD, VIRTUAL_KEYWORD} from '../SETTINGS.js';
+import condense from '../utils/condense.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const DATA = [
+    [
+        condense(`
+            Liam, Aiden, Harper, Lucas, Elizabeth, Henry, Chloe, Mason, Ella, Michael, Avery, Jackson,
+            Abigail, William, Sofia, Ethan, Madison, Aria, Emma, James, Noah, Isabella, Benjamin, AnaCard, Geta
+        `),
+        '',
+        '',
+        '',
+        '',
+    ],
     ['From', 'Amount', 'To', 'Summary', 'Date'],
-    [ADMIN_ACCOUNT, 0, 'Liam', 'Init', '2023-10-25T06:01:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Aiden', 'Init', '2023-10-25T06:02:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Harper', 'Init', '2023-10-25T06:03:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Lucas', 'Init', '2023-10-25T06:04:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Elizabeth', 'Init', '2023-10-25T06:05:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Henry', 'Init', '2023-10-25T06:06:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Chloe', 'Init', '2023-10-25T06:07:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Mason', 'Init', '2023-10-25T06:08:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Ella', 'Init', '2023-10-25T06:09:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Michael', 'Init', '2023-10-25T06:10:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Avery', 'Init', '2023-10-25T06:11:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Jackson', 'Init', '2023-10-25T06:12:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Abigail', 'Init', '2023-10-25T06:13:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'William', 'Init', '2023-10-25T06:14:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Sofia', 'Init', '2023-10-25T06:15:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Ethan', 'Init', '2023-10-25T06:16:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Madison', 'Init', '2023-10-25T06:17:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Aria', 'Init', '2023-10-25T06:19:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Emma', 'Init', '2023-10-25T06:22:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'James', 'Init', '2023-10-25T06:23:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Noah', 'Init', '2023-10-25T06:26:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Isabella', 'Init', '2023-10-25T06:33:22+03:00'],
-    [ADMIN_ACCOUNT, 0, 'Benjamin', 'Init', '2023-10-25T06:38:22+03:00'],
     ['Monica', 3200, 'Liam', 'Coconut', '2023-10-25T07:48:59+03:00'],
     ['Razvan', 1700, 'Aiden', 'Pear', '2023-10-25T08:25:14+03:00'],
     ['Camelia', 2200, 'Harper', 'Raspberry', '2023-10-25T09:11:27+03:00'],
@@ -67,8 +55,6 @@ const DATA = [
     ['Gabriela', 2200, 'Benjamin', 'Apricot', '2023-10-27T15:21:52+03:00'],
     ['Valeria', 2400, 'Noah', 'Raspberry', '2023-10-27T16:43:47+03:00'],
     // Custom:
-    [ADMIN_ACCOUNT, 0, 'AnaCard', 'Init', '2023-10-27T17:41:47+03:00'],
-    [ADMIN_ACCOUNT, 1000, 'Geta', 'Init', '2023-10-27T17:41:48+03:00'],
     ['God', 250, 'AnaCard', 'Lottery', '2023-10-27T17:41:49+03:00'],
     ['Geta', 100, 'Penny', 'Diverse', '2023-10-27T17:43:50+03:00'],
     ['Geta', 100, 'AnaPortofel', VIRTUAL_KEYWORD, '2023-10-27T17:43:51+03:00'],

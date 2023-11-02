@@ -111,7 +111,14 @@ class Bar extends React.PureComponent {
                     onClick={this.onMenuClick}
                     variant={'inverted'}
                 />
-                <Button icon={reloadIcon} cssNormal={SX.btn} onClick={this.onReloadClick} variant={'inverted'} />
+                <Button
+                    icon={reloadIcon}
+                    holdIcon={RefreshCircle}
+                    cssNormal={SX.btn}
+                    onClick={this.onReloadClick}
+                    onHold={this.onReloadHold}
+                    variant={'inverted'}
+                />
                 <SideMenu
                     isOpen={isMenuOpen}
                     onClose={this.onMenuClose}
@@ -192,7 +199,14 @@ class Bar extends React.PureComponent {
      *
      */
     onReloadClick = () => {
-        window.scrollTo(0, 0);
+        window.location.reload();
+    };
+
+    /**
+     *
+     */
+    onReloadHold = async () => {
+        await requestHistory(true);
         window.location.reload();
     };
 

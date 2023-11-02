@@ -8,6 +8,7 @@ const STATE_MOCK = {
         expirationTimestamp: 0,
     },
     vaults: {},
+    rosters: {},
     history: [],
     options: {
         defaults: {

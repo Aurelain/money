@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Footer from './Footer.jsx';
-import {selectIsAuthenticated} from '../state/selectors.js';
+import {selectIsAuthenticated, selectIsHealed} from '../state/selectors.js';
 import {addErrorListener} from '../utils/interceptErrors.js';
 import failAuthentication from '../state/actions/failAuthentication.js';
 import History from './History.jsx';
@@ -41,7 +41,9 @@ class App extends React.PureComponent {
         );
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        const {isAuthenticated, isHealed} = this.props;
+
         if (USE_MOCK) {
             document.title += ' (MOCK)';
         }
@@ -50,9 +52,9 @@ class App extends React.PureComponent {
 
         addErrorListener(this.onGlobalError);
 
-        if (this.props.isAuthenticated) {
+        if (isAuthenticated) {
             // We were logged-in sometimes in the past. We should ensure we have the latest data:
-            await requestHistory();
+            requestHistory(isHealed);
         }
     }
 
@@ -86,10 +88,12 @@ class App extends React.PureComponent {
 // =====================================================================================================================
 App.propTypes = {
     isAuthenticated: PropTypes.bool.isRequired,
+    isHealed: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     isAuthenticated: selectIsAuthenticated(state),
+    isHealed: selectIsHealed(state),
 });
 
 export default connect(mapStateToProps)(App);

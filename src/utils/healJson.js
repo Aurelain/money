@@ -6,6 +6,7 @@ import getDeep from './getDeep.js';
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const ajv = new Ajv();
+let healedCount;
 
 // =====================================================================================================================
 //  P U B L I C
@@ -18,7 +19,7 @@ const healJson = (json, schema, options = {}) => {
     const validate = ajv.compile(schema);
     const id = schema['$id'];
     let errorFingerprint = '';
-    let errorCount = 0;
+    healedCount = 0;
 
     while (true) {
         if (validate(json)) {
@@ -26,8 +27,8 @@ const healJson = (json, schema, options = {}) => {
             return json;
         }
 
-        errorCount++;
-        assume(errorCount < 1000, 'Too many errors!');
+        healedCount++;
+        assume(healedCount < 1000, 'Too many errors!');
 
         const [error] = validate.errors; // we're only interested in the first error
         const freshFingerprint = JSON.stringify(error, null, 4);
@@ -73,7 +74,7 @@ const healJson = (json, schema, options = {}) => {
                 const dataParent = getDeep(json, instanceDotPath);
                 delete dataParent[params.additionalProperty];
                 verbose && console.warn(`Removed: ${instanceDotPath}.${params.additionalProperty}`);
-                errorCount--;
+                healedCount--;
                 break;
             }
             case 'minItems': {
@@ -154,4 +155,5 @@ const standardizePath = (path) => {
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================
+export {healedCount};
 export default healJson;

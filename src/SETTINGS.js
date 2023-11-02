@@ -18,7 +18,8 @@ export const FILTER_HEIGHT = 32;
 
 export const VAULT_PREFIX = 'Money_';
 export const VAULT_OPTIONS = VAULT_PREFIX + 'Options';
-export const DATE_FORMAT = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\+\d\d:\d\d$/;
+
+export const PATTERN_ONLY_CHARACTERS = /^\S+$/;
 
 export const FIELD_FROM = 'from';
 export const FIELD_VALUE = 'value';

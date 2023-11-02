@@ -50,10 +50,8 @@ const SpreadsheetSchema = {
                                                     properties: {
                                                         formattedValue: {
                                                             type: 'string',
-                                                            minLength: 1,
                                                         },
                                                     },
-                                                    required: ['formattedValue'],
                                                 },
                                             },
                                         },

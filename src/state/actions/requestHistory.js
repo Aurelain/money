@@ -1,10 +1,10 @@
 import requestApi from '../../system/requestApi.js';
 import checkOffline from '../../system/checkOffline.js';
-import {selectHistory, selectVaults} from '../selectors.js';
+import {selectHistory, selectRosters, selectVaults} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import SpreadsheetSchema from '../../schemas/SpreadsheetSchema.js';
 import assume from '../../utils/assume.js';
-import {ADMIN_ACCOUNT, VAULT_OPTIONS, VAULT_PREFIX} from '../../SETTINGS.js';
+import {ADMIN_ACCOUNT, PATTERN_ONLY_CHARACTERS, VAULT_OPTIONS, VAULT_PREFIX} from '../../SETTINGS.js';
 import VaultsSchema from '../../schemas/VaultsSchema.js';
 import SPREADSHEET1_MOCK from '../../mocks/SPREADSHEET1_MOCK.js';
 import SPREADSHEET2_MOCK from '../../mocks/SPREADSHEET2_MOCK.js';
@@ -19,6 +19,7 @@ import saveOptions from '../../system/saveOptions.js';
 import validateRowAddition from '../../system/validateRowAddition.js';
 import validateRow from '../../system/validateRow.js';
 import collectBirths from './collectBirths.js';
+import condense from '../../utils/condense.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -53,12 +54,19 @@ const requestHistory = async (isForced = false) => {
     const pendingIds = {...changes.created, ...changes.updated};
     delete pendingIds[optionsVaultId];
 
+    const prevRosters = selectRosters(state);
+    const rosters = {};
+    for (const vaultId in changes.unchanged) {
+        rosters[vaultId] = prevRosters[vaultId];
+    }
+
     const prevHistory = selectHistory(state);
     const history = prevHistory.filter((item) => item.spreadsheetId in changes.unchanged);
 
     for (const id in pendingIds) {
         const spreadsheet = await requestSpreadsheet(id);
-        const rows = validateSpreadsheet(spreadsheet, id);
+        const {roster, rows} = parseSpreadsheet(spreadsheet, id);
+        rosters[id] = roster;
         history.push(...rows);
     }
 
@@ -67,6 +75,7 @@ const requestHistory = async (isForced = false) => {
 
     setState((state) => {
         state.vaults = vaults;
+        state.rosters = rosters;
         state.history = history;
     });
 };
@@ -167,7 +176,7 @@ const requestSpreadsheet = async (spreadsheetId) => {
 /**
  *
  */
-const validateSpreadsheet = (spreadsheet, spreadsheetId) => {
+const parseSpreadsheet = (spreadsheet, spreadsheetId) => {
     const rows = [];
 
     const {sheets, properties} = spreadsheet;
@@ -176,7 +185,10 @@ const validateSpreadsheet = (spreadsheet, spreadsheetId) => {
     const {rowData} = sheet.data[0];
     const {length} = rowData;
 
-    for (let index = 1; index < length; index++) {
+    const roster = parseRoster(rowData, spreadsheetTitle);
+
+    // Skip the roster and the headers, so start at 2:
+    for (let index = 2; index < length; index++) {
         const {values} = rowData[index];
         const from = values[0].formattedValue;
         const value = Number(values[1].formattedValue);
@@ -189,7 +201,26 @@ const validateSpreadsheet = (spreadsheet, spreadsheetId) => {
         rows.push(row);
     }
 
-    return rows;
+    return {roster, rows};
+};
+
+/**
+ *
+ */
+const parseRoster = (rowData, spreadsheetTitle) => {
+    const firstCell = rowData[0].values[0];
+    let rosterText = firstCell.formattedValue || '';
+    rosterText = rosterText.replace(/,/g, ' ');
+    rosterText = condense(rosterText);
+    const parts = rosterText.split(' ');
+    assume(parts.length > 0, `No local accounts declared in ${spreadsheetTitle}!`);
+
+    const roster = {};
+    for (const part of parts) {
+        assume(part.match(PATTERN_ONLY_CHARACTERS), `Local account name ${part} is invalid!`);
+        roster[part] = true;
+    }
+    return roster;
 };
 
 /**

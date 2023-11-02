@@ -4,8 +4,8 @@ import {ADMIN_ACCOUNT} from '../SETTINGS.js';
 //  D E C L A R A T I O N S
 // =====================================================================================================================
 const DATA = [
+    ['Ava', '', '', '', ''],
     ['From', 'Amount', 'To', 'Summary', 'Date'],
-    [ADMIN_ACCOUNT, 0, 'Ava', 'Init', '2023-10-24T06:30:22+03:00'],
     ['Gabriel', 1500, 'Ava', 'Blueberry', '2023-10-24T22:18:47+03:00'],
     ['AnaCard', 10, 'Ava', 'Test', '2023-10-27T17:41:53+03:00'],
 ];

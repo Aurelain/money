@@ -1,11 +1,10 @@
 import assume from '../utils/assume.js';
-import {ADMIN_ACCOUNT} from '../SETTINGS.js';
+import {ADMIN_ACCOUNT, PATTERN_ONLY_CHARACTERS} from '../SETTINGS.js';
 import condense from '../utils/condense.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
-const ONLY_CHARACTERS = /^\S+$/;
 const DATE_FORMAT = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\+\d\d:\d\d$/;
 const ONLY_CHARACTERS_AND_SPACE = /^[\S ]+$/;
 
@@ -35,7 +34,7 @@ const run = (row) => {
 
     assume(typeof from === 'string', 'From-account must be a string!');
     assume(from.length, 'From-account must not be empty!');
-    assume(from.match(ONLY_CHARACTERS), 'From-account must not contain whitespace!');
+    assume(from.match(PATTERN_ONLY_CHARACTERS), 'From-account must not contain whitespace!');
 
     assume(Number.isInteger(value), 'Amount must be integer!');
     if (value === 0) {
@@ -46,7 +45,7 @@ const run = (row) => {
 
     assume(typeof to === 'string', 'To-account must be a string!');
     assume(to.length, 'To-account must not be empty!');
-    assume(to.match(ONLY_CHARACTERS), 'To-account must not contain whitespace!');
+    assume(to.match(PATTERN_ONLY_CHARACTERS), 'To-account must not contain whitespace!');
     assume(to !== ADMIN_ACCOUNT, 'To-account must not be an administrator!');
     assume(from !== to, 'From-account must differ from To-account!');
 

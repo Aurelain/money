@@ -33,6 +33,23 @@ export default {
                 },
             },
         },
+        rosters: {
+            type: 'object',
+            additionalProperties: false,
+            patternProperties: {
+                // The property name is actually the spreadsheet's `id`
+                '.': {
+                    type: 'object',
+                    additionalProperties: false,
+                    patternProperties: {
+                        // The property name is actually the name of a local account (e.g. "AnaCard")
+                        '.': {
+                            const: true,
+                        },
+                    },
+                },
+            },
+        },
         history: {
             type: 'array',
             items: {
@@ -73,5 +90,5 @@ export default {
             additionalProperties: false,
         },
     },
-    required: ['tokens', 'vaults', 'history', 'options', 'optionsVaultId', 'volatile'],
+    required: ['tokens', 'vaults', 'rosters', 'history', 'options', 'optionsVaultId', 'volatile'],
 };
