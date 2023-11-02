@@ -17,7 +17,6 @@ import VAULTS_MOCK from '../../mocks/VAULTS_MOCK.js';
 import createOptionsSpreadsheet from '../../system/createOptionsSpreadsheet.js';
 import saveOptions from '../../system/saveOptions.js';
 import validateRowAddition from '../../system/validateRowAddition.js';
-import inferOwner from '../../system/inferOwner.js';
 import validateRow from '../../system/validateRow.js';
 
 // =====================================================================================================================
@@ -204,9 +203,6 @@ const linkAccountToSpreadsheet = (history, vaults) => {
         if (from === ADMIN_ACCOUNT) {
             check(!bag[to], 'Already born!', row, vaults);
             bag[to] = spreadsheetId;
-            // Also spawn a link for the owner, even if it may not have been mentioned
-            const owner = inferOwner(to);
-            bag[owner] = spreadsheetId;
         }
     }
     return bag;
@@ -237,10 +233,8 @@ const checkAndCleanDuplicates = (history, accountToSpreadsheet, vaults) => {
             history.splice(index, 1); // remove the second row
         } else {
             const {spreadsheetId, from, to} = r1;
-            const fromOwner = inferOwner(from);
-            const toOwner = inferOwner(to);
-            const fromSpreadsheet = from === ADMIN_ACCOUNT ? spreadsheetId : accountToSpreadsheet[fromOwner];
-            const toSpreadsheet = accountToSpreadsheet[toOwner];
+            const fromSpreadsheet = from === ADMIN_ACCOUNT ? spreadsheetId : accountToSpreadsheet[from];
+            const toSpreadsheet = accountToSpreadsheet[to];
             if (fromSpreadsheet === spreadsheetId) {
                 const isToValid = toSpreadsheet === spreadsheetId || !toSpreadsheet;
                 check(isToValid, 'Row has no to-mirror!', r1, vaults);

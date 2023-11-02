@@ -12,13 +12,12 @@ import memoHistoryComputation from '../../system/memoHistoryComputation.js';
 const showDebts = () => {
     const state = getState();
     const history = selectHistory(state);
-    const {accountsBag, virtualAccounts} = memoHistoryComputation(history);
+    const {accountsBag, virtualDates} = memoHistoryComputation(history);
 
     const relations = {};
     for (const item of history) {
-        const {from, value, to, product} = item;
-        const isVirtual = virtualAccounts[from] || virtualAccounts[to];
-        if (isVirtual || product.includes(CREDIT_KEYWORD)) {
+        const {from, value, to, product, date} = item;
+        if (date in virtualDates || product.includes(CREDIT_KEYWORD)) {
             const fromOwner = accountsBag[from].owner;
             const toOwner = accountsBag[to].owner;
             const relationName = [fromOwner, toOwner].sort().join('_');

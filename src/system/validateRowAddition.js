@@ -1,5 +1,6 @@
-import {ADMIN_ACCOUNT, CREDIT_CARD_MARK, VIRTUAL_KEYWORD} from '../SETTINGS.js';
+import {ADMIN_ACCOUNT, CREDIT_CARD_MARK} from '../SETTINGS.js';
 import assume from '../utils/assume.js';
+import checkVirtual from './checkVirtual.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -33,7 +34,7 @@ const validateRowAddition = (row, history) => {
  *
  */
 const run = (row, history) => {
-    const {spreadsheetId, from, value, to, product, date} = row;
+    const {spreadsheetId, from, value, to, date} = row;
     const births = collectBirths(history);
     const fromBirth = births[from] || DEFAULT_BIRTH;
     const toBirth = births[to] || DEFAULT_BIRTH;
@@ -49,7 +50,7 @@ const run = (row, history) => {
     }
 
     // Validate `value` in the context of the whole history:
-    if (!product.includes(VIRTUAL_KEYWORD) && !from.includes(CREDIT_CARD_MARK)) {
+    if (!checkVirtual(row) && !from.includes(CREDIT_CARD_MARK)) {
         const fromTotal = computeTotal(from, history);
         if (births[from]) {
             assume(fromTotal - value >= 0, `The account "${from}" is not allowed to become negative!`);
@@ -84,11 +85,11 @@ const collectBirths = (history) => {
 const computeTotal = (account, history) => {
     let total = 0;
     for (const row of history) {
-        const {from, value, to, product} = row;
+        const {from, value, to} = row;
         if (from !== account && to !== account) {
             continue; // we're not interested in this row, as it doesn't touch our target account
         }
-        if (product.includes(VIRTUAL_KEYWORD)) {
+        if (checkVirtual(row)) {
             continue; // virtual transactions don't change the total
         }
         total += (from === account ? -1 : 1) * value;

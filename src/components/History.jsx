@@ -48,17 +48,22 @@ class History extends React.PureComponent {
         const {history, focusedDate, meta} = this.props;
         const {pages} = this.state;
         const historySubset = this.memoHistorySubset(history, pages);
-        const {virtualAccounts} = memoHistoryComputation(history);
+        const {virtualDates} = memoHistoryComputation(history);
         return (
             <div css={SX.root}>
                 {historySubset.length !== history.length && (
                     <Button cssNormal={SX.more} label={'...'} onClick={this.onMoreClick} variant={'simple'} />
                 )}
                 {historySubset.map((row) => {
-                    const {from, to, date} = row;
-                    const isVirtual = from in virtualAccounts || to in virtualAccounts;
+                    const {date} = row;
                     return (
-                        <Row key={date} {...row} isSelected={focusedDate === date} isVirtual={isVirtual} meta={meta} />
+                        <Row
+                            key={date}
+                            {...row}
+                            isSelected={focusedDate === date}
+                            isVirtual={date in virtualDates}
+                            meta={meta}
+                        />
                     );
                 })}
             </div>
