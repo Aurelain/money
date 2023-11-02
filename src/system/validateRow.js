@@ -1,5 +1,5 @@
 import assume from '../utils/assume.js';
-import {ADMIN_ACCOUNT, PATTERN_ONLY_CHARACTERS} from '../SETTINGS.js';
+import {PATTERN_ONLY_CHARACTERS} from '../SETTINGS.js';
 import condense from '../utils/condense.js';
 
 // =====================================================================================================================
@@ -37,16 +37,11 @@ const run = (row) => {
     assume(from.match(PATTERN_ONLY_CHARACTERS), 'From-account must not contain whitespace!');
 
     assume(Number.isInteger(value), 'Amount must be integer!');
-    if (value === 0) {
-        assume(from === ADMIN_ACCOUNT, 'Only an administrator may transfer zero amount!');
-    } else {
-        assume(value > 0, 'Amount must be positive!');
-    }
+    assume(value > 0, 'Amount must be positive!');
 
     assume(typeof to === 'string', 'To-account must be a string!');
     assume(to.length, 'To-account must not be empty!');
     assume(to.match(PATTERN_ONLY_CHARACTERS), 'To-account must not contain whitespace!');
-    assume(to !== ADMIN_ACCOUNT, 'To-account must not be an administrator!');
     assume(from !== to, 'From-account must differ from To-account!');
 
     assume(typeof product === 'string', 'Summary must be a string!');

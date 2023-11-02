@@ -19,7 +19,13 @@ import SelectFrom from './filters/SelectFrom.jsx';
 import SelectValue from './filters/SelectValue.jsx';
 import SelectTo from './filters/SelectTo.jsx';
 import SelectProduct from './filters/SelectProduct.jsx';
-import {selectDefaults, selectFocusedDate, selectHistory, selectMeta} from '../state/selectors.js';
+import {
+    selectDefaults,
+    selectFocusedDate,
+    selectHistory,
+    selectImportantAccounts,
+    selectMeta,
+} from '../state/selectors.js';
 import memo from '../utils/memo.js';
 import Close from '../ui/Icons/Close.jsx';
 import clearFocusedDate from '../state/actions/clearFocusedDate.js';
@@ -128,10 +134,10 @@ class Footer extends React.PureComponent {
     };
 
     render() {
-        const {focusedDate, defaults, meta, history} = this.props;
+        const {focusedDate, defaults, meta, importantAccounts, history} = this.props;
         const {command, isFocusLocked} = this.state;
         const {from, value, to, product} = this.memoDigestion(command, defaults, meta);
-        const validation = this.memoValidation(command, history);
+        const validation = this.memoValidation(command, importantAccounts, history);
         return (
             <div css={SX.root}>
                 <div css={SX.content}>
@@ -376,12 +382,12 @@ class Footer extends React.PureComponent {
     /**
      *
      */
-    memoValidation = memoize((command, history) => {
+    memoValidation = memoize((command, importantAccounts, history) => {
         if (!command) {
             return 'Empty!';
         }
         let validation = true;
-        const {spreadsheets, row} = buildRowPayload(command);
+        const {spreadsheets, row} = buildRowPayload(command, importantAccounts);
         if (!spreadsheets.length) {
             spreadsheets.push('');
         }
@@ -394,7 +400,7 @@ class Footer extends React.PureComponent {
                 break;
             }
 
-            const additionValidation = validateRowAddition(enrichedRow, history);
+            const additionValidation = validateRowAddition(enrichedRow, importantAccounts, history);
             if (additionValidation !== true) {
                 validation = additionValidation;
                 break;
@@ -425,6 +431,7 @@ const prettifyDate = (date) => {
 Footer.propTypes = {
     // -------------------------------- redux:
     focusedDate: PropTypes.string,
+    importantAccounts: PropTypes.objectOf(PropTypes.string),
     history: PropTypes.array,
     defaults: PropTypes.object.isRequired,
     meta: PropTypes.object.isRequired,
@@ -433,6 +440,7 @@ Footer.propTypes = {
 const mapStateToProps = (state) => {
     return {
         focusedDate: selectFocusedDate(state),
+        importantAccounts: selectImportantAccounts(state),
         history: selectHistory(state),
         defaults: selectDefaults(state),
         meta: selectMeta(state),

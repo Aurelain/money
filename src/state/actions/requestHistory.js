@@ -1,10 +1,10 @@
 import requestApi from '../../system/requestApi.js';
 import checkOffline from '../../system/checkOffline.js';
-import {selectHistory, selectRosters, selectVaults} from '../selectors.js';
+import {selectHistory, selectImportantAccounts, selectVaults} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import SpreadsheetSchema from '../../schemas/SpreadsheetSchema.js';
 import assume from '../../utils/assume.js';
-import {ADMIN_ACCOUNT, PATTERN_ONLY_CHARACTERS, VAULT_OPTIONS, VAULT_PREFIX} from '../../SETTINGS.js';
+import {PATTERN_ONLY_CHARACTERS, VAULT_OPTIONS, VAULT_PREFIX} from '../../SETTINGS.js';
 import VaultsSchema from '../../schemas/VaultsSchema.js';
 import SPREADSHEET1_MOCK from '../../mocks/SPREADSHEET1_MOCK.js';
 import SPREADSHEET2_MOCK from '../../mocks/SPREADSHEET2_MOCK.js';
@@ -18,7 +18,6 @@ import createOptionsSpreadsheet from '../../system/createOptionsSpreadsheet.js';
 import saveOptions from '../../system/saveOptions.js';
 import validateRowAddition from '../../system/validateRowAddition.js';
 import validateRow from '../../system/validateRow.js';
-import collectBirths from './collectBirths.js';
 import condense from '../../utils/condense.js';
 
 // =====================================================================================================================
@@ -54,10 +53,13 @@ const requestHistory = async (isForced = false) => {
     const pendingIds = {...changes.created, ...changes.updated};
     delete pendingIds[optionsVaultId];
 
-    const prevRosters = selectRosters(state);
-    const rosters = {};
-    for (const vaultId in changes.unchanged) {
-        rosters[vaultId] = prevRosters[vaultId];
+    const prevImportantAccounts = selectImportantAccounts(state);
+    const importantAccounts = {};
+    for (const name in prevImportantAccounts) {
+        const motherId = prevImportantAccounts[name];
+        if (motherId in changes.unchanged) {
+            importantAccounts[name] = motherId;
+        }
     }
 
     const prevHistory = selectHistory(state);
@@ -66,16 +68,19 @@ const requestHistory = async (isForced = false) => {
     for (const id in pendingIds) {
         const spreadsheet = await requestSpreadsheet(id);
         const {roster, rows} = parseSpreadsheet(spreadsheet, id);
-        rosters[id] = roster;
         history.push(...rows);
+        for (const item of roster) {
+            assume(!importantAccounts[item], `Account ${item} is already hosted someplace else!`);
+            importantAccounts[item] = id;
+        }
     }
 
     history.sort(compareHistoryItems);
-    validateHistory(history);
+    validateHistory(history, importantAccounts);
 
     setState((state) => {
         state.vaults = vaults;
-        state.rosters = rosters;
+        state.importantAccounts = importantAccounts;
         state.history = history;
     });
 };
@@ -103,7 +108,7 @@ const discoverVaults = async () => {
     const vaults = {};
     let optionsVaultId = '';
     for (const {id, name, modifiedTime} of result.files) {
-        if (name.startsWith(VAULT_OPTIONS && name !== VAULT_OPTIONS)) {
+        if (name.startsWith(VAULT_OPTIONS) && name !== VAULT_OPTIONS) {
             continue;
         }
         if (name.startsWith(VAULT_PREFIX)) {
@@ -212,14 +217,8 @@ const parseRoster = (rowData, spreadsheetTitle) => {
     let rosterText = firstCell.formattedValue || '';
     rosterText = rosterText.replace(/,/g, ' ');
     rosterText = condense(rosterText);
-    const parts = rosterText.split(' ');
-    assume(parts.length > 0, `No local accounts declared in ${spreadsheetTitle}!`);
-
-    const roster = {};
-    for (const part of parts) {
-        assume(part.match(PATTERN_ONLY_CHARACTERS), `Local account name ${part} is invalid!`);
-        roster[part] = true;
-    }
+    const roster = rosterText.split(' ');
+    assume(roster.length > 0, `No hosted accounts in ${spreadsheetTitle}!`);
     return roster;
 };
 
@@ -234,11 +233,11 @@ const compareHistoryItems = (a, b) => {
  * We're acting as if each row is created right now, starting from an empty database.
  * This helps in catching some chronological errors or some accounts going below zero when they shouldn't.
  */
-const validateHistory = (history) => {
-    validateMirrors(history);
+const validateHistory = (history, importantAccounts) => {
+    validateMirrors(history, importantAccounts);
     const incrementalHistory = [];
     for (const row of history) {
-        const validation = validateRowAddition(row, incrementalHistory);
+        const validation = validateRowAddition(row, importantAccounts, incrementalHistory);
         check(validation === true, validation, row);
         incrementalHistory.push(row);
     }
@@ -247,18 +246,15 @@ const validateHistory = (history) => {
 /**
  *
  */
-const validateMirrors = (history) => {
-    const births = collectBirths(history);
+const validateMirrors = (history, importantAccounts) => {
     for (let i = 0; i < history.length; i++) {
         const row = history[i];
         const {from, to, date} = row;
-        if (from !== ADMIN_ACCOUNT) {
-            const fromBirth = births[from];
-            const toBirth = births[to];
-            if (fromBirth && toBirth && fromBirth !== toBirth) {
-                check(history[i + 1]?.date === date, 'Expecting mirror!', row);
-                i++; // skip next item, which is certain to be a mirror
-            }
+        const fromMother = importantAccounts[from];
+        const toMother = importantAccounts[to];
+        if (fromMother && toMother && fromMother !== toMother) {
+            check(history[i + 1]?.date === date, 'Expecting mirror!', row);
+            i++; // skip next item, which is certain to be a mirror
         }
     }
 };

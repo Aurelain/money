@@ -56,6 +56,7 @@ const DATA = [
     ['Valeria', 2400, 'Noah', 'Raspberry', '2023-10-27T16:43:47+03:00'],
     // Custom:
     ['God', 250, 'AnaCard', 'Lottery', '2023-10-27T17:41:49+03:00'],
+    ['God', 1000, 'Geta', 'Lottery', '2023-10-27T17:42:49+03:00'],
     ['Geta', 100, 'Penny', 'Diverse', '2023-10-27T17:43:50+03:00'],
     ['Geta', 100, 'AnaPortofel', VIRTUAL_KEYWORD, '2023-10-27T17:43:51+03:00'],
     ['AnaCard', 150, 'Geta', CREDIT_KEYWORD, '2023-10-27T17:43:52+03:00'],
@@ -68,7 +69,7 @@ const DATA = [
 // =====================================================================================================================
 const SPREADSHEET1_MOCK = {
     properties: {
-        title: 'FooSpreadsheet1',
+        title: 'Money_Foo2',
     },
     sheets: [
         {

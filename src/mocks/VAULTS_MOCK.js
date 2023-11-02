@@ -6,12 +6,12 @@ import {VAULT_OPTIONS} from '../SETTINGS.js';
 const VAULTS_MOCK = {
     files: [
         {
-            id: 'Money_Foo1',
+            id: 'Money_Foo1_id',
             name: 'Money_Foo1',
             modifiedTime: '2023-10-24T15:08:57.627Z',
         },
         {
-            id: 'Money_Foo2',
+            id: 'Money_Foo2_id',
             name: 'Money_Foo2',
             modifiedTime: '2023-10-24T15:08:57.627Z',
         },

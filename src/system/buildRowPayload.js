@@ -1,9 +1,7 @@
 import localizeTime from '../utils/localizeTime.js';
 import {getState} from '../state/store.js';
-import {selectDefaults, selectHistory, selectMeta} from '../state/selectors.js';
+import {selectDefaults, selectMeta} from '../state/selectors.js';
 import parseCommand from './parseCommand.js';
-import memoHistoryComputation from './memoHistoryComputation.js';
-import {ADMIN_ACCOUNT} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -11,7 +9,7 @@ import {ADMIN_ACCOUNT} from '../SETTINGS.js';
 /**
  *
  */
-const buildRowPayload = (command) => {
+const buildRowPayload = (command, importantAccounts) => {
     const state = getState();
     const defaults = selectDefaults(state);
     const meta = selectMeta(state);
@@ -22,14 +20,8 @@ const buildRowPayload = (command) => {
     const row = {from, value, to, product, date};
 
     const spreadsheets = [];
-    const history = selectHistory(state);
-    const {births} = memoHistoryComputation(history);
-    if (from === ADMIN_ACCOUNT) {
-        // TODO
-    } else {
-        births[from] && spreadsheets.push(births[from]);
-        births[to] && spreadsheets.push(births[to]);
-    }
+    importantAccounts[from] && spreadsheets.push(importantAccounts[from]);
+    importantAccounts[to] && spreadsheets.push(importantAccounts[to]);
 
     return {
         spreadsheets,

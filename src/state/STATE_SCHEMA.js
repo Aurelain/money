@@ -28,25 +28,19 @@ export default {
             patternProperties: {
                 // The property name is actually the spreadsheet's `id`
                 '.': {
-                    // The property value is actually the spreadsheet's `modifiedTime`
+                    // The property value is actually the spreadsheet's `title+modifiedTime`
                     type: 'string',
                 },
             },
         },
-        rosters: {
+        importantAccounts: {
             type: 'object',
             additionalProperties: false,
             patternProperties: {
-                // The property name is actually the spreadsheet's `id`
+                // The property name is actually the name of an important account (e.g. "AnaCard")
                 '.': {
-                    type: 'object',
-                    additionalProperties: false,
-                    patternProperties: {
-                        // The property name is actually the name of a local account (e.g. "AnaCard")
-                        '.': {
-                            const: true,
-                        },
-                    },
+                    // The property value is actually the mother-spreadsheet id
+                    type: 'string',
                 },
             },
         },
@@ -90,5 +84,5 @@ export default {
             additionalProperties: false,
         },
     },
-    required: ['tokens', 'vaults', 'rosters', 'history', 'options', 'optionsVaultId', 'volatile'],
+    required: ['tokens', 'vaults', 'importantAccounts', 'history', 'options', 'optionsVaultId', 'volatile'],
 };

@@ -4,7 +4,7 @@ export const selectExpirationTimestamp = (state) => state.tokens.expirationTimes
 export const selectIsAuthenticated = (state) => state.volatile.isAuthenticated;
 export const selectIsHealed = (state) => state.volatile.isHealed;
 export const selectVaults = (state) => state.vaults;
-export const selectRosters = (state) => state.rosters;
+export const selectImportantAccounts = (state) => state.importantAccounts;
 export const selectHistory = (state) => state.history;
 export const selectFocusedDate = (state) => state.volatile.focusedDate;
 export const selectOptions = (state) => state.options;

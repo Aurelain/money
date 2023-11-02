@@ -1,14 +1,17 @@
 import validateRowAddition from './validateRowAddition.js';
 import Focus from '../utils/Focus.js';
-import {ADMIN_ACCOUNT} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
+const IMPORTANT_ACCOUNTS = {
+    AliceCard: 'MySpreadsheet1',
+    BobCC: 'MySpreadsheet2',
+};
 const HISTORY = [
     {
         spreadsheetId: 'MySpreadsheet1',
-        from: ADMIN_ACCOUNT,
+        from: 'Admin',
         value: 100,
         to: 'AliceCard',
         product: 'Init',
@@ -16,7 +19,7 @@ const HISTORY = [
     },
     {
         spreadsheetId: 'MySpreadsheet2',
-        from: ADMIN_ACCOUNT,
+        from: 'Admin',
         value: 0,
         to: 'BobCC',
         product: 'Init',
@@ -49,33 +52,17 @@ const tests = [
         importance: 1,
         input: {
             row: {...ROW},
+            importantAccounts: IMPORTANT_ACCOUNTS,
             history: HISTORY,
         },
         output: true,
-    },
-    // -----------------------------------------------------------------------------------------------------------------
-    {
-        importance: 1,
-        input: {
-            row: {...ROW, from: ADMIN_ACCOUNT},
-            history: HISTORY,
-        },
-        output: true,
-    },
-    // -----------------------------------------------------------------------------------------------------------------
-    {
-        importance: 1,
-        input: {
-            row: {...ROW, from: ADMIN_ACCOUNT, to: 'AliceCard'},
-            history: HISTORY,
-        },
-        output: 'REGEX:.',
     },
     // -----------------------------------------------------------------------------------------------------------------
     {
         importance: 1,
         input: {
             row: {...ROW, from: 'Foo', to: 'Bar'},
+            importantAccounts: IMPORTANT_ACCOUNTS,
             history: HISTORY,
         },
         output: 'REGEX:.',
@@ -85,6 +72,7 @@ const tests = [
         importance: 1,
         input: {
             row: {...ROW, value: 200},
+            importantAccounts: IMPORTANT_ACCOUNTS,
             history: HISTORY,
         },
         output: 'REGEX:.',
@@ -94,6 +82,7 @@ const tests = [
         importance: 1,
         input: {
             row: {...ROW, spreadsheetId: 'MySpreadsheet2', from: 'BobCC', value: 100},
+            importantAccounts: IMPORTANT_ACCOUNTS,
             history: HISTORY,
         },
         output: true,
@@ -103,6 +92,7 @@ const tests = [
         importance: 1,
         input: {
             row: {...ROW, date: '2023-10-10T10:10:00+03:00'},
+            importantAccounts: IMPORTANT_ACCOUNTS,
             history: HISTORY,
         },
         output: 'REGEX:.',
@@ -112,6 +102,7 @@ const tests = [
         importance: 1,
         input: {
             row: {...ROW, date: '2025-10-10T10:10:00+03:00'},
+            importantAccounts: IMPORTANT_ACCOUNTS,
             history: HISTORY,
         },
         output: 'REGEX:.',
@@ -128,6 +119,7 @@ const tests = [
                 product: 'Three',
                 date: '2026-10-10T11:00:00+03:00',
             },
+            importantAccounts: IMPORTANT_ACCOUNTS,
             history: HISTORY,
         },
         output: true,
@@ -144,6 +136,7 @@ const tests = [
                 product: 'Three',
                 date: '2026-10-10T11:00:00+03:00',
             },
+            importantAccounts: IMPORTANT_ACCOUNTS,
             history: HISTORY,
         },
         output: 'REGEX:.',
