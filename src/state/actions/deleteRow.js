@@ -13,6 +13,10 @@ import assume from '../../utils/assume.js';
  *
  */
 const deleteRow = async (date) => {
+    // TODO:
+    //  ensure the deletion doesn't leave the spreadsheet in an invalid state
+    //  (e.g. an important account becomes negative)
+
     const state = getState();
     const history = selectHistory(state);
     const candidatesForDeletion = history.filter((item) => item.date === date);

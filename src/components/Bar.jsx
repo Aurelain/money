@@ -59,7 +59,6 @@ const SX = {
 
 const MENU_ADD_FORMULA = 'MENU_ADD_FORMULA';
 const MENU_DEBTS = 'MENU_DEBTS';
-const MENU_FORCE_VAULTS = 'MENU_FORCE_VAULTS';
 const MENU_LOG_OUT = 'MENU_LOG_OUT';
 const LIST = [
     {
@@ -71,11 +70,6 @@ const LIST = [
         name: MENU_DEBTS,
         icon: Bank,
         label: 'Show debts',
-    },
-    {
-        name: MENU_FORCE_VAULTS,
-        icon: RefreshCircle,
-        label: 'Refresh vaults',
     },
     // {
     //     name: MENU_SHOW_CONSOLE,
@@ -174,12 +168,6 @@ class Bar extends React.PureComponent {
                 break;
             case MENU_DEBTS:
                 showDebts();
-                break;
-            case MENU_FORCE_VAULTS:
-                await requestHistory(true);
-                this.setState({
-                    isMenuOpen: false,
-                });
                 break;
             // case MENU_SHOW_CONSOLE:
             //     localStorage.setItem('console', 'emulated');

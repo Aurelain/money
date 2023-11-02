@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '../ui/Button.jsx';
-import focusDate from '../state/actions/focusDate.js';
 import memo from '../utils/memo.js';
 import clearFocusedDate from '../state/actions/clearFocusedDate.js';
 import formatNumber from '../system/formatNumber.js';
+import deleteRow from '../state/actions/deleteRow.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -28,6 +28,7 @@ const SX = {
     isVirtual: {
         opacity: 0.8,
         fontStyle: 'italic',
+        background: 'rgba(0,0,0,0.05)',
     },
     date: {
         position: 'absolute',
@@ -52,7 +53,8 @@ class Row extends React.PureComponent {
         const toSuffix = meta[to]?.suffix || '';
         return (
             <Button
-                css={this.memoRootSx(SX.root, isSelected && SX.isSelected, isVirtual && SX.isVirtual)}
+                cssNormal={this.memoRootSx(SX.root, isVirtual && SX.isVirtual)}
+                style={isSelected ? SX.isSelected : {}}
                 label={
                     <>
                         <div css={SX.column}>{from + fromSuffix}</div>
@@ -62,7 +64,7 @@ class Row extends React.PureComponent {
                     </>
                 }
                 variant={'simple'}
-                onClick={this.onRootClick}
+                // onClick={this.onRootClick}
                 onHold={this.onRootHold}
                 // onClick={this.onRootHold}
             />
@@ -86,14 +88,31 @@ class Row extends React.PureComponent {
      *
      */
     onRootHold = () => {
-        const {date, isSelected} = this.props;
-        if (isSelected) {
-            clearFocusedDate();
-        } else {
-            focusDate(date);
+        const {from, value, to, product, date} = this.props;
+        const lines = [];
+        lines.push(`From: ${from}`);
+        lines.push(`Amount: ${value}`);
+        lines.push(`To: ${to}`);
+        lines.push(`Summary: ${product}`);
+        lines.push(`Date: ${prettifyDate(date)}`);
+        lines.push('');
+        lines.push('Are you sure you want to delete this transaction?');
+        const reply = confirm(lines.join('\n'));
+        if (reply) {
+            deleteRow(date);
         }
     };
 }
+// =====================================================================================================================
+//  H E L P E R S
+// =====================================================================================================================
+/**
+ *
+ */
+const prettifyDate = (date) => {
+    const matched = date.match(/(.*?)T(\d\d:\d\d)/);
+    return matched[1] + ', ' + matched[2];
+};
 
 // =====================================================================================================================
 //  E X P O R T
