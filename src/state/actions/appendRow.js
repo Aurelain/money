@@ -4,6 +4,8 @@ import APPEND_SPREADSHEET_MOCK from '../../mocks/APPEND_SPREADSHEET_MOCK.js';
 import AppendSpreadsheetSchema from '../../schemas/AppendSpreadsheetSchema.js';
 import {setState} from '../store.js';
 import buildRowPayload from '../../system/buildRowPayload.js';
+import assume from '../../utils/assume.js';
+import {selectHistory} from '../selectors.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -11,36 +13,42 @@ import buildRowPayload from '../../system/buildRowPayload.js';
 /**
  *
  */
-const appendRow = async (command) => {
-    return;
-    const rowPayload = buildRowPayload(command);
-    const {spreadsheetId, row} = rowPayload;
-    const [from, value, to, product, date] = row;
+const appendRow = async (command, importantAccounts, defaults, meta) => {
+    const rowPayload = buildRowPayload(command, importantAccounts, defaults, meta);
+    const {spreadsheets, row} = rowPayload;
 
-    let historyIndex;
+    // Append the rows (plural, because they may be mirrored) before contacting the cloud:
     setState((state) => {
-        historyIndex = state.history.length;
-        state.history.push({
-            spreadsheetId,
-            index: 0, // to be updated
-            from,
-            value,
-            to,
-            product,
-            date,
-        });
+        const {from, value, to, product, date} = row;
+        for (const spreadsheetId of spreadsheets) {
+            state.history.push({
+                spreadsheetId,
+                index: 0, // to be updated
+                from,
+                value,
+                to,
+                product,
+                date,
+            });
+        }
     });
 
     if (checkOffline()) {
         return;
     }
 
-    const response = await requestAppend(spreadsheetId, row);
-    const {updatedRange} = response.updates;
-    const rowIndex = Number(updatedRange.match(/!A(\d+)/)[1]) - 1;
-    setState((state) => {
-        state.history[historyIndex].index = rowIndex;
-    });
+    const vector = Object.values(row);
+    for (const spreadsheetId of spreadsheets) {
+        const response = await requestAppend(spreadsheetId, vector);
+        const {updatedRange} = response.updates;
+        const rowIndex = Number(updatedRange.match(/!A(\d+)/)[1]) - 1;
+        assume(rowIndex > 1, `Unexpected row index ${rowIndex}!`);
+        setState((state) => {
+            const history = selectHistory(state);
+            const index = history.findIndex((item) => item.spreadsheetId === spreadsheetId && item.date === row.date);
+            history[index].index = rowIndex;
+        });
+    }
 };
 
 // =====================================================================================================================

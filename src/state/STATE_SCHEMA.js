@@ -53,6 +53,9 @@ export default {
                     spreadsheetId: {
                         type: 'string',
                     },
+                    spreadsheetTitle: {
+                        type: 'string',
+                    },
                     index: {
                         type: 'number',
                     },
@@ -72,7 +75,7 @@ export default {
                         type: 'string',
                     },
                 },
-                required: ['spreadsheetId', 'from', 'value', 'to', 'product', 'date'],
+                required: ['spreadsheetId', 'spreadsheetTitle', 'from', 'value', 'to', 'product', 'date'],
             },
         },
         options: cloneShallow(OptionsSchema, '$id'),

@@ -76,6 +76,7 @@ const parseFormulaText = (command) => {
     label = condense(label);
     assume(label.match(/^\w+$/i), 'Invalid label in formula!');
 
+    operations = condense(operations);
     const draftOperations = operations.replace(/\b\w+\b/g, '3');
     const testValue = evaluate(draftOperations);
     assume(typeof testValue === 'number', 'Invalid operations in formula!');

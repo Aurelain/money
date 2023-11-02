@@ -131,13 +131,15 @@ class Footer extends React.PureComponent {
         isFocusLocked: false,
         command: '',
         // command: 'AnaCard 10 Ella',
+        // command: 'ac 10 foo',
+        // command: 'AnaCard 10 Ava',
     };
 
     render() {
         const {focusedDate, defaults, meta, importantAccounts, history} = this.props;
         const {command, isFocusLocked} = this.state;
         const {from, value, to, product} = this.memoDigestion(command, defaults, meta);
-        const validation = this.memoValidation(command, importantAccounts, history);
+        const validation = this.memoValidation(command, importantAccounts, history, defaults, meta);
         return (
             <div css={SX.root}>
                 <div css={SX.content}>
@@ -295,7 +297,7 @@ class Footer extends React.PureComponent {
         if (this.validation !== true) {
             throw new Error(this.validation);
         }
-        const {focusedDate} = this.props;
+        const {focusedDate, importantAccounts, defaults, meta} = this.props;
         const {command} = this.state;
         if (focusedDate) {
             updateRow(focusedDate, command);
@@ -304,7 +306,7 @@ class Footer extends React.PureComponent {
             this.setState({
                 command: '',
             });
-            appendRow(command);
+            appendRow(command, importantAccounts, defaults, meta);
         }
     };
 
@@ -365,7 +367,7 @@ class Footer extends React.PureComponent {
      *
      */
     memoDigestion = memoize((command, defaults, meta) => {
-        this.digestion = parseCommand({command, defaults, meta}); // harmless side-effect
+        this.digestion = parseCommand(command, defaults, meta); // harmless side-effect
         return this.digestion;
     });
 
@@ -382,12 +384,12 @@ class Footer extends React.PureComponent {
     /**
      *
      */
-    memoValidation = memoize((command, importantAccounts, history) => {
+    memoValidation = memoize((command, importantAccounts, history, defaults, meta) => {
         if (!command) {
             return 'Empty!';
         }
         let validation = true;
-        const {spreadsheets, row} = buildRowPayload(command, importantAccounts);
+        const {spreadsheets, row} = buildRowPayload(command, importantAccounts, defaults, meta);
         if (!spreadsheets.length) {
             spreadsheets.push('');
         }
@@ -408,7 +410,7 @@ class Footer extends React.PureComponent {
         }
         this.validation = validation; // harmless side-effect
         if (validation !== true) {
-            console.warn(validation);
+            // console.warn(validation);
         }
         return validation;
     });

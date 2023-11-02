@@ -1,6 +1,4 @@
 import localizeTime from '../utils/localizeTime.js';
-import {getState} from '../state/store.js';
-import {selectDefaults, selectMeta} from '../state/selectors.js';
 import parseCommand from './parseCommand.js';
 
 // =====================================================================================================================
@@ -9,19 +7,19 @@ import parseCommand from './parseCommand.js';
 /**
  *
  */
-const buildRowPayload = (command, importantAccounts) => {
-    const state = getState();
-    const defaults = selectDefaults(state);
-    const meta = selectMeta(state);
-    const digestion = parseCommand({command, defaults, meta});
+const buildRowPayload = (command, importantAccounts, defaults, meta) => {
+    const digestion = parseCommand(command, defaults, meta);
     const {from, to, product} = digestion;
     const value = Number(digestion.value);
     const date = localizeTime(new Date());
     const row = {from, value, to, product, date};
 
     const spreadsheets = [];
-    importantAccounts[from] && spreadsheets.push(importantAccounts[from]);
-    importantAccounts[to] && spreadsheets.push(importantAccounts[to]);
+    const motherFrom = importantAccounts[from];
+    const motherTo = importantAccounts[to];
+
+    motherFrom && spreadsheets.push(motherFrom);
+    motherTo && motherTo !== motherFrom && spreadsheets.push(motherTo);
 
     return {
         spreadsheets,

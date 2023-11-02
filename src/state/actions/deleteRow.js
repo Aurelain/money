@@ -4,6 +4,7 @@ import {getState, setState} from '../store.js';
 import {selectHistory} from '../selectors.js';
 import DELETE_SPREADSHEET_MOCK from '../../mocks/DELETE_SPREADSHEET_MOCK.js';
 import DeleteSpreadsheetSchema from '../../schemas/DeleteSpreadsheetSchema.js';
+import assume from '../../utils/assume.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -14,18 +15,23 @@ import DeleteSpreadsheetSchema from '../../schemas/DeleteSpreadsheetSchema.js';
 const deleteRow = async (date) => {
     const state = getState();
     const history = selectHistory(state);
-    const historyIndex = history.findIndex((item) => item.date === date);
-    const {spreadsheetId, index} = history[historyIndex];
+    const candidatesForDeletion = history.filter((item) => item.date === date);
 
+    // Delete the rows (plural, because they may be mirrored) before contacting the cloud:
     setState((state) => {
         state.volatile.focusedDate = '';
-        state.history.splice(historyIndex, 1);
+        state.history = state.history.filter((item) => item.date !== date);
     });
 
     if (checkOffline()) {
         return;
     }
-    await requestDeletion(spreadsheetId, index);
+
+    for (const {spreadsheetId, index} of candidatesForDeletion) {
+        assume(index > 1, `Unexpected row index ${index}!`); // fail-safe
+        await requestDeletion(spreadsheetId, index);
+        // TODO: assimilate any fresh changes that came from the cloud
+    }
 };
 
 // =====================================================================================================================

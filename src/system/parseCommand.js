@@ -6,7 +6,7 @@ import memoize from 'memoize-one';
 /**
  * We're memoizing it because the command is centralized.
  */
-const parseCommand = memoize(({command, defaults, meta}) => {
+const parseCommand = memoize((command, defaults, meta) => {
     let {from, value, to, product} = defaults;
 
     command = command.replace(/\s+/g, ' ');

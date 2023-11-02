@@ -14,15 +14,15 @@ const memoHistoryComputation = memoize((history) => {
     const virtualDates = {};
     for (const row of history) {
         registerAccount(row.from, row, accountsBag);
-        accountsBag[row.from].total -= row.value;
-
         registerAccount(row.to, row, accountsBag);
-        accountsBag[row.to].total += row.value;
 
         valuesBag[row.value] = true;
         productsBag[row.product] = true;
         if (checkVirtual(row)) {
             virtualDates[row.date] = true;
+        } else {
+            accountsBag[row.from].total -= row.value;
+            accountsBag[row.to].total += row.value;
         }
     }
 
