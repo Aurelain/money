@@ -1,5 +1,6 @@
 import memoize from 'memoize-one';
 import checkVirtual from './checkVirtual.js';
+import collectBirths from '../state/actions/collectBirths.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -36,6 +37,7 @@ const memoHistoryComputation = memoize((history) => {
         products,
         accountsBag,
         virtualDates,
+        births: collectBirths(history),
     };
 });
 

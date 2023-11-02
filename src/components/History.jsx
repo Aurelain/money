@@ -47,14 +47,12 @@ class History extends React.PureComponent {
     render() {
         const {history, focusedDate, meta} = this.props;
         const {pages} = this.state;
-        const historySubset = this.memoHistorySubset(history, pages);
+        const {hasMore, subset} = this.memoHistorySubset(history, pages);
         const {virtualDates} = memoHistoryComputation(history);
         return (
             <div css={SX.root}>
-                {historySubset.length !== history.length && (
-                    <Button cssNormal={SX.more} label={'...'} onClick={this.onMoreClick} variant={'simple'} />
-                )}
-                {historySubset.map((row) => {
+                {hasMore && <Button cssNormal={SX.more} label={'...'} onClick={this.onMoreClick} variant={'simple'} />}
+                {subset.map((row) => {
                     const {date} = row;
                     return (
                         <Row
@@ -88,22 +86,24 @@ class History extends React.PureComponent {
      *
      */
     memoHistorySubset = memoize((history, pages) => {
-        const {length} = history;
-        const tailLength = pages * ITEMS_PER_PAGE;
-        if (tailLength < length) {
-            history = history.slice(length - tailLength);
-        }
-
         // Remove duplicates (by date):
         const encountered = {};
-        const fresh = [];
+        const subset = [];
         for (const item of history) {
             if (!encountered[item.date]) {
                 encountered[item.date] = true;
-                fresh.push(item);
+                subset.push(item);
             }
         }
-        return fresh;
+
+        // Pagination:
+        const {length} = subset;
+        const tailLength = pages * ITEMS_PER_PAGE;
+        if (tailLength < length) {
+            return {hasMore: true, subset: subset.slice(length - tailLength)};
+        }
+
+        return {hasMore: false, subset};
     });
 
     /**

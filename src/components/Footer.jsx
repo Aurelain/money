@@ -25,14 +25,16 @@ import Close from '../ui/Icons/Close.jsx';
 import clearFocusedDate from '../state/actions/clearFocusedDate.js';
 import parseCommand from '../system/parseCommand.js';
 import buildCommand from '../system/buildCommand.js';
-import validateSelectors from '../system/validateSelectors.js';
 import appendRow from '../state/actions/appendRow.js';
-import memoHistoryComputation from '../system/memoHistoryComputation.js';
 import deleteRow from '../state/actions/deleteRow.js';
 import updateRow from '../state/actions/updateRow.js';
 import Check from '../ui/Icons/Check.jsx';
 import toggleFavorite from '../state/actions/toggleFavorite.js';
 import configureLabel from '../state/actions/configureLabel.js';
+import validateRowAddition from '../system/validateRowAddition.js';
+import buildRowPayload from '../system/buildRowPayload.js';
+import AlertOutline from '../ui/Icons/AlertOutline.jsx';
+import validateRow from '../system/validateRow.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -118,16 +120,18 @@ class Footer extends React.PureComponent {
     textareaRef = React.createRef();
     digestion; // filled by `memoDigestion`, contains `{from, value, to, product}`
     isFocusLockedInstant = false;
+    validation;
     state = {
         isFocusLocked: false,
         command: '',
+        // command: 'AnaCard 10 Ella',
     };
 
     render() {
         const {focusedDate, defaults, meta, history} = this.props;
         const {command, isFocusLocked} = this.state;
         const {from, value, to, product} = this.memoDigestion(command, defaults, meta);
-        const isValid = this.memoIsValid(command, this.digestion, history);
+        const validation = this.memoValidation(command, history);
         return (
             <div css={SX.root}>
                 <div css={SX.content}>
@@ -191,11 +195,12 @@ class Footer extends React.PureComponent {
                             onBlur={this.onInputBlur}
                         />
                         <Button
-                            icon={focusedDate ? Check : Plus}
+                            icon={this.memoCommitIcon(command, focusedDate, validation)}
                             cssNormal={SX.plus}
                             variant={'inverted'}
                             onClick={this.onPlusClick}
-                            disabled={!isValid}
+                            title={typeof validation === 'string' ? validation : undefined}
+                            disabled={!command}
                         />
                         <Button
                             icon={Close}
@@ -242,10 +247,7 @@ class Footer extends React.PureComponent {
     onInputKeyDown = (event) => {
         if (event.key === 'Enter') {
             event.preventDefault();
-            const {history} = this.props;
-            const {command} = this.state;
-            const isValid = this.memoIsValid(command, this.digestion, history);
-            if (isValid) {
+            if (this.validation === true) {
                 this.create();
                 defocus();
             }
@@ -284,6 +286,9 @@ class Footer extends React.PureComponent {
      *
      */
     create = () => {
+        if (this.validation !== true) {
+            throw new Error(this.validation);
+        }
         const {focusedDate} = this.props;
         const {command} = this.state;
         if (focusedDate) {
@@ -361,12 +366,45 @@ class Footer extends React.PureComponent {
     /**
      *
      */
-    memoIsValid = memoize((command, digestion, history) => {
-        if (!command || !validateSelectors(digestion)) {
-            return false;
+    memoCommitIcon = memoize((command, focusedDate, validation) => {
+        if (command && validation !== true) {
+            return AlertOutline;
         }
-        const {accountsBag} = memoHistoryComputation(history);
-        return digestion.from in accountsBag || digestion.to in accountsBag;
+        return focusedDate ? Check : Plus;
+    });
+
+    /**
+     *
+     */
+    memoValidation = memoize((command, history) => {
+        if (!command) {
+            return 'Empty!';
+        }
+        let validation = true;
+        const {spreadsheets, row} = buildRowPayload(command);
+        if (!spreadsheets.length) {
+            spreadsheets.push('');
+        }
+        for (const spreadsheetId of spreadsheets) {
+            const enrichedRow = {...row, spreadsheetId};
+
+            const rowValidation = validateRow(enrichedRow);
+            if (rowValidation !== true) {
+                validation = rowValidation;
+                break;
+            }
+
+            const additionValidation = validateRowAddition(enrichedRow, history);
+            if (additionValidation !== true) {
+                validation = additionValidation;
+                break;
+            }
+        }
+        this.validation = validation; // harmless side-effect
+        if (validation !== true) {
+            console.warn(validation);
+        }
+        return validation;
     });
 }
 

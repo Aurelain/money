@@ -12,6 +12,7 @@ import buildRowPayload from '../../system/buildRowPayload.js';
  *
  */
 const appendRow = async (command) => {
+    return;
     const rowPayload = buildRowPayload(command);
     const {spreadsheetId, row} = rowPayload;
     const [from, value, to, product, date] = row;

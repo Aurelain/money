@@ -1,10 +1,12 @@
+import memoize from 'memoize-one';
+
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
 /**
- *
+ * We're memoizing it because the command is centralized.
  */
-const parseCommand = ({command, defaults, meta}) => {
+const parseCommand = memoize(({command, defaults, meta}) => {
     let {from, value, to, product} = defaults;
 
     command = command.replace(/\s+/g, ' ');
@@ -14,7 +16,7 @@ const parseCommand = ({command, defaults, meta}) => {
         const {alias} = meta[keyword];
         if (alias) {
             const re = new RegExp(' ' + alias + ' ', 'gi');
-            command = command.replace(re, keyword);
+            command = command.replace(re, ' ' + keyword + ' ');
         }
     }
 
@@ -34,7 +36,7 @@ const parseCommand = ({command, defaults, meta}) => {
     product = other.join(' ') || product;
 
     return {from, value, to, product};
-};
+});
 
 // =====================================================================================================================
 //  E X P O R T

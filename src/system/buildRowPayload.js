@@ -3,6 +3,7 @@ import {getState} from '../state/store.js';
 import {selectDefaults, selectHistory, selectMeta} from '../state/selectors.js';
 import parseCommand from './parseCommand.js';
 import memoHistoryComputation from './memoHistoryComputation.js';
+import {ADMIN_ACCOUNT} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -15,38 +16,25 @@ const buildRowPayload = (command) => {
     const defaults = selectDefaults(state);
     const meta = selectMeta(state);
     const digestion = parseCommand({command, defaults, meta});
-    const history = selectHistory(state);
-    const {accountsBag} = memoHistoryComputation(history);
-    const spreadsheetId = getHostSpreadsheetId(digestion, accountsBag);
     const {from, to, product} = digestion;
     const value = Number(digestion.value);
     const date = localizeTime(new Date());
-    return {
-        spreadsheetId,
-        row: [from, value, to, product, date],
-    };
-};
+    const row = {from, value, to, product, date};
 
-// =====================================================================================================================
-//  P R I V A T E
-// =====================================================================================================================
-/**
- *
- */
-const getHostSpreadsheetId = ({from, to}, accountsBag) => {
-    let winner;
-    const fromAccountDate = accountsBag[from]?.date;
-    if (!fromAccountDate) {
-        winner = to;
+    const spreadsheets = [];
+    const history = selectHistory(state);
+    const {births} = memoHistoryComputation(history);
+    if (from === ADMIN_ACCOUNT) {
+        // TODO
     } else {
-        const toAccountDate = accountsBag[to]?.date;
-        if (!toAccountDate) {
-            winner = from;
-        } else {
-            winner = fromAccountDate <= toAccountDate ? from : to;
-        }
+        births[from] && spreadsheets.push(births[from]);
+        births[to] && spreadsheets.push(births[to]);
     }
-    return accountsBag[winner].spreadsheetId;
+
+    return {
+        spreadsheets,
+        row,
+    };
 };
 
 // =====================================================================================================================

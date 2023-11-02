@@ -67,14 +67,14 @@ const DATA = [
     ['Gabriela', 2200, 'Benjamin', 'Apricot', '2023-10-27T15:21:52+03:00'],
     ['Valeria', 2400, 'Noah', 'Raspberry', '2023-10-27T16:43:47+03:00'],
     // Custom:
-    [ADMIN_ACCOUNT, 0, 'AnaCard', 'Init', '2024-10-19T16:41:47+03:00'],
-    [ADMIN_ACCOUNT, 1000, 'Geta', 'Init', '2024-10-20T16:41:47+03:00'],
-    ['God', 250, 'AnaCard', 'Lottery', '2024-10-21T16:41:47+03:00'],
-    ['Geta', 100, 'Penny', 'Diverse', '2024-10-28T16:43:47+03:00'],
-    ['Geta', 100, 'AnaPortofel', VIRTUAL_KEYWORD, '2024-10-29T16:43:47+03:00'],
-    ['AnaCard', 150, 'Geta', CREDIT_KEYWORD, '2024-11-01T16:43:47+02:00'],
-    ['AnaCard', 10, 'Ava', 'Test', '2024-12-20T16:41:47+03:00'],
-    ['AnaCard', 20, 'Ella', 'Credit', '2024-12-21T16:41:47+03:00'],
+    [ADMIN_ACCOUNT, 0, 'AnaCard', 'Init', '2023-10-27T17:41:47+03:00'],
+    [ADMIN_ACCOUNT, 1000, 'Geta', 'Init', '2023-10-27T17:41:48+03:00'],
+    ['God', 250, 'AnaCard', 'Lottery', '2023-10-27T17:41:49+03:00'],
+    ['Geta', 100, 'Penny', 'Diverse', '2023-10-27T17:43:50+03:00'],
+    ['Geta', 100, 'AnaPortofel', VIRTUAL_KEYWORD, '2023-10-27T17:43:51+03:00'],
+    ['AnaCard', 150, 'Geta', CREDIT_KEYWORD, '2023-10-27T17:43:52+03:00'],
+    ['AnaCard', 10, 'Ava', 'Test', '2023-10-27T17:41:53+03:00'],
+    ['AnaCard', 20, 'Ella', 'Credit', '2023-10-27T17:41:54+03:00'],
 ];
 
 // =====================================================================================================================

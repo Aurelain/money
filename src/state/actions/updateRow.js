@@ -12,6 +12,7 @@ import updateRangeInSpreadsheet from '../../system/updateRangeInSpreadsheet.js';
  *
  */
 const updateRow = async (focusedDate, command) => {
+    return;
     const state = getState();
     const history = selectHistory(state);
     const historyIndex = history.findIndex((item) => item.date === focusedDate);

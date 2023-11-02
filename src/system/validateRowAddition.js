@@ -40,7 +40,7 @@ const run = (row, history) => {
     } else {
         // This is a normal row.
         const isAllowed = fromBirth === spreadsheetId || toBirth === spreadsheetId;
-        assume(isAllowed, 'At least one of the accounts must be native to the spreadsheet!');
+        assume(isAllowed, 'At least one of the accounts must be known!');
     }
 
     // Validate `value` in the context of the whole history:
