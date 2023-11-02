@@ -84,16 +84,31 @@ class History extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    /**
+     *
+     */
     memoHistorySubset = memoize((history, pages) => {
         const {length} = history;
         const tailLength = pages * ITEMS_PER_PAGE;
-        if (tailLength >= length) {
-            return history;
-        } else {
-            return history.slice(length - tailLength);
+        if (tailLength < length) {
+            history = history.slice(length - tailLength);
         }
+
+        // Remove duplicates (by date):
+        const encountered = {};
+        const fresh = [];
+        for (const item of history) {
+            if (!encountered[item.date]) {
+                encountered[item.date] = true;
+                fresh.push(item);
+            }
+        }
+        return fresh;
     });
 
+    /**
+     *
+     */
     onMoreClick = () => {
         this.setState({
             pages: this.state.pages + 1,

@@ -22,6 +22,14 @@ const HISTORY = [
         product: 'Init',
         date: '2026-10-10T10:00:00+03:00',
     },
+    {
+        spreadsheetId: 'MySpreadsheet2',
+        from: 'BobCC',
+        value: 3,
+        to: 'AliceCard',
+        product: 'Three',
+        date: '2026-10-10T11:00:00+03:00',
+    },
 ];
 const ROW = {
     spreadsheetId: 'MySpreadsheet1',
@@ -76,7 +84,7 @@ const tests = [
     {
         importance: 1,
         input: {
-            row: {...ROW, value: 101},
+            row: {...ROW, value: 200},
             history: HISTORY,
         },
         output: 'REGEX:.',
@@ -103,7 +111,39 @@ const tests = [
     {
         importance: 1,
         input: {
-            row: {...ROW, date: '2025-11-10T10:10:00+03:00', to: 'BobCC'},
+            row: {...ROW, date: '2025-10-10T10:10:00+03:00'},
+            history: HISTORY,
+        },
+        output: 'REGEX:.',
+    },
+    // -----------------------------------------------------------------------------------------------------------------
+    {
+        importance: 1,
+        input: {
+            row: {
+                spreadsheetId: 'MySpreadsheet1',
+                from: 'BobCC',
+                value: 3,
+                to: 'AliceCard',
+                product: 'Three',
+                date: '2026-10-10T11:00:00+03:00',
+            },
+            history: HISTORY,
+        },
+        output: true,
+    },
+    // -----------------------------------------------------------------------------------------------------------------
+    {
+        importance: 1,
+        input: {
+            row: {
+                spreadsheetId: 'MySpreadsheet2',
+                from: 'BobCC',
+                value: 3,
+                to: 'AliceCard',
+                product: 'Three',
+                date: '2026-10-10T11:00:00+03:00',
+            },
             history: HISTORY,
         },
         output: 'REGEX:.',

@@ -18,6 +18,7 @@ import createOptionsSpreadsheet from '../../system/createOptionsSpreadsheet.js';
 import saveOptions from '../../system/saveOptions.js';
 import validateRowAddition from '../../system/validateRowAddition.js';
 import validateRow from '../../system/validateRow.js';
+import collectBirths from './collectBirths.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -61,8 +62,6 @@ const requestHistory = async (isForced = false) => {
         history.push(...rows);
     }
 
-    const accountToSpreadsheet = linkAccountToSpreadsheet(history, vaults);
-    checkAndCleanDuplicates(history, accountToSpreadsheet, vaults);
     history.sort(compareHistoryItems);
     validateHistory(history);
 
@@ -172,7 +171,7 @@ const validateSpreadsheet = (spreadsheet, spreadsheetId) => {
     const rows = [];
 
     const {sheets, properties} = spreadsheet;
-    const {title} = properties;
+    const {title: spreadsheetTitle} = properties;
     const [sheet] = sheets;
     const {rowData} = sheet.data[0];
     const {length} = rowData;
@@ -184,67 +183,13 @@ const validateSpreadsheet = (spreadsheet, spreadsheetId) => {
         const to = values[2].formattedValue;
         const product = values[3].formattedValue;
         const date = values[4].formattedValue;
-        const row = {spreadsheetId, index, from, value, to, product, date};
+        const row = {spreadsheetId, spreadsheetTitle, index, from, value, to, product, date};
         const validation = validateRow(row);
-        assume(validation === true, validation + ` (${title}, row ${index}, ${date})`);
+        assume(validation === true, validation + ` (${spreadsheetTitle}, row ${index}, ${date})`);
         rows.push(row);
     }
 
     return rows;
-};
-
-/**
- *
- */
-const linkAccountToSpreadsheet = (history, vaults) => {
-    const bag = {};
-    for (const row of history) {
-        const {spreadsheetId, from, to} = row;
-        if (from === ADMIN_ACCOUNT) {
-            check(!bag[to], 'Already born!', row, vaults);
-            bag[to] = spreadsheetId;
-        }
-    }
-    return bag;
-};
-
-/**
- *
- */
-const checkAndCleanDuplicates = (history, accountToSpreadsheet, vaults) => {
-    const byDate = {};
-    const {length} = history;
-    for (let index = 0; index < length; index++) {
-        const row = history[index];
-        const {date} = row;
-        const rows = byDate[date] || [];
-        rows.push({row, index});
-        check(rows.length <= 2, 'Too many rows share the same date!', row, vaults);
-        byDate[date] = rows;
-    }
-    for (const key in byDate) {
-        const [entry1, entry2] = byDate[key];
-        const {row: r1} = entry1;
-        if (entry2) {
-            const {row: r2, index} = entry2;
-            const isSame = r1.from === r2.from && r1.value === r2.value && r1.to === r2.to && r1.product === r2.product;
-            check(isSame, 'Two different entries share the same date!', r2, vaults);
-            check(r1.spreadsheetId !== r2.spreadsheetId, 'The same entry found in the same spreadsheet!', r2, vaults);
-            history.splice(index, 1); // remove the second row
-        } else {
-            const {spreadsheetId, from, to} = r1;
-            const fromSpreadsheet = from === ADMIN_ACCOUNT ? spreadsheetId : accountToSpreadsheet[from];
-            const toSpreadsheet = accountToSpreadsheet[to];
-            if (fromSpreadsheet === spreadsheetId) {
-                const isToValid = toSpreadsheet === spreadsheetId || !toSpreadsheet;
-                check(isToValid, 'Row has no to-mirror!', r1, vaults);
-            } else if (toSpreadsheet === spreadsheetId) {
-                check(!fromSpreadsheet, 'Row has no from-mirror!', r1, vaults);
-            } else {
-                check(false, "Row doesn't belong!", r1, vaults);
-            }
-        }
-    }
 };
 
 /**
@@ -259,10 +204,11 @@ const compareHistoryItems = (a, b) => {
  * This helps in catching some chronological errors or some accounts going below zero when they shouldn't.
  */
 const validateHistory = (history) => {
+    validateMirrors(history);
     const incrementalHistory = [];
     for (const row of history) {
         const validation = validateRowAddition(row, incrementalHistory);
-        assume(validation === true, validation);
+        check(validation === true, validation, row);
         incrementalHistory.push(row);
     }
 };
@@ -270,12 +216,30 @@ const validateHistory = (history) => {
 /**
  *
  */
-const check = (condition, message, row, vaults) => {
+const validateMirrors = (history) => {
+    const births = collectBirths(history);
+    for (let i = 0; i < history.length; i++) {
+        const row = history[i];
+        const {from, to, date} = row;
+        if (from !== ADMIN_ACCOUNT) {
+            const fromBirth = births[from];
+            const toBirth = births[to];
+            if (fromBirth && toBirth && fromBirth !== toBirth) {
+                check(history[i + 1]?.date === date, 'Expecting mirror!', row);
+                i++; // skip next item, which is certain to be a mirror
+            }
+        }
+    }
+};
+
+/**
+ * A custom version of `assume()`.
+ */
+const check = (condition, message, row) => {
     if (!condition) {
-        console.log('row:', row);
-        const {spreadsheetId, date, index} = row;
-        const title = vaults[spreadsheetId].replace(/,.*/, '');
-        message += ` (${title}, ${index}, ${date})`;
+        console.log('Row:', row);
+        const {spreadsheetTitle, date, index} = row;
+        message += ` (${spreadsheetTitle}, ${index}, ${date})`;
         throw new Error(message);
     }
 };

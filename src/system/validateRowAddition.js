@@ -1,14 +1,8 @@
 import {ADMIN_ACCOUNT, CREDIT_CARD_MARK} from '../SETTINGS.js';
 import assume from '../utils/assume.js';
 import checkVirtual from './checkVirtual.js';
+import collectBirths from '../state/actions/collectBirths.js';
 
-// =====================================================================================================================
-//  D E C L A R A T I O N S
-// =====================================================================================================================
-const DEFAULT_BIRTH = {
-    spreadsheetId: '',
-    date: '0000-00-00T00:00:00+00:00',
-};
 // =====================================================================================================================
 //  P U B L I C
 // =====================================================================================================================
@@ -36,16 +30,16 @@ const validateRowAddition = (row, history) => {
 const run = (row, history) => {
     const {spreadsheetId, from, value, to, date} = row;
     const births = collectBirths(history);
-    const fromBirth = births[from] || DEFAULT_BIRTH;
-    const toBirth = births[to] || DEFAULT_BIRTH;
+    const fromBirth = births[from];
+    const toBirth = births[to];
 
     // Validate `from` and `to` in the context of the whole history:
     if (from === ADMIN_ACCOUNT) {
         // This is a birth row.
-        assume(!births[to], `Account "${to}" has already been born!`);
+        assume(!births[to], `Account ${to} has already been born!`);
     } else {
         // This is a normal row.
-        const isAllowed = fromBirth.spreadsheetId === spreadsheetId || toBirth.spreadsheetId === spreadsheetId;
+        const isAllowed = fromBirth === spreadsheetId || toBirth === spreadsheetId;
         assume(isAllowed, 'At least one of the accounts must be native to the spreadsheet!');
     }
 
@@ -53,30 +47,23 @@ const run = (row, history) => {
     if (!checkVirtual(row) && !from.includes(CREDIT_CARD_MARK)) {
         const fromTotal = computeTotal(from, history);
         if (births[from]) {
-            assume(fromTotal - value >= 0, `The account "${from}" is not allowed to become negative!`);
+            assume(fromTotal - value >= 0, `Account ${from} is not allowed to become negative!`);
         }
     }
 
     // Validate `date` in the context of the whole history:
-    const maxBirth = fromBirth.date > toBirth.date ? fromBirth.date : toBirth.date;
-    assume(date >= maxBirth, `The date should be greater than ${maxBirth}`);
-};
-
-/**
- *
- */
-const collectBirths = (history) => {
-    const births = {};
-    for (const row of history) {
-        const {spreadsheetId, from, to, date} = row;
-        if (from === ADMIN_ACCOUNT) {
-            births[to] = {
-                spreadsheetId,
-                date,
-            };
+    if (history.length) {
+        const previousRow = history.at(-1);
+        const maxBirth = previousRow.date;
+        if (maxBirth === date) {
+            // A duplicate row is about to be added
+            assume(checkIdentical(previousRow, row), 'Two different entries share the same date!');
+            assume(spreadsheetId !== previousRow.spreadsheetId, 'Already added to this spreadsheet!');
+            assume(history.at(-2)?.date !== date, 'Row added to many times!');
+        } else {
+            assume(date > maxBirth, `The date should be greater than ${maxBirth}!`);
         }
     }
-    return births;
 };
 
 /**
@@ -95,6 +82,13 @@ const computeTotal = (account, history) => {
         total += (from === account ? -1 : 1) * value;
     }
     return total;
+};
+
+/**
+ *
+ */
+const checkIdentical = (r1, r2) => {
+    return r1.from === r2.from && r1.value === r2.value && r1.to === r2.to && r1.product === r2.product;
 };
 
 // =====================================================================================================================
