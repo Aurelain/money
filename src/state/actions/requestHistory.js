@@ -267,7 +267,8 @@ const compareHistoryItems = (a, b) => {
 const validateHistory = (history) => {
     const incrementalHistory = [];
     for (const row of history) {
-        validateRowAddition(row, incrementalHistory);
+        const validation = validateRowAddition(row, incrementalHistory);
+        assume(validation === true, validation);
         incrementalHistory.push(row);
     }
 };
