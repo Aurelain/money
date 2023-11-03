@@ -16,7 +16,10 @@ const showDebts = () => {
 
     const relations = {};
     for (const item of history) {
-        const {from, value, to, product, date} = item;
+        const {from, value, to, product, date, isMirror} = item;
+        if (isMirror) {
+            continue;
+        }
         if (date in virtualDates || product.includes(CREDIT_KEYWORD)) {
             const fromOwner = accountsBag[from].owner;
             const toOwner = accountsBag[to].owner;
