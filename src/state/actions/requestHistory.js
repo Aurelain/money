@@ -1,6 +1,6 @@
 import requestApi from '../../system/requestApi.js';
 import checkOffline from '../../system/checkOffline.js';
-import {selectHistory, selectImportantAccounts, selectVaults} from '../selectors.js';
+import {selectHistory, selectImportantAccounts, selectOptionsVaultId, selectVaults} from '../selectors.js';
 import {getState, setState} from '../store.js';
 import SpreadsheetSchema from '../../schemas/SpreadsheetSchema.js';
 import assume from '../../utils/assume.js';
@@ -32,7 +32,7 @@ const requestHistory = async (isForced = false) => {
     }
 
     const state = getState();
-    const prevVaults = isForced ? {} : selectVaults(state);
+    const prevVaults = isForced ? {} : getPreviousVaults(state);
     const {vaults, optionsVaultId} = await discoverVaults();
 
     if (!optionsVaultId) {
@@ -89,6 +89,18 @@ const requestHistory = async (isForced = false) => {
 // =====================================================================================================================
 //  P R I V A T E
 // =====================================================================================================================
+/**
+ *
+ */
+const getPreviousVaults = (state) => {
+    const vaults = selectVaults(state);
+    // TODO remove the following block, which forces all transactions to be re-read, regardless of change status
+    const optionsVaultId = selectOptionsVaultId(state);
+    return {
+        [optionsVaultId]: vaults[optionsVaultId],
+    };
+};
+
 /**
  *
  */

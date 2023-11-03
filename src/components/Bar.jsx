@@ -203,7 +203,7 @@ class Bar extends React.PureComponent {
      */
     onReloadHold = async () => {
         await requestHistory(true);
-        window.location.reload();
+        // window.location.reload();
     };
 
     /**
