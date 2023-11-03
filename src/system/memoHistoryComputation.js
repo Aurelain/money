@@ -1,5 +1,7 @@
 import memoize from 'memoize-one';
 import checkVirtual from './checkVirtual.js';
+import {selectImportantAccounts} from '../state/selectors.js';
+import {getState} from '../state/store.js';
 
 // =====================================================================================================================
 //  P U B L I C
@@ -12,17 +14,26 @@ const memoHistoryComputation = memoize((history) => {
     const valuesBag = {};
     const productsBag = {};
     const virtualDates = {};
-    for (const row of history) {
-        registerAccount(row.from, row, accountsBag);
-        registerAccount(row.to, row, accountsBag);
 
-        valuesBag[row.value] = true;
-        productsBag[row.product] = true;
+    // Cheat the memoization a little by getting the importantAccounts from the global state:
+    addImportantAccounts(accountsBag);
+
+    for (const row of history) {
+        const {from, value, to, product, date} = row;
+        registerAccount(from, accountsBag);
+        registerAccount(to, accountsBag);
+
+        valuesBag[value] = true;
+        productsBag[product] = true;
         if (checkVirtual(row)) {
-            virtualDates[row.date] = true;
+            virtualDates[date] = true;
+            accountsBag[from].worth += value;
+            accountsBag[to].worth -= value;
         } else {
-            accountsBag[row.from].total -= row.value;
-            accountsBag[row.to].total += row.value;
+            accountsBag[from].total -= value;
+            accountsBag[to].total += value;
+            accountsBag[from].worth -= value;
+            accountsBag[to].worth += value;
         }
     }
 
@@ -45,20 +56,24 @@ const memoHistoryComputation = memoize((history) => {
 /**
  *
  */
-const registerAccount = (name, row, accountsBag) => {
-    const {date, spreadsheetId} = row;
-    const account = accountsBag[name];
-    if (!account) {
+const addImportantAccounts = (accountsBag) => {
+    const state = getState();
+    const importantAccounts = selectImportantAccounts(state);
+    for (const name in importantAccounts) {
+        registerAccount(name, accountsBag);
+    }
+};
+
+/**
+ *
+ */
+const registerAccount = (name, accountsBag) => {
+    if (!accountsBag[name]) {
         accountsBag[name] = {
             total: 0,
-            date,
-            spreadsheetId,
+            worth: 0,
             owner: inferOwner(name),
         };
-    } else {
-        if (date < account.date) {
-            account.date = date;
-        }
     }
 };
 
@@ -75,6 +90,7 @@ const inferOwner = (name) => {
     }
     return name;
 };
+
 // =====================================================================================================================
 //  E X P O R T
 // =====================================================================================================================

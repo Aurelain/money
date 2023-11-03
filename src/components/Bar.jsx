@@ -217,16 +217,16 @@ class Bar extends React.PureComponent {
      *
      */
     memoGrowLabel = memoize((history, formulas) => {
-        const results = memoFormulaResults(history, formulas);
+        const results = memoFormulaResults(history, formulas).filter((item) => item.label.startsWith('_'));
         if (results.length < 2) {
-            return results[0];
+            return results[0]?.result;
         }
         return (
             <>
                 {results.map((item, index) => {
                     return (
                         <div key={index} css={SX.result}>
-                            {item}
+                            {item.result}
                         </div>
                     );
                 })}

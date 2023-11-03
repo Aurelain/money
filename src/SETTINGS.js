@@ -20,6 +20,7 @@ export const VAULT_PREFIX = 'Money_';
 export const VAULT_OPTIONS = VAULT_PREFIX + 'Options';
 
 export const PATTERN_ONLY_CHARACTERS = /^\S+$/;
+export const PATTERN_WORTH = /worth/i;
 
 export const FIELD_FROM = 'from';
 export const FIELD_VALUE = 'value';
@@ -28,6 +29,7 @@ export const FIELD_PRODUCT = 'product';
 
 export const CREDIT_KEYWORD = 'Credit';
 export const VIRTUAL_KEYWORD = 'CreditV';
+export const ADMIN_KEYWORD = 'Admin';
 export const CREDIT_CARD_MARK = 'CC';
 
 export const COLOR_FROM = 'red';

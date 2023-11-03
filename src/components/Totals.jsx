@@ -2,12 +2,14 @@ import React from 'react';
 import {connect} from 'react-redux';
 import memoHistoryComputation from '../system/memoHistoryComputation.js';
 import PropTypes from 'prop-types';
-import {selectFormulas, selectHistory, selectMeta} from '../state/selectors.js';
+import memoize from 'memoize-one';
+import {selectFormulas, selectHistory, selectImportantAccounts, selectMeta} from '../state/selectors.js';
 import formatNumber from '../system/formatNumber.js';
 import embellishLabel from '../system/embellishLabel.js';
 import Formula from './Formula.jsx';
 import memoFormulaResults from '../system/memoFormulaResults.js';
 import configureFormula from '../state/actions/configureFormula.js';
+import {ADMIN_KEYWORD} from '../SETTINGS.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -32,24 +34,19 @@ const SX = {
 // =====================================================================================================================
 class Totals extends React.PureComponent {
     render() {
-        const {history, formulas, meta} = this.props;
+        const {history, formulas, meta, importantAccounts} = this.props;
         const {accounts, accountsBag} = memoHistoryComputation(history);
         const results = memoFormulaResults(history, formulas);
+        const accountsList = this.memoAccountsList(accounts, importantAccounts);
         return (
             <div css={SX.root}>
                 {formulas.map((formula, index) => {
-                    const {label} = formula;
+                    const {label, result} = results[index];
                     return (
-                        <Formula
-                            key={index}
-                            label={label}
-                            data={index}
-                            result={results[index]}
-                            onClick={this.onFormulaClick}
-                        />
+                        <Formula key={index} data={index} label={label} result={result} onClick={this.onFormulaClick} />
                     );
                 })}
-                {accounts.map((name) => {
+                {accountsList.map((name) => {
                     return (
                         <div key={name} css={SX.account}>
                             {embellishLabel(name, '', meta)}
@@ -63,9 +60,21 @@ class Totals extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
+    /**
+     *
+     */
     onFormulaClick = ({data: index}) => {
         configureFormula(index);
     };
+
+    /**
+     *
+     */
+    memoAccountsList = memoize((accounts, importantAccounts) => {
+        const citizens = accounts.filter((item) => importantAccounts[item]);
+        const foreigners = accounts.filter((item) => item !== ADMIN_KEYWORD && !importantAccounts[item]);
+        return [...citizens, ...foreigners];
+    });
 }
 
 // =====================================================================================================================
@@ -76,6 +85,7 @@ Totals.propTypes = {
     history: PropTypes.array.isRequired,
     formulas: PropTypes.array.isRequired,
     meta: PropTypes.object.isRequired,
+    importantAccounts: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -83,6 +93,7 @@ const mapStateToProps = (state) => {
         history: selectHistory(state),
         formulas: selectFormulas(state),
         meta: selectMeta(state),
+        importantAccounts: selectImportantAccounts(state),
     };
 };
 
