@@ -4,7 +4,7 @@ import {selectHistory, selectImportantAccounts, selectVaults} from '../selectors
 import {getState, setState} from '../store.js';
 import SpreadsheetSchema from '../../schemas/SpreadsheetSchema.js';
 import assume from '../../utils/assume.js';
-import {PATTERN_ONLY_CHARACTERS, VAULT_OPTIONS, VAULT_PREFIX} from '../../SETTINGS.js';
+import {VAULT_OPTIONS, VAULT_PREFIX} from '../../SETTINGS.js';
 import VaultsSchema from '../../schemas/VaultsSchema.js';
 import SPREADSHEET1_MOCK from '../../mocks/SPREADSHEET1_MOCK.js';
 import SPREADSHEET2_MOCK from '../../mocks/SPREADSHEET2_MOCK.js';
@@ -76,6 +76,7 @@ const requestHistory = async (isForced = false) => {
     }
 
     history.sort(compareHistoryItems);
+    validateAndUpdateMirrors(history, importantAccounts);
     validateHistory(history, importantAccounts);
 
     setState((state) => {
@@ -234,9 +235,12 @@ const compareHistoryItems = (a, b) => {
  * This helps in catching some chronological errors or some accounts going below zero when they shouldn't.
  */
 const validateHistory = (history, importantAccounts) => {
-    validateMirrors(history, importantAccounts);
     const incrementalHistory = [];
     for (const row of history) {
+        if (row.isMirror) {
+            continue;
+        }
+
         const validation = validateRowAddition(row, importantAccounts, incrementalHistory);
         check(validation === true, validation, row);
         incrementalHistory.push(row);
@@ -246,14 +250,16 @@ const validateHistory = (history, importantAccounts) => {
 /**
  *
  */
-const validateMirrors = (history, importantAccounts) => {
+const validateAndUpdateMirrors = (history, importantAccounts) => {
     for (let i = 0; i < history.length; i++) {
         const row = history[i];
         const {from, to, date} = row;
         const fromMother = importantAccounts[from];
         const toMother = importantAccounts[to];
         if (fromMother && toMother && fromMother !== toMother) {
-            check(history[i + 1]?.date === date, 'Expecting mirror!', row);
+            const nextRow = history[i + 1];
+            check(nextRow?.date === date, 'Expecting mirror!', row);
+            nextRow.isMirror = true;
             i++; // skip next item, which is certain to be a mirror
         }
     }

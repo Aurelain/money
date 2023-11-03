@@ -26,7 +26,7 @@ class Connect extends React.PureComponent {
                     label={
                         <>
                             Connect your
-                            <br /> Google Calendar
+                            <br /> Google Drive
                         </>
                     }
                     onClick={this.onButtonClick}

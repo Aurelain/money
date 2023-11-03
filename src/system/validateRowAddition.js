@@ -62,7 +62,11 @@ const run = (row, importantAccounts, history) => {
 const computeTotal = (account, history) => {
     let total = 0;
     for (const row of history) {
-        const {from, value, to} = row;
+        const {from, value, to, isMirror} = row;
+        if (isMirror) {
+            continue;
+        }
+
         if (from !== account && to !== account) {
             continue; // we're not interested in this row, as it doesn't touch our target account
         }

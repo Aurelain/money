@@ -19,7 +19,11 @@ const memoHistoryComputation = memoize((history) => {
     addImportantAccounts(accountsBag);
 
     for (const row of history) {
-        const {from, value, to, product, date} = row;
+        const {from, value, to, product, date, isMirror} = row;
+        if (isMirror) {
+            continue;
+        }
+
         registerAccount(from, accountsBag);
         registerAccount(to, accountsBag);
 

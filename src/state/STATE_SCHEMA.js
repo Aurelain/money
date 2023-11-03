@@ -74,6 +74,9 @@ export default {
                     date: {
                         type: 'string',
                     },
+                    isMirror: {
+                        type: 'boolean', // optional
+                    },
                 },
                 required: ['spreadsheetId', 'spreadsheetTitle', 'from', 'value', 'to', 'product', 'date'],
             },

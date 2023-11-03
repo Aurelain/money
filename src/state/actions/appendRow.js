@@ -20,15 +20,18 @@ const appendRow = async (command, importantAccounts, defaults, meta) => {
     // Append the rows (plural, because they may be mirrored) before contacting the cloud:
     setState((state) => {
         const {from, value, to, product, date} = row;
-        for (const spreadsheetId of spreadsheets) {
+        for (let i = 0; i < spreadsheets.length; i++) {
+            const spreadsheetId = spreadsheets[i];
             state.history.push({
                 spreadsheetId,
+                spreadsheetTitle: spreadsheetId, // TODO
                 index: 0, // to be updated
                 from,
                 value,
                 to,
                 product,
                 date,
+                isMirror: i === 1,
             });
         }
     });
