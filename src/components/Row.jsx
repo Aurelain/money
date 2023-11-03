@@ -95,17 +95,22 @@ class Row extends React.PureComponent {
     onRootHold = () => {
         const {from, value, to, product, date} = this.props;
         const lines = [];
-        lines.push(`From: ${from}`);
-        lines.push(`Amount: ${value}`);
-        lines.push(`To: ${to}`);
-        lines.push(`Summary: ${product}`);
-        lines.push(`Date: ${prettifyDate(date)}`);
+        lines.push(`From:           ${from}`);
+        lines.push(`Amount:      ${formatNumber(value)}`);
+        lines.push(`To:               ${to}`);
+        lines.push(`Summary:    ${product}`);
+        lines.push(`Date:           ${prettifyDate(date)}`);
         lines.push('');
-        lines.push('Are you sure you want to delete this transaction?');
-        const reply = confirm(lines.join('\n'));
-        if (reply) {
+        lines.push('If you want to delete this transaction, type "DEL":');
+        const reply = prompt(lines.join('\n'));
+        if (reply?.match(/^DEL$/i)) {
             deleteRow(date);
         }
+        // lines.push('Are you sure you want to delete this transaction?');
+        // const reply = confirm(lines.join('\n'));
+        // if (reply) {
+        //     deleteRow(date);
+        // }
     };
 }
 // =====================================================================================================================

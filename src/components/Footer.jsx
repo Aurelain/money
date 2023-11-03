@@ -60,7 +60,6 @@ const SX = {
         maxWidth: CONTENT_MAX_WIDTH,
         height: '100%',
     },
-    selectors: {},
     selectorButton: {
         background: SECONDARY_COLOR,
         width: '25%',
@@ -91,14 +90,14 @@ const SX = {
         width: '100%',
         border: 'none',
         borderRadius: 20,
-        padding: '0 16px',
-        margin: 8,
+        padding: '8px 16px',
+        margin: '4px 8px',
         appearance: 'none',
         background: '#fff',
         resize: 'none',
         fontFamily: 'inherit',
         fontSize: 'inherit',
-        lineHeight: '30px',
+        lineHeight: '22px',
         overflow: 'hidden',
     },
     plus: {
@@ -114,6 +113,18 @@ const SX = {
         color: 'white',
         borderRadius: 12,
         pointerEvents: 'none',
+    },
+    validation: {
+        position: 'absolute',
+        left: 24,
+        right: 2,
+        bottom: 8,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        fontSize: 10,
+        pointerEvents: 'none',
+        color: 'red',
     },
 };
 
@@ -203,12 +214,11 @@ class Footer extends React.PureComponent {
                             onBlur={this.onInputBlur}
                         />
                         <Button
-                            icon={this.memoCommitIcon(command, focusedDate, validation)}
+                            icon={Plus}
                             cssNormal={SX.plus}
                             variant={'inverted'}
                             onClick={this.onPlusClick}
-                            title={typeof validation === 'string' ? validation : undefined}
-                            disabled={!command}
+                            disabled={!command || validation !== true}
                         />
                         <Button
                             icon={Close}
@@ -216,6 +226,7 @@ class Footer extends React.PureComponent {
                             variant={'inverted'}
                             onClick={this.onCloseClick}
                         />
+                        {command && validation !== true && <div css={SX.validation}>{validation}</div>}
                     </div>
                 </div>
             </div>
@@ -369,16 +380,6 @@ class Footer extends React.PureComponent {
     memoDigestion = memoize((command, defaults, meta) => {
         this.digestion = parseCommand(command, defaults, meta); // harmless side-effect
         return this.digestion;
-    });
-
-    /**
-     *
-     */
-    memoCommitIcon = memoize((command, focusedDate, validation) => {
-        if (command && validation !== true) {
-            return AlertOutline;
-        }
-        return focusedDate ? Check : Plus;
     });
 
     /**
