@@ -99,6 +99,7 @@ const SX = {
         fontSize: 'inherit',
         lineHeight: '22px',
         overflow: 'hidden',
+        whiteSpace: 'nowrap',
     },
     plus: {
         height: '100%',
@@ -304,21 +305,18 @@ class Footer extends React.PureComponent {
     /**
      *
      */
-    create = () => {
+    create = async () => {
         if (this.validation !== true) {
             throw new Error(this.validation);
         }
         const {focusedDate, importantAccounts, defaults, meta} = this.props;
         const {command} = this.state;
         if (focusedDate) {
-            updateRow(focusedDate, command);
-            this.exit();
+            await updateRow(focusedDate, command);
         } else {
-            this.setState({
-                command: '',
-            });
-            appendRow(command, importantAccounts, defaults, meta);
+            await appendRow(command, importantAccounts, defaults, meta);
         }
+        this.exit();
     };
 
     /**
