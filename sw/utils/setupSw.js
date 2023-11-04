@@ -94,7 +94,12 @@ const onWorkerFetch = (event) => {
 
     let responsePromise;
     if (mode === 'navigate') {
-        responsePromise = respondToRoot();
+        // TODO: find a better way
+        if (url.split('/').pop().includes('.')) {
+            responsePromise = respondToFile(url);
+        } else {
+            responsePromise = respondToRoot();
+        }
     } else {
         responsePromise = respondToFile(url);
     }
@@ -143,7 +148,8 @@ const fetchUrl = async (url) => {
  */
 const respondToFile = async (url) => {
     const cachedResponse = await caches.match(url);
-    return cachedResponse || fetch(url);
+    // return cachedResponse || (await fetch(url)) || new Response(null, {status: 404});
+    return cachedResponse || (await fetch(url));
 };
 
 // =====================================================================================================================
