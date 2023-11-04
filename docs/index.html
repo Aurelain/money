@@ -55,7 +55,15 @@
                 }
             }
 
-            #refresh {
+            #refresh1 {
+                position: absolute;
+                bottom: 36px;
+                left: 50%;
+                width: 100px;
+                margin-left: -50px;
+            }
+
+            #refresh2 {
                 position: absolute;
                 bottom: 10px;
                 left: 50%;
@@ -64,6 +72,14 @@
             }
         </style>
         <script>
+            window.refreshSoft = function () {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for (let registration of registrations) {
+                        registration.unregister();
+                    }
+                    window.location.reload();
+                });
+            };
             window.refreshHard = function () {
                 navigator.serviceWorker.getRegistrations().then(function(registrations) {
                     for (let registration of registrations) {
@@ -83,9 +99,10 @@
     <body>
         <div id='loading'>
             <div id='spinner'></div>
-            <button id='refresh' onclick='refreshHard()'>Refresh</button>
+            <button id='refresh1' onclick='refreshSoft()'>Refresh1</button>
+            <button id='refresh2' onclick='refreshHard()'>Refresh2</button>
         </div>
         <div id='root'></div>
-        <script src='js/main-WcRoDnvO.js'></script>
+        <script src='js/main-V5NIcElA.js'></script>
     </body>
 </html>

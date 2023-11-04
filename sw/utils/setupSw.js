@@ -143,7 +143,7 @@ const fetchUrl = async (url) => {
  */
 const respondToFile = async (url) => {
     const cachedResponse = await caches.match(url);
-    return cachedResponse || new Response(null, {status: 404});
+    return cachedResponse || fetch(url);
 };
 
 // =====================================================================================================================
