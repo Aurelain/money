@@ -34,12 +34,6 @@ const build = async () => {
     fsExtra.copySync('public', OUTPUT_DIR);
     const clientBundle = await createBundle(entryPath, 'js/[name]', isDev);
 
-    // Rename `main.js`:
-    const {hash} = await hashElement(OUTPUT_DIR);
-    const cleanHash = hash.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
-    renameClient(clientBundle, cleanHash);
-    updateIndex(clientBundle);
-
     // Adapt service-worker:
     if (!isFocus) {
         const swBundle = await createBundle('sw/sw.js', '[name]', isDev);
@@ -47,9 +41,16 @@ const build = async () => {
         fs.writeFileSync(swBundle.filePath, swBundle.content);
     }
 
+    // Rename `main.js`:
+    const {hash} = await hashElement(OUTPUT_DIR);
+    const cleanHash = hash.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8);
+    renameClient(clientBundle, cleanHash);
+    updateIndex(clientBundle);
+
     // Write to disk the adapted main bundle:
     fs.writeFileSync(clientBundle.filePath, clientBundle.content);
 
+    console.log(cleanHash);
     console.log(`Done in ${Date.now() - time} ms.`);
     await refreshBrowser();
 };
