@@ -48,7 +48,7 @@ class App extends React.PureComponent {
             document.title += ' (MOCK)';
         }
         document.addEventListener('visibilitychange', this.onDocumentVisibilityChange);
-        document.body.removeChild(document.getElementById('spinner'));
+        document.body.removeChild(document.getElementById('loading'));
 
         addErrorListener(this.onGlobalError);
 

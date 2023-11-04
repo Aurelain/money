@@ -25,8 +25,15 @@
                 --sat: env(safe-area-inset-top);
                 --sab: env(safe-area-inset-bottom);
             }
-            #spinner {
+
+            #loading {
                 position: fixed;
+                inset: 0;
+                z-index: 9999999;
+            }
+
+            #spinner {
+                position: absolute;
                 left: 50%;
                 top: 50%;
                 margin: -12px 0 0 -12px;
@@ -38,6 +45,7 @@
                 border-top-color: transparent;
                 box-sizing: border-box;
             }
+
             @keyframes animationSpinner {
                 0% {
                     transform: rotate(0deg);
@@ -46,10 +54,37 @@
                     transform: rotate(360deg);
                 }
             }
+
+            #refresh {
+                position: absolute;
+                bottom: 10px;
+                left: 50%;
+                width: 100px;
+                margin-left: -50px;
+            }
         </style>
+        <script>
+            window.refreshHard = function () {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for (let registration of registrations) {
+                        registration.unregister();
+                    }
+                    const request = window.indexedDB.deleteDatabase('money-store');
+                    request.onerror = () => {
+                        window.location.reload();
+                    };
+                    request.onsuccess = () => {
+                        window.location.reload();
+                    };
+                });
+            };
+        </script>
     </head>
     <body>
-        <div id='spinner'></div>
+        <div id='loading'>
+            <div id='spinner'></div>
+            <button id='refresh' onclick='refreshHard()'>Refresh</button>
+        </div>
         <div id='root'></div>
         <script src='@CLIENT_PATH'></script>
     </body>

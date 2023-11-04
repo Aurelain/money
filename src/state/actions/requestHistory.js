@@ -32,7 +32,7 @@ const requestHistory = async (isForced = false) => {
     }
 
     const state = getState();
-    const prevVaults = isForced ? {} : getPreviousVaults(state);
+    const prevVaults = isForced ? {} : selectVaults(state);
     const {vaults, optionsVaultId} = await discoverVaults();
 
     if (!optionsVaultId) {
@@ -50,8 +50,14 @@ const requestHistory = async (isForced = false) => {
         await loadOptions(optionsVaultId);
     }
 
-    const pendingIds = {...changes.created, ...changes.updated};
+    // TODO: uncomment the following line
+    // const pendingIds = {...changes.created, ...changes.updated};
+    // delete pendingIds[optionsVaultId];
+
+    // TODO: comment the following lines. We had to force all transactions to be re-read, regardless of change status.
+    const pendingIds = {...vaults};
     delete pendingIds[optionsVaultId];
+    changes.unchanged = {}; // act as if everything changed
 
     const prevImportantAccounts = selectImportantAccounts(state);
     const importantAccounts = {};
@@ -89,18 +95,6 @@ const requestHistory = async (isForced = false) => {
 // =====================================================================================================================
 //  P R I V A T E
 // =====================================================================================================================
-/**
- *
- */
-const getPreviousVaults = (state) => {
-    const vaults = selectVaults(state);
-    // TODO remove the following block, which forces all transactions to be re-read, regardless of change status
-    const optionsVaultId = selectOptionsVaultId(state);
-    return {
-        [optionsVaultId]: vaults[optionsVaultId],
-    };
-};
-
 /**
  *
  */

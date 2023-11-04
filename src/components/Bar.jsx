@@ -2,12 +2,11 @@ import React from 'react';
 import memoize from 'memoize-one';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import localforage from 'localforage';
 import Button from '../ui/Button.jsx';
 import Reload from '../ui/Icons/Reload.jsx';
 import SideMenu from '../ui/SideMenu.jsx';
 import LocationExit from '../ui/Icons/LocationExit.jsx';
-import {HEADER_HEIGHT, HEADER_SAFETY, PRIMARY_COLOR, STORE_KEY} from '../SETTINGS.js';
+import {HEADER_HEIGHT, HEADER_SAFETY, PRIMARY_COLOR} from '../SETTINGS.js';
 import assume from '../utils/assume.js';
 import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fetchWithLoading.js';
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
@@ -182,8 +181,7 @@ class Bar extends React.PureComponent {
             //     window.location.reload();
             //     break;
             case MENU_LOG_OUT:
-                await localforage.removeItem(STORE_KEY);
-                window.location.reload();
+                window.refreshHard();
                 break;
             default: {
                 assume(false, `Unexpected menu choice "${name}"!`);
