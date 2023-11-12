@@ -29,7 +29,7 @@ const STATE_MOCK = {
         },
         formulas: [
             {
-                label: 'MyTotal1',
+                label: '_MyTotal1',
                 operations: 'AnaCard+Abigail', // -8500+1900=-6600
             },
             {

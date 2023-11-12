@@ -311,12 +311,12 @@ class Footer extends React.PureComponent {
         }
         const {focusedDate, importantAccounts, defaults, meta} = this.props;
         const {command} = this.state;
+        this.exit();
         if (focusedDate) {
             await updateRow(focusedDate, command);
         } else {
             await appendRow(command, importantAccounts, defaults, meta);
         }
-        this.exit();
     };
 
     /**
