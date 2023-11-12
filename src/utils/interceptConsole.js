@@ -6,11 +6,13 @@ Manages the browser's console:
     3. allowed (when `console` has any other value, including undefined)
 */
 
+import EMPTY_OBJECT from './EMPTY_OBJECT.js';
+import EMPTY_FUNCTION from './EMPTY_FUNCTION.js';
+
 // =====================================================================================================================
 //  D E C L A R A T I O N S
 // =====================================================================================================================
-const EMPTY_OBJECT = {};
-const EMPTY_FUNCTION = () => 0;
+
 const CONSOLE_HEIGHT = 300;
 const PROPERTIES = ['memory'];
 const METHODS = {

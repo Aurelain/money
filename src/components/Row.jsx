@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '../ui/Button.jsx';
 import memo from '../utils/memo.js';
-import clearFocusedDate from '../state/actions/clearFocusedDate.js';
 import formatNumber from '../system/formatNumber.js';
 import deleteRow from '../state/actions/deleteRow.js';
-import {COLOR_AMOUNT, COLOR_FROM, COLOR_SUMMARY, COLOR_TO} from '../SETTINGS.js';
+import {BAD, COLOR_AMOUNT, COLOR_FROM, COLOR_SUMMARY, COLOR_TO, GOOD, SECONDARY_COLOR} from '../SETTINGS.js';
+import EMPTY_OBJECT from '../utils/EMPTY_OBJECT.js';
+import decideMorality from '../system/decideMorality.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -13,6 +14,9 @@ import {COLOR_AMOUNT, COLOR_FROM, COLOR_SUMMARY, COLOR_TO} from '../SETTINGS.js'
 const SX = {
     root: {
         borderBottom: 'solid 1px rgba(0,0,0,0.1)',
+    },
+    hover: {
+        background: SECONDARY_COLOR,
     },
     column: {
         width: '25%',
@@ -28,9 +32,7 @@ const SX = {
         color: 'white',
     },
     isVirtual: {
-        opacity: 0.8,
-        fontStyle: 'italic',
-        background: 'rgba(0,0,0,0.05)',
+        opacity: 0.3,
     },
     date: {
         position: 'absolute',
@@ -39,6 +41,12 @@ const SX = {
         padding: 4,
         background: 'red',
         color: 'white',
+    },
+    good: {
+        background: 'rgba(0,255,0,0.1)',
+    },
+    bad: {
+        background: 'rgba(255,0,0,0.1)',
     },
 };
 const SX_FROM = {...SX.column, color: COLOR_FROM};
@@ -56,10 +64,17 @@ class Row extends React.PureComponent {
 
         const fromSuffix = meta[from]?.suffix || '';
         const toSuffix = meta[to]?.suffix || '';
+        const morality = decideMorality(from, to);
         return (
             <Button
-                cssNormal={this.memoRootSx(SX.root, isVirtual && SX.isVirtual)}
-                style={isSelected ? SX.isSelected : {}}
+                cssNormal={this.memoRootSx(
+                    SX.root,
+                    isVirtual && SX.isVirtual,
+                    morality === GOOD && SX.good,
+                    morality === BAD && SX.bad,
+                )}
+                cssHover={SX.hover}
+                style={isSelected ? SX.isSelected : EMPTY_OBJECT}
                 label={
                     <>
                         <div css={SX_FROM}>{from + fromSuffix}</div>
@@ -79,16 +94,6 @@ class Row extends React.PureComponent {
     // -----------------------------------------------------------------------------------------------------------------
     // P R I V A T E
     // -----------------------------------------------------------------------------------------------------------------
-    /**
-     *
-     */
-    onRootClick = () => {
-        const {isSelected} = this.props;
-        if (isSelected) {
-            clearFocusedDate();
-        }
-    };
-
     /**
      *
      */

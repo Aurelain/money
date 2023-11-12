@@ -37,6 +37,9 @@ export const COLOR_AMOUNT = '#15693f';
 export const COLOR_TO = 'blue';
 export const COLOR_SUMMARY = 'magenta';
 
+export const GOOD = 'GOOD';
+export const BAD = 'BAD';
+
 // The following values have been obtained through `btoa('actual_value')`. Funny security, right?
 // prettier-ignore
 // eslint-disable-next-line max-len
