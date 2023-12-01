@@ -90,7 +90,7 @@ class SimpleTotal extends React.PureComponent {
 SimpleTotal.propTypes = {
     label: PropTypes.string.isRequired,
     result: PropTypes.string,
-    data: PropTypes.number.isRequired,
+    data: PropTypes.any,
     onAlias: PropTypes.func.isRequired,
     onReport: PropTypes.func.isRequired,
 };

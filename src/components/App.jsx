@@ -4,13 +4,14 @@ import {connect} from 'react-redux';
 import Bar from './Bar.jsx';
 import Connect from './Connect.jsx';
 import Footer from './Footer.jsx';
-import {selectIsAuthenticated, selectIsHealed} from '../state/selectors.js';
+import {selectIsAuthenticated, selectIsHealed, selectReport} from '../state/selectors.js';
 import {addErrorListener} from '../utils/interceptErrors.js';
 import failAuthentication from '../state/actions/failAuthentication.js';
 import History from './History.jsx';
 import requestHistory from '../state/actions/requestHistory.js';
 import Grid from './Grid.jsx';
 import {USE_MOCK} from '../SETTINGS.js';
+import Report from './Report.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -24,19 +25,20 @@ class App extends React.PureComponent {
     constructionTimestamp = Date.now();
 
     render() {
-        const {isAuthenticated} = this.props;
+        const {isAuthenticated, report} = this.props;
+        const isReport = typeof report === 'string';
         return (
             <>
                 <Bar />
-                {isAuthenticated ? (
+                {isAuthenticated && isReport && <Report />}
+                {isAuthenticated && !isReport && (
                     <>
                         <Grid />
                         <History />
                         <Footer />
                     </>
-                ) : (
-                    <Connect />
                 )}
+                {!isAuthenticated && <Connect />}
             </>
         );
     }
@@ -89,11 +91,13 @@ class App extends React.PureComponent {
 App.propTypes = {
     isAuthenticated: PropTypes.bool.isRequired,
     isHealed: PropTypes.bool.isRequired,
+    report: PropTypes.string,
 };
 
 const mapStateToProps = (state) => ({
     isAuthenticated: selectIsAuthenticated(state),
     isHealed: selectIsHealed(state),
+    report: selectReport(state),
 });
 
 export default connect(mapStateToProps)(App);

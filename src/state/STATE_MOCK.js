@@ -39,6 +39,8 @@ const STATE_MOCK = {
         ],
     },
     optionsVaultId: '',
+    report: 'from==="AnaCard" || to==="AnaCard"',
+    isMenuOpen: false,
     volatile: {},
 };
 

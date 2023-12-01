@@ -12,13 +12,14 @@ import {addFetchListener, checkIsLoading, removeFetchListener} from '../utils/fe
 import DotsCircle from '../ui/Animations/DotsCircle.jsx';
 import requestHistory from '../state/actions/requestHistory.js';
 import Totals from './Totals.jsx';
-import {selectFormulas, selectHistory} from '../state/selectors.js';
+import {selectFormulas, selectHistory, selectIsMenuOpen} from '../state/selectors.js';
 import Sigma from '../ui/Icons/Sigma.jsx';
 import configureFormula from '../state/actions/configureFormula.js';
 import memoFormulaResults from '../system/memoFormulaResults.js';
 import RefreshCircle from '../ui/Icons/RefreshCircle.jsx';
 import Bank from '../ui/Icons/Bank.jsx';
 import showDebts from '../state/actions/showDebts.js';
+import toggleMenu from '../state/actions/toggleMenu.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -96,13 +97,12 @@ const LIST = [
 // =====================================================================================================================
 class Bar extends React.PureComponent {
     state = {
-        isMenuOpen: false,
         isLoading: false,
     };
 
     render() {
-        const {history, formulas} = this.props;
-        const {isMenuOpen, isLoading} = this.state;
+        const {history, formulas, isMenuOpen} = this.props;
+        const {isLoading} = this.state;
         const reloadIcon = isLoading ? DotsCircle : Reload;
         return (
             <div css={SX.root}>
@@ -151,18 +151,14 @@ class Bar extends React.PureComponent {
      *
      */
     onMenuClick = () => {
-        this.setState({
-            isMenuOpen: true,
-        });
+        toggleMenu(true);
     };
 
     /**
      *
      */
     onMenuClose = () => {
-        this.setState({
-            isMenuOpen: !this.state.isMenuOpen,
-        });
+        toggleMenu(false);
     };
 
     /**
@@ -240,12 +236,14 @@ Bar.propTypes = {
     // -------------------------------- redux:
     history: PropTypes.arrayOf(PropTypes.object),
     formulas: PropTypes.arrayOf(PropTypes.object),
+    isMenuOpen: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => {
     return {
         history: selectHistory(state),
         formulas: selectFormulas(state),
+        isMenuOpen: selectIsMenuOpen(state),
     };
 };
 

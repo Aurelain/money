@@ -11,6 +11,9 @@ import memoFormulaResults from '../system/memoFormulaResults.js';
 import configureFormula from '../state/actions/configureFormula.js';
 import {ADMIN_KEYWORD} from '../SETTINGS.js';
 import SimpleTotal from './SimpleTotal.jsx';
+import updateReport from '../state/actions/updateReport.js';
+import configureLabel from '../state/actions/configureLabel.js';
+import toggleMenu from '../state/actions/toggleMenu.js';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -58,7 +61,7 @@ class Totals extends React.PureComponent {
                     return (
                         <SimpleTotal
                             key={index}
-                            data={index}
+                            data={name}
                             label={embellishLabel(name, '', meta)}
                             result={formatNumber(accountsBag[name].total)}
                             onAlias={this.onSimpleAlias}
@@ -83,21 +86,35 @@ class Totals extends React.PureComponent {
      *
      */
     onFormulaReport = ({data: index}) => {
-        console.log('onFormulaReport:', index);
+        const {formulas} = this.props;
+        const {operations} = formulas[index];
+        const words = operations.match(/[A-Z]\w+/gi);
+        const prefix = words[0].substring(0, 3);
+
+        let report = '';
+        report += `(from.startsWith("${prefix}") || to.startsWith("${prefix}"))`;
+        report += generateDateCondition();
+
+        updateReport(report);
+        toggleMenu(false);
     };
 
     /**
      *
      */
-    onSimpleAlias = ({data: index}) => {
-        console.log('onSimpleAlias:', index);
+    onSimpleAlias = ({data}) => {
+        configureLabel(data);
     };
 
     /**
      *
      */
-    onSimpleReport = ({data: index}) => {
-        console.log('onSimpleReport:', index);
+    onSimpleReport = ({data}) => {
+        let report = '';
+        report += `(from === "${data}" || to === "${data}")`;
+        report += generateDateCondition();
+        updateReport(report);
+        toggleMenu(false);
     };
 
     /**
@@ -109,6 +126,16 @@ class Totals extends React.PureComponent {
         return [...citizens, ...foreigners];
     });
 }
+
+// =====================================================================================================================
+//  H E L P E R S
+// =====================================================================================================================
+/**
+ *
+ */
+const generateDateCondition = () => {
+    return ` && date.startsWith("${new Date().toISOString().substring(0, 7)}")`;
+};
 
 // =====================================================================================================================
 //  E X P O R T

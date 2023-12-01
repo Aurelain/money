@@ -85,10 +85,25 @@ export default {
         optionsVaultId: {
             type: 'string',
         },
+        report: {
+            type: 'string',
+        },
+        isMenuOpen: {
+            type: 'boolean',
+        },
         volatile: {
             type: 'object',
             additionalProperties: false,
         },
     },
-    required: ['tokens', 'vaults', 'importantAccounts', 'history', 'options', 'optionsVaultId', 'volatile'],
+    required: [
+        'tokens',
+        'vaults',
+        'importantAccounts',
+        'history',
+        'options',
+        'optionsVaultId',
+        'isMenuOpen',
+        'volatile',
+    ],
 };

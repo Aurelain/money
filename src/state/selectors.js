@@ -16,3 +16,5 @@ export const selectPreferredValue = (state) => state.options.defaults.value;
 export const selectPreferredTo = (state) => state.options.defaults.to;
 export const selectPreferredProduct = (state) => state.options.defaults.product;
 export const selectFormulas = (state) => state.options.formulas;
+export const selectReport = (state) => state.report;
+export const selectIsMenuOpen = (state) => state.isMenuOpen;
