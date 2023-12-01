@@ -34,12 +34,10 @@ import buildCommand from '../system/buildCommand.js';
 import appendRow from '../state/actions/appendRow.js';
 import deleteRow from '../state/actions/deleteRow.js';
 import updateRow from '../state/actions/updateRow.js';
-import Check from '../ui/Icons/Check.jsx';
 import toggleFavorite from '../state/actions/toggleFavorite.js';
 import configureLabel from '../state/actions/configureLabel.js';
 import validateRowAddition from '../system/validateRowAddition.js';
 import buildRowPayload from '../system/buildRowPayload.js';
-import AlertOutline from '../ui/Icons/AlertOutline.jsx';
 import validateRow from '../system/validateRow.js';
 
 // =====================================================================================================================

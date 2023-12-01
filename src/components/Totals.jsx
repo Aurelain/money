@@ -10,6 +10,7 @@ import Formula from './Formula.jsx';
 import memoFormulaResults from '../system/memoFormulaResults.js';
 import configureFormula from '../state/actions/configureFormula.js';
 import {ADMIN_KEYWORD} from '../SETTINGS.js';
+import SimpleTotal from './SimpleTotal.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -53,12 +54,16 @@ class Totals extends React.PureComponent {
                         />
                     );
                 })}
-                {accountsList.map((name) => {
+                {accountsList.map((name, index) => {
                     return (
-                        <div key={name} css={SX.account}>
-                            {embellishLabel(name, '', meta)}
-                            <div css={SX.accountTotal}>{formatNumber(accountsBag[name].total)}</div>
-                        </div>
+                        <SimpleTotal
+                            key={index}
+                            data={index}
+                            label={embellishLabel(name, '', meta)}
+                            result={formatNumber(accountsBag[name].total)}
+                            onAlias={this.onSimpleAlias}
+                            onReport={this.onSimpleReport}
+                        />
                     );
                 })}
             </div>
@@ -79,6 +84,20 @@ class Totals extends React.PureComponent {
      */
     onFormulaReport = ({data: index}) => {
         console.log('onFormulaReport:', index);
+    };
+
+    /**
+     *
+     */
+    onSimpleAlias = ({data: index}) => {
+        console.log('onSimpleAlias:', index);
+    };
+
+    /**
+     *
+     */
+    onSimpleReport = ({data: index}) => {
+        console.log('onSimpleReport:', index);
     };
 
     /**
