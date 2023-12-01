@@ -157,7 +157,6 @@ class Select extends React.PureComponent {
 // =====================================================================================================================
 Select.propTypes = {
     button: PropTypes.elementType,
-    buttonProps: PropTypes.object,
     list: PropTypes.elementType,
     listProps: PropTypes.object,
     onOpen: PropTypes.func,

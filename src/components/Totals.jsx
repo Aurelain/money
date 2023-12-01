@@ -43,7 +43,14 @@ class Totals extends React.PureComponent {
                 {formulas.map((formula, index) => {
                     const {label, result} = results[index];
                     return (
-                        <Formula key={index} data={index} label={label} result={result} onClick={this.onFormulaClick} />
+                        <Formula
+                            key={index}
+                            data={index}
+                            label={label}
+                            result={result}
+                            onEdit={this.onFormulaEdit}
+                            onReport={this.onFormulaReport}
+                        />
                     );
                 })}
                 {accountsList.map((name) => {
@@ -63,8 +70,15 @@ class Totals extends React.PureComponent {
     /**
      *
      */
-    onFormulaClick = ({data: index}) => {
+    onFormulaEdit = ({data: index}) => {
         configureFormula(index);
+    };
+
+    /**
+     *
+     */
+    onFormulaReport = ({data: index}) => {
+        console.log('onFormulaReport:', index);
     };
 
     /**
