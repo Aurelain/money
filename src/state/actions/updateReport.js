@@ -8,7 +8,11 @@ import {setState} from '../store.js';
  */
 const updateReport = (report) => {
     setState((state) => {
-        state.report = report;
+        if (report === null) {
+            delete state.report;
+        } else {
+            state.report = report;
+        }
     });
 };
 

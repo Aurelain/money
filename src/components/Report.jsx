@@ -8,6 +8,9 @@ import Close from '../ui/Icons/Close.jsx';
 import updateReport from '../state/actions/updateReport.js';
 import defocus from '../utils/defocus.js';
 import evaluate from '../utils/evaluate.js';
+import Select from '../ui/Select.jsx';
+import toggleTag from '../state/actions/toggleTag.js';
+import ReportNumber from './ReportNumber.jsx';
 
 // =====================================================================================================================
 //  D E C L A R A T I O N S
@@ -18,6 +21,11 @@ const SX = {
         padding: 16,
         paddingTop: HEADER_HEIGHT + HEADER_SAFETY,
         paddingBottom: FOOTER_HEIGHT + FOOTER_SAFETY,
+        '& li': {
+            width: 200,
+            margin: 4,
+            borderBottom: 'solid 1px silver',
+        },
     },
     close: {
         float: 'right',
@@ -39,6 +47,7 @@ const SX = {
             userSelect: 'text',
         },
         width: '100%',
+        marginBottom: 32,
         borderCollapse: 'collapse',
         tableLayout: 'fixed',
         '& th, & td': {
@@ -59,6 +68,52 @@ const SX = {
     bad: {
         background: 'rgba(255,0,0,0.1)',
     },
+    select: {},
+};
+
+const LIST_PROPS = {
+    items: [
+        {
+            name: 'c_Mâncare',
+            label: 'Mâncare',
+        },
+        {
+            name: 'c_Casnice',
+            label: 'Casnice',
+        },
+        {
+            name: 'c_Utilități',
+            label: 'Utilități',
+        },
+        {
+            name: 'c_Educație',
+            label: 'Educație',
+        },
+        {
+            name: 'c_Distracție',
+            label: 'Distracție',
+        },
+        {
+            name: 'c_Transport',
+            label: 'Transport',
+        },
+        {
+            name: 'c_Rezerve',
+            label: 'Rezerve',
+        },
+        {
+            name: 'c_Stingeri',
+            label: 'Stingeri',
+        },
+        {
+            name: 'c_Neprevăzute',
+            label: 'Neprevăzute',
+        },
+        {
+            name: 'c_Discuție',
+            label: 'Discuție',
+        },
+    ],
 };
 
 // =====================================================================================================================
@@ -70,6 +125,7 @@ class Report extends React.PureComponent {
         const entries = collectReportEntries(history, report);
         const targets = inferTargets(report);
         const totals = targets && computeTotals(entries, targets);
+        const categories = computeCategories(entries, LIST_PROPS.items);
         return (
             <div css={SX.root}>
                 <h1>
@@ -84,7 +140,6 @@ class Report extends React.PureComponent {
                     onChange={this.onFieldChange}
                     onKeyDown={this.onFieldKeyDown}
                 />
-
                 <table css={SX.table}>
                     <thead>
                         <tr>
@@ -104,20 +159,62 @@ class Report extends React.PureComponent {
                                     <td css={targets.includes(from) && SX.targeted}>{from}</td>
                                     <td>{value}</td>
                                     <td css={targets.includes(to) && SX.targeted}>{to}</td>
-                                    <td>{product}</td>
+                                    <td>
+                                        <Select
+                                            cssNormal={SX.select}
+                                            variant={'simple'}
+                                            label={product}
+                                            listProps={LIST_PROPS}
+                                            data={date}
+                                            onSelect={this.onSummarySelect}
+                                        />
+                                    </td>
                                 </tr>
                             );
                         })}
                     </tbody>
                 </table>
-
                 {!!targets.length && (
                     <>
-                        <h4>Expenditures: {totals.expenditures}</h4>
-                        <h4>Credits: {totals.credits}</h4>
-                        <h2>Worth: {totals.worth}</h2>
+                        Money:
+                        <ul>
+                            <li>
+                                Money In: <ReportNumber value={totals.moneyIn} />
+                            </li>
+                            <li>
+                                Money Out: <ReportNumber value={totals.moneyOut} />
+                            </li>
+                            <li>
+                                Money Delta: <ReportNumber value={totals.moneyIn - totals.moneyOut} />
+                            </li>
+                        </ul>
+                        Credits:
+                        <ul>
+                            <li>
+                                Credits Good: <ReportNumber value={totals.creditsGood} />
+                            </li>
+                            <li>
+                                Credits Bad: <ReportNumber value={totals.creditsBad} />
+                            </li>
+                            <li>
+                                Credits Delta: <ReportNumber value={totals.creditsGood - totals.creditsBad} />
+                            </li>
+                        </ul>
                     </>
                 )}
+                Categories:
+                <ul>
+                    {LIST_PROPS.items.map((item) => {
+                        return (
+                            <li key={item.label}>
+                                {item.label}: <ReportNumber value={categories[item.name]} />
+                            </li>
+                        );
+                    })}
+                    <li>
+                        TOTAL: <ReportNumber value={categories.total} />
+                    </li>
+                </ul>
             </div>
         );
     }
@@ -141,6 +238,10 @@ class Report extends React.PureComponent {
 
     onCloseClick = () => {
         updateReport(null);
+    };
+
+    onSummarySelect = ({data, name}) => {
+        toggleTag(data, name);
     };
 }
 
@@ -220,8 +321,10 @@ const collectReportEntries = (history, reportCommand) => {
  *
  */
 const computeTotals = (entries, targets) => {
-    let expenditures = 0;
-    let credits = 0;
+    let moneyIn = 0;
+    let moneyOut = 0;
+    let creditsGood = 0;
+    let creditsBad = 0;
     for (const entry of entries) {
         const {from, to, value, product} = entry;
         const isCredit = product.includes(CREDIT_KEYWORD);
@@ -237,24 +340,47 @@ const computeTotals = (entries, targets) => {
         }
         if (isFrom && !isTo) {
             if (isCredit) {
-                credits -= value;
+                creditsGood += value;
             } else {
-                expenditures -= value;
+                moneyOut += value;
             }
         } else if (!isFrom && isTo) {
             if (isCredit) {
-                credits += value;
+                creditsBad += value;
             } else {
-                expenditures += value;
+                moneyIn += value;
             }
         }
     }
 
     return {
-        expenditures,
-        credits,
-        worth: expenditures - credits,
+        moneyIn,
+        moneyOut,
+        creditsGood,
+        creditsBad,
     };
+};
+
+/**
+ *
+ */
+const computeCategories = (entries, list) => {
+    const categories = {
+        total: 0,
+    };
+    for (const item of list) {
+        categories[item.name] = 0;
+    }
+    for (const entry of entries) {
+        const {value, product} = entry;
+        for (const item of list) {
+            if (product.includes(item.name)) {
+                categories[item.name] += value;
+                categories.total += value;
+            }
+        }
+    }
+    return categories;
 };
 
 /**
