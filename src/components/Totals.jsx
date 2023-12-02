@@ -89,10 +89,9 @@ class Totals extends React.PureComponent {
         const {formulas} = this.props;
         const {operations} = formulas[index];
         const words = operations.match(/[A-Z]\w+/gi);
-        const prefix = words[0].substring(0, 3);
 
         let report = '';
-        report += `(from.startsWith("${prefix}") || to.startsWith("${prefix}"))`;
+        report += `(${JSON.stringify(words)}.includes(from) || ${JSON.stringify(words)}.includes(to))`;
         report += generateDateCondition();
 
         updateReport(report);

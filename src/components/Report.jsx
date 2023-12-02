@@ -1,5 +1,5 @@
 import React from 'react';
-import {FOOTER_HEIGHT, FOOTER_SAFETY, HEADER_HEIGHT, HEADER_SAFETY} from '../SETTINGS.js';
+import {CREDIT_KEYWORD, FOOTER_HEIGHT, FOOTER_SAFETY, HEADER_HEIGHT, HEADER_SAFETY} from '../SETTINGS.js';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {selectHistory, selectMeta, selectReport} from '../state/selectors.js';
@@ -28,15 +28,16 @@ const SX = {
         padding: 4,
         appearance: 'none',
         background: '#fff',
-        resize: 'none',
         fontFamily: 'inherit',
         fontSize: 'inherit',
         overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        height: 32,
+        height: 64,
         marginBottom: 32,
     },
     table: {
+        '& *': {
+            userSelect: 'text',
+        },
         width: '100%',
         borderCollapse: 'collapse',
         tableLayout: 'fixed',
@@ -46,9 +47,17 @@ const SX = {
             border: 'solid 1px silver',
             width: '20%',
             overflow: 'hidden',
-            textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
         },
+    },
+    targeted: {
+        fontWeight: 'bold',
+    },
+    good: {
+        background: 'rgba(0,255,0,0.1)',
+    },
+    bad: {
+        background: 'rgba(255,0,0,0.1)',
     },
 };
 
@@ -59,7 +68,8 @@ class Report extends React.PureComponent {
     render() {
         const {history, report} = this.props;
         const entries = collectReportEntries(history, report);
-        const target = inferTarget(report);
+        const targets = inferTargets(report);
+        const totals = targets && computeTotals(entries, targets);
         return (
             <div css={SX.root}>
                 <h1>
@@ -87,23 +97,26 @@ class Report extends React.PureComponent {
                     </thead>
                     <tbody>
                         {entries.map((entry, index) => {
+                            const {from, to, date, product, value} = entry;
                             return (
-                                <tr key={index}>
-                                    <td>{beautifyDate(entry.date)}</td>
-                                    <td>{entry.from}</td>
-                                    <td>{entry.value}</td>
-                                    <td>{entry.to}</td>
-                                    <td>{entry.product}</td>
+                                <tr key={index} css={decideCss(from, to, targets)}>
+                                    <td>{beautifyDate(date)}</td>
+                                    <td css={targets.includes(from) && SX.targeted}>{from}</td>
+                                    <td>{value}</td>
+                                    <td css={targets.includes(to) && SX.targeted}>{to}</td>
+                                    <td>{product}</td>
                                 </tr>
                             );
                         })}
                     </tbody>
                 </table>
 
-                {target && (
-                    <h2>
-                        Total for &quot;{target.value}&quot;: {computeTotal(entries, target)}
-                    </h2>
+                {!!targets.length && (
+                    <>
+                        <h4>Expenditures: {totals.expenditures}</h4>
+                        <h4>Credits: {totals.credits}</h4>
+                        <h2>Worth: {totals.worth}</h2>
+                    </>
                 )}
             </div>
         );
@@ -137,37 +150,32 @@ class Report extends React.PureComponent {
 /**
  *
  */
-const inferTarget = (report) => {
+const inferTargets = (report) => {
     let target;
 
-    target = report.match(/from.startsWith\("(.*?)"\)/)?.[1];
+    target = report.match(/(\[.*?]).includes/)?.[1];
     if (target) {
-        return {mode: 'fuzzy', value: target};
-    }
-
-    target = report.match(/to.startsWith\("(.*?)"\)/)?.[1];
-    if (target) {
-        return {mode: 'fuzzy', value: target};
+        return JSON.parse(target);
     }
 
     target = report.match(/from\s*==+\s*"(.*?)"/)?.[1];
     if (target) {
-        return {mode: 'exact', value: target};
+        return [target];
     }
 
     target = report.match(/to\s*==+\s*"(.*?)"/)?.[1];
     if (target) {
-        return {mode: 'exact', value: target};
+        return [target];
     }
 
-    return null;
+    return [];
 };
 
 /**
  *
  */
 const beautifyDate = (date) => {
-    const matched = date.match(/^(\d\d\d\d-\d\d-\d\d)T(\d\d:\d\d)/);
+    const matched = date.match(/^\d\d(\d\d-\d\d-\d\d)T(\d\d:\d\d)/);
     return matched[1] + ', ' + matched[2];
 };
 
@@ -211,27 +219,65 @@ const collectReportEntries = (history, reportCommand) => {
 /**
  *
  */
-const computeTotal = (entries, target) => {
-    let total = 0;
-    for (const {from, to, value} of entries) {
+const computeTotals = (entries, targets) => {
+    let expenditures = 0;
+    let credits = 0;
+    for (const entry of entries) {
+        const {from, to, value, product} = entry;
+        const isCredit = product.includes(CREDIT_KEYWORD);
         let isFrom;
         let isTo;
-        if (target.mode === 'fuzzy') {
-            isFrom = from.startsWith(target.value);
-            isTo = to.startsWith(target.value);
-        } else {
-            // Exact matching
-            isFrom = from === target.value;
-            isTo = to === target.value;
+        for (const target of targets) {
+            if (target === from) {
+                isFrom = true;
+            }
+            if (target === to) {
+                isTo = true;
+            }
         }
         if (isFrom && !isTo) {
-            total -= value;
+            if (isCredit) {
+                credits -= value;
+            } else {
+                expenditures -= value;
+            }
         } else if (!isFrom && isTo) {
-            total += value;
+            if (isCredit) {
+                credits += value;
+            } else {
+                expenditures += value;
+            }
         }
     }
 
-    return total;
+    return {
+        expenditures,
+        credits,
+        worth: expenditures - credits,
+    };
+};
+
+/**
+ *
+ */
+const decideCss = (from, to, targets) => {
+    let isFrom;
+    let isTo;
+    for (const target of targets) {
+        if (target === from) {
+            isFrom = true;
+        }
+        if (target === to) {
+            isTo = true;
+        }
+    }
+    if (isFrom && !isTo) {
+        return SX.bad;
+    } else if (!isFrom && isTo) {
+        return SX.good;
+    }
+
+    return null;
 };
 
 // =====================================================================================================================
